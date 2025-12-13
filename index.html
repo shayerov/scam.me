@@ -49,6 +49,7 @@
       font-weight:900;
       text-align:center;
       font-variant-numeric:tabular-nums;
+      margin-top:8px;
     }
     .sub{color:var(--muted); text-align:center; margin:10px 0 16px}
     .progress{
@@ -66,10 +67,10 @@
     .done{display:none; text-align:center; margin-top:14px}
     .thanks{color:var(--ok); font-weight:900}
 
-    /* End overlay image */
+    /* End image shown ABOVE end message */
     .endOverlay{
       display:none;
-      margin-top:14px;
+      margin: 0 0 14px;
       border-radius:14px;
       overflow:hidden;
       border:1px solid rgba(255,255,255,.14);
@@ -83,6 +84,7 @@
 
     #blocked{display:none; text-align:center}
     #blocked p{color:var(--bad)}
+
     .btnRow{margin-top:18px; display:flex; justify-content:center}
     button{
       background:rgba(255,255,255,.08);
@@ -125,26 +127,29 @@
     </div>
 
     <div id="active">
-      <div class="timer" id="timer">--:--</div>
-      <div class="sub" id="status">Connecting…</div>
-      <div class="progress"><div class="bar" id="bar"></div></div>
+      <!-- Waiting UI (will be hidden on finish) -->
+      <div id="waitingUI">
+        <div class="timer" id="timer">--:--</div>
+        <div class="sub" id="status">Connecting…</div>
+        <div class="progress" id="progress"><div class="bar" id="bar"></div></div>
 
+        <div class="btnRow" id="btnRow">
+          <button id="minus30">− 30 seconds</button>
+        </div>
+
+        <footer>URL format: <code>?event_name=scam-me</code></footer>
+      </div>
+
+      <!-- Done UI (end image ABOVE message) -->
       <div class="done" id="done">
-        <h2 class="thanks">Thank you for waiting 🙏</h2>
-        <p>You waited <b><span id="youWaited">0</span></b> seconds.</p>
-        <p>Total for this event: <b><span id="eventTotal">—</span></b> seconds.</p>
-
-        <!-- End image shown over/with the end message -->
         <div class="endOverlay" id="endOverlay">
           <img src="WaitingPoint_End.jpg" alt="End image"/>
         </div>
-      </div>
 
-      <div class="btnRow">
-        <button id="minus30">− 30 seconds</button>
+        <h2 class="thanks">Thank you for waiting 🙏</h2>
+        <p>You waited <b><span id="youWaited">0</span></b> seconds.</p>
+        <p>Total for this event: <b><span id="eventTotal">—</span></b> seconds.</p>
       </div>
-
-      <footer>URL format: <code>?event_name=scam-me</code></footer>
     </div>
   </section>
 </div>
@@ -181,12 +186,15 @@ const eventTotalEl = $("eventTotal");
 const minus30Btn = $("minus30");
 const sessionCountPill = $("sessionCountPill");
 const endOverlay = $("endOverlay");
+const waitingUI = $("waitingUI");
+const progressEl = $("progress");
+const btnRowEl = $("btnRow");
 
 function block(msg){
   blockedEl.style.display = "block";
   activeEl.style.display = "none";
   blockedReasonEl.textContent = msg;
-  minus30Btn.disabled = true;
+  try { minus30Btn.disabled = true; } catch {}
 }
 function fmt(ms){
   const s = Math.max(0, Math.ceil(ms/1000));
@@ -224,11 +232,7 @@ function getTabSession(){
 }
 function setTabSession(obj){ sessionStorage.setItem(TAB_SESSION_KEY, JSON.stringify(obj)); }
 
-/* ================= Timer rules =================
-   First load in a tab: random 30s..5m
-   Every refresh in same tab: +30 seconds
-   Button: -30 seconds
-*/
+/* ================= Timer rules ================= */
 const minMs = 30_000, maxMs = 300_000;
 const REFRESH_BONUS_MS = 30_000;
 
@@ -240,7 +244,7 @@ function ensureEndAtForTab(eventName){
   const tabState = getTabSession();
 
   if (tabState && tabState.eventName === eventName && tabState.endAt && tabState.endAt > now) {
-    tabState.endAt += REFRESH_BONUS_MS;
+    tabState.endAt += REFRESH_BONUS_MS; // refresh bonus
     setTabSession(tabState);
     return tabState.endAt;
   }
@@ -324,9 +328,10 @@ async function finishNow(){
     eventTotalEl.textContent = "0";
   }
 
-  // Show the end image overlay
-  endOverlay.style.display = "block";
+  // Hide timer + progress + button area; show end picture above message
+  waitingUI.style.display = "none";
   doneEl.style.display = "block";
+  endOverlay.style.display = "block";
 }
 
 /* ================= Main ================= */
