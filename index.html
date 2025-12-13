@@ -28,12 +28,17 @@
     .progress{height:10px; background:rgba(255,255,255,.08); border-radius:12px; overflow:hidden}
     .bar{height:100%; width:0%; background:linear-gradient(90deg, var(--accent), #06b6d4); transition:width .2s linear;}
     .done{display:none; text-align:center; margin-top:10px}
-    .done h2{margin:8px 0 4px}
     .thanks{color:var(--ok); font-weight:900}
-    .totals{margin-top:18px; padding:14px 16px; background:var(--card); border-radius:14px;
-      border:1px solid rgba(255,255,255,.08);}
-    .totals .label{color:var(--muted)}
-    .totals .value{font-weight:900}
+    #blockedMessage{display:none; text-align:center}
+    .btnRow{margin-top:16px; display:flex; justify-content:center}
+    button{
+      appearance:none; border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06); color:var(--fg);
+      padding:10px 14px; border-radius:12px; cursor:pointer;
+      font-weight:700;
+    }
+    button:active{transform:translateY(1px)}
+    button[disabled]{opacity:.5; cursor:not-allowed}
     footer{margin-top:16px; text-align:center; color:var(--muted); font-size:.9rem}
     code{background:rgba(255,255,255,.08); padding:.15rem .35rem; border-radius:.35rem}
   </style>
@@ -41,208 +46,257 @@
 <body>
   <div class="wrap">
     <h1>⏳ A Tiny Waiting Room</h1>
-    <p class="lead">
-      Event: <span class="pill" id="eventNamePill">—</span><br/>
-      A random countdown between 30 seconds and 5 minutes. When it finishes, you’ll see a thank-you — and we’ll add your seconds to the event total.
-    </p>
+    <p class="lead">Event: <span class="pill" id="eventNamePill">—</span></p>
 
     <section class="card" aria-live="polite">
-      <div class="timer" id="timeLeft">00:00</div>
-      <p class="sub" id="subtext">Counting down…</p>
-      <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
-
-      <div class="done" id="done">
-        <h2 class="thanks">Thank you for waiting 🙏</h2>
-        <p class="sub">You personally waited <span id="youWaited">0</span> seconds.</p>
-        <p class="sub">Total for this event: <b><span id="eventTotal">—</span></b> seconds</p>
+      <div id="blockedMessage">
+        <h2>🚫 This event is not active</h2>
+        <p class="sub" id="blockedReason"></p>
       </div>
 
-      <div class="totals">
-        <span class="label">Live total seconds (this event):</span>
-        <span class="value" id="eventTotalLive">—</span>
+      <div id="activeArea">
+        <div class="timer" id="timeLeft">00:00</div>
+        <p class="sub" id="subtext">Counting down…</p>
+        <div class="progress"><div class="bar" id="bar"></div></div>
+
+        <div class="done" id="done">
+          <h2 class="thanks">Thank you for waiting 🙏</h2>
+          <p class="sub">You personally waited <span id="youWaited">0</span> seconds.</p>
+          <p class="sub">Total for this event: <b><span id="eventTotal">—</span></b> seconds</p>
+        </div>
+
+        <div class="btnRow">
+          <button id="minus30Btn" type="button">− 30 seconds</button>
+        </div>
       </div>
 
-      <footer>
-        URL format: <code>?event_name=scam-me</code>
-      </footer>
+      <footer>URL format: <code>?event_name=scam-me</code></footer>
     </section>
   </div>
 
-  <!-- Firebase (Compat builds for easy drop-in) -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 
   <script>
-    // ========= 1) Read event_name from URL =========
+    // ===== URL param =====
     const params = new URLSearchParams(location.search);
-    const rawEvent = params.get('event_name') || 'default';
+    const rawEvent = params.get('event_name') || '';
+    const eventName = rawEvent.trim().toLowerCase().replace(/[^a-z0-9-_]/g,'-').slice(0,64);
+    document.getElementById('eventNamePill').textContent = eventName || '—';
 
-    // Keep it “path-safe” for Firebase keys
-    const eventName = rawEvent.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '-').slice(0, 64) || 'default';
-    document.getElementById('eventNamePill').textContent = eventName;
-
-    // ========= 2) Random timer =========
-    const minMs = 30_000, maxMs = 300_000;
-    const durationMs = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-    const endAt = Date.now() + durationMs;
-
-    // ========= UI =========
+    // ===== UI =====
     const elTime = document.getElementById('timeLeft');
-    const elSub = document.getElementById('subtext');
-    const elBar = document.getElementById('bar');
+    const elSub  = document.getElementById('subtext');
+    const elBar  = document.getElementById('bar');
     const elDone = document.getElementById('done');
-    const elYou = document.getElementById('youWaited');
-    const elEventTotalLive = document.getElementById('eventTotalLive');
+    const elYou  = document.getElementById('youWaited');
     const elEventTotal = document.getElementById('eventTotal');
+    const minus30Btn = document.getElementById('minus30Btn');
 
-    function fmt(ms) {
-      const s = Math.max(0, Math.ceil(ms / 1000));
-      const m = Math.floor(s / 60);
-      const r = String(s % 60).padStart(2, '0');
-      return `${String(m).padStart(2,'0')}:${r}`;
+    const blockedMessage = document.getElementById('blockedMessage');
+    const blockedReason  = document.getElementById('blockedReason');
+    const activeArea     = document.getElementById('activeArea');
+
+    function block(reason){
+      blockedReason.textContent = reason;
+      blockedMessage.style.display = 'block';
+      activeArea.style.display = 'none';
+      try { minus30Btn.disabled = true; } catch {}
     }
 
-    // ========= 3) Firebase config (paste yours) =========
-	// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-	const firebaseConfig = {
-	  apiKey: "AIzaSyBjgXGvkvTtmLCKgCq_AuX3NHFu-P4TljU",
-	  authDomain: "scam-me-12e45.firebaseapp.com",
-	  projectId: "scam-me-12e45",
-	  storageBucket: "scam-me-12e45.firebasestorage.app",
-	  messagingSenderId: "541965900648",
-	  appId: "1:541965900648:web:bc2c8a36da68ffc1a2d4dd",
-	  measurementId: "G-E745Z03SRT"
-	};
+    function fmt(ms){
+      const s = Math.max(0, Math.ceil(ms/1000));
+      const m = Math.floor(s/60);
+      return `${String(m).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+    }
 
-    // ========= 4) Database refs =========
-    let firebaseReady = false;
-    let sessionRef = null;         // /sessions/{pushId}
-    let eventTotalRef = null;      // /events/{eventName}/totalSeconds
-    let sessionId = null;
+    // ===== Firebase config (paste yours) =====
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_APP_ID",
+      // storageBucket is fine to keep if you have it; not needed for this page
+      // storageBucket: "YOUR_PROJECT_ID.appspot.com"
+    };
 
-    // Session state we store:
-    // { event_name, total_waiting, didFinish, createdAt }
-    let visible = document.visibilityState === 'visible';
+    // ===== Timer behavior =====
+    // - First load: random 30s..5m
+    // - Every refresh: extend existing timer by +30s (per event_name)
+    const minMs = 30_000, maxMs = 300_000;
+    const storageKey = eventName ? `wait_endAt_${eventName}` : `wait_endAt_default`;
+
+    function computeInitialEndAt(){
+      const now = Date.now();
+      const stored = Number(localStorage.getItem(storageKey) || 0);
+
+      // If there's an active timer, extend it by +30s on refresh:
+      if (stored && stored > now) {
+        const extended = stored + 30_000;
+        localStorage.setItem(storageKey, String(extended));
+        return extended;
+      }
+
+      // Otherwise start a new random timer:
+      const durationMs = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+      const endAt = now + durationMs;
+      localStorage.setItem(storageKey, String(endAt));
+      return endAt;
+    }
+
+    let endAt = computeInitialEndAt();
+    let durationMsForProgress = Math.max(1, endAt - Date.now()); // used just for progress scaling; we refine after start
+
+    // Button: subtract 30 seconds from remaining time
+    minus30Btn.addEventListener('click', () => {
+      if (finished) return;
+      const now = Date.now();
+      endAt = Math.max(now, endAt - 30_000);
+      localStorage.setItem(storageKey, String(endAt));
+      // If user nukes it to zero, finishing is handled by the ticker within 200ms.
+      tickOnce();
+    });
+
+    // ===== Session tracking & DB =====
+    let sessionRef = null;
+    let eventRef = null;          // /events/{eventName}
+    let eventTotalRef = null;     // /events/{eventName}/totalSeconds
+
     let youWaitedSeconds = 0;
-    let bufferedSeconds = 0;
-    let lastFlushedSessionTotal = 0;
+    let buffered = 0;
     let finished = false;
+    let visible = document.visibilityState === 'visible';
 
-    function initFirebase() {
-      if (!firebaseConfig.apiKey) return;
+    document.addEventListener('visibilitychange', () => {
+      visible = document.visibilityState === 'visible';
+    });
 
-      firebase.initializeApp(firebaseConfig);
+    function safeNumber(x){ return (typeof x === 'number' && isFinite(x)) ? x : 0; }
+
+    async function flush(){
+      if (!sessionRef || !eventTotalRef || buffered <= 0) return;
+      const delta = buffered;
+      buffered = 0;
+
+      // Increment aggregate + update session
+      try {
+        await eventTotalRef.transaction(v => safeNumber(v) + delta);
+        await sessionRef.update({ total_waiting: youWaitedSeconds });
+      } catch (e) {
+        // if fails, restore buffer
+        buffered += delta;
+      }
+    }
+
+    // ===== Countdown tick =====
+    function tickOnce(){
+      const now = Date.now();
+      const left = Math.max(0, endAt - now);
+
+      elTime.textContent = fmt(left);
+
+      // Progress bar: scale against (current) total duration from the moment the page started.
+      // We keep it simple: progress is based on remaining vs initial remaining at page load.
+      const initialRemaining = durationMsForProgress;
+      const pct = initialRemaining > 0 ? (100 - (left / initialRemaining) * 100) : 100;
+      elBar.style.width = Math.min(100, Math.max(0, pct)).toFixed(2) + '%';
+    }
+
+    async function finishNow(){
+      if (finished) return;
+      finished = true;
+
+      elSub.textContent = 'Done!';
+      elDone.style.display = 'block';
+      elYou.textContent = youWaitedSeconds.toLocaleString();
+
+      // final flush + mark session finished
+      await flush();
+      try { await sessionRef.update({ didFinish: true }); } catch {}
+
+      // fetch total for this event (ONLY show after done)
+      try {
+        const snap = await eventTotalRef.get();
+        const total = safeNumber(snap.val());
+        elEventTotal.textContent = total.toLocaleString();
+      } catch {
+        elEventTotal.textContent = '0';
+      }
+
+      // stop offering manipulation
+      minus30Btn.disabled = true;
+
+      // optional: keep endAt in storage so a refresh still extends; if you prefer reset after finish, uncomment:
+      // localStorage.removeItem(storageKey);
+    }
+
+    // ===== Start everything =====
+    async function start(){
+      if (!eventName) { block('No event specified.'); return; }
+
+      try {
+        firebase.initializeApp(firebaseConfig);
+      } catch (e) {
+        // If double-initialized (rare with single page), ignore
+      }
+
       const db = firebase.database();
+      eventRef = db.ref(`events/${eventName}`);
 
-      // Create a unique session entry
-      const sessions = db.ref('sessions');
-      sessionRef = sessions.push();
-      sessionId = sessionRef.key;
+      // Validate event existence + done flag
+      const eventSnap = await eventRef.get();
+      if (!eventSnap.exists()) { block('This event does not exist.'); return; }
+      const eventData = eventSnap.val() || {};
+      if (eventData.done === true) { block('This event has already finished.'); return; }
+
+      // Ensure required fields exist
+      if (typeof eventData.totalSeconds !== 'number') {
+        await eventRef.update({ totalSeconds: 0, done: false });
+      }
 
       eventTotalRef = db.ref(`events/${eventName}/totalSeconds`);
 
-      firebaseReady = true;
-
-      // Write initial session record
-      sessionRef.set({
+      // Create a unique session
+      sessionRef = db.ref('sessions').push();
+      await sessionRef.set({
         event_name: eventName,
         total_waiting: 0,
         didFinish: false,
         createdAt: firebase.database.ServerValue.TIMESTAMP
       });
 
-      // Live total for this event
-      eventTotalRef.on('value', snap => {
-        const v = snap.val();
-        elEventTotalLive.textContent = (typeof v === 'number' ? v : 0).toLocaleString();
-      }, () => {
-        elEventTotalLive.textContent = '—';
-      });
+      // Count waited seconds while visible (independent of timer length)
+      setInterval(() => {
+        if (finished) return;
+        if (!visible) return;
+        youWaitedSeconds += 1;
+        buffered += 1;
+      }, 1000);
+
+      // Flush every 5s
+      setInterval(() => {
+        if (finished) return;
+        flush();
+      }, 5000);
+
+      // Set progress scaling baseline at start
+      durationMsForProgress = Math.max(1, endAt - Date.now());
+
+      // Countdown ticker
+      setInterval(async () => {
+        if (finished) return;
+        tickOnce();
+        if (Date.now() >= endAt) {
+          await finishNow();
+        }
+      }, 200);
+
+      // initial draw
+      tickOnce();
     }
 
-    try { initFirebase(); } catch (e) {
-      console.warn('Firebase not initialized (demo mode).', e);
-    }
-
-    // ========= 5) Flush seconds to DB (batched) =========
-    async function flush() {
-      if (!firebaseReady || !sessionRef || !eventTotalRef || bufferedSeconds <= 0) return;
-
-      const delta = bufferedSeconds;
-      bufferedSeconds = 0;
-
-      // Update session total_waiting (monotonic)
-      lastFlushedSessionTotal += delta;
-
-      try {
-        // 1) Increment aggregate event total
-        await eventTotalRef.transaction(cur => (typeof cur === 'number' ? cur : 0) + delta);
-
-        // 2) Update the session record
-        await sessionRef.update({
-          total_waiting: lastFlushedSessionTotal
-        });
-      } catch (e) {
-        // If it fails, re-buffer and try later
-        bufferedSeconds += delta;
-        lastFlushedSessionTotal -= delta;
-      }
-    }
-
-    // Count only while visible, flush every 5 seconds
-    let sinceFlush = 0;
-    setInterval(() => {
-      if (finished) return;
-      if (!visible) return;
-
-      youWaitedSeconds += 1;
-      bufferedSeconds += 1;
-      sinceFlush += 1;
-
-      if (sinceFlush >= 5) { sinceFlush = 0; flush(); }
-    }, 1000);
-
-    document.addEventListener('visibilitychange', () => {
-      visible = document.visibilityState === 'visible';
-      if (!visible) flush();
-    });
-
-    window.addEventListener('beforeunload', () => { flush(); });
-
-    // ========= 6) Countdown =========
-    const tick = () => {
-      const msLeft = Math.max(0, endAt - Date.now());
-      elTime.textContent = fmt(msLeft);
-      elBar.style.width = (100 - (msLeft / durationMs) * 100).toFixed(2) + '%';
-
-      if (msLeft <= 0 && !finished) {
-        finished = true;
-        elSub.textContent = 'Done!';
-        elDone.style.display = 'block';
-        elYou.textContent = youWaitedSeconds.toLocaleString();
-
-        // Final flush + mark didFinish true
-        (async () => {
-          await flush();
-          if (firebaseReady && sessionRef) {
-            try {
-              await sessionRef.update({ didFinish: true });
-            } catch {}
-          }
-
-          // Show event total at end (read current live total)
-          const current = elEventTotalLive.textContent;
-          elEventTotal.textContent = current === '—' ? '0' : current.replace(/,/g,'');
-          // (We also leave the formatted live one visible above.)
-          elEventTotal.textContent = (parseInt(elEventTotal.textContent,10) || 0).toLocaleString();
-        })();
-
-        clearInterval(ticker);
-      }
-    };
-
-    const ticker = setInterval(tick, 200);
-    tick();
+    start();
   </script>
 </body>
 </html>
