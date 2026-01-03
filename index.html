@@ -64,8 +64,6 @@
     }
     .done{display:none; text-align:center; margin-top:14px}
     .thanks{color:var(--ok); font-weight:900}
-
-    /* End image ABOVE end message */
     .endOverlay{
       display:none;
       margin:0 0 14px;
@@ -122,21 +120,18 @@
     </div>
 
     <div id="active">
-      <!-- Waiting UI (hidden on finish) -->
       <div id="waitingUI">
         <div class="timer" id="timer">--:--</div>
         <div class="sub" id="status">Connecting…</div>
-        <div class="progress" id="progress"><div class="bar" id="bar"></div></div>
+        <div class="progress"><div class="bar" id="bar"></div></div>
 
-        <!-- DEV button row (only shown when devPassword matches) -->
         <div class="btnRow" id="btnRow" style="display:none;">
           <button id="minus30" type="button">− 30 seconds</button>
         </div>
 
-        <footer>URL format: <code>?event_name=scam-me</code></footer>
+        <footer>URL format: <code>?event_name=MyEvent</code></footer>
       </div>
 
-      <!-- Done UI -->
       <div class="done" id="done">
         <div class="endOverlay" id="endOverlay">
           <img src="WaitingPoint_End.jpg" alt="End image"/>
@@ -167,7 +162,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 /* ================= DOM ================= */
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
 const eventLabel = $("eventLabel");
 const sessionCountPill = $("sessionCountPill");
 const statusEl = $("status");
@@ -176,7 +171,6 @@ const blockedReasonEl = $("blockedReason");
 const activeEl = $("active");
 const waitingUI = $("waitingUI");
 const timerEl = $("timer");
-const progressEl = $("progress");
 const barEl = $("bar");
 const btnRowEl = $("btnRow");
 const minus30Btn = $("minus30");
@@ -185,12 +179,12 @@ const endOverlayEl = $("endOverlay");
 const youWaitedEl = $("youWaited");
 const eventTotalEl = $("eventTotal");
 
+/* ================= Helpers ================= */
 function block(msg){
   blockedEl.style.display = "block";
   activeEl.style.display = "none";
   blockedReasonEl.textContent = msg;
 }
-
 function fmt(ms){
   const s = Math.max(0, Math.ceil(ms/1000));
   const m = Math.floor(s/60);
@@ -205,25 +199,21 @@ const DEV_PASSWORD = "WaitingIsThePoint";
 const devMode = params.get("devPassword") === DEV_PASSWORD;
 if (devMode) btnRowEl.style.display = "flex";
 
-/* ================= Resolve eventName ================= */
+/* ================= Resolve eventName (CASE-SENSITIVE) ================= */
 function sanitizeEventName(s){
-  return (s || "")
-    .trim()
-    .replace(/[^a-zA-Z0-9-_]/g, "-")
-    .slice(0, 64);
+  return (s || "").trim().slice(0, 64);
 }
 
 async function resolveEventName(){
   const fromUrl = sanitizeEventName(params.get("event_name"));
   if (fromUrl) return fromUrl;
 
-  // fallback: /defaultEvent
   const snap = await db.ref("defaultEvent").get();
   if (!snap.exists() || typeof snap.val() !== "string") return "";
   return sanitizeEventName(snap.val());
 }
 
-/* ================= User identity (localStorage) ================= */
+/* ================= User identity ================= */
 const USER_KEY = "scamme_user_id_v1";
 function getOrCreateUserId(){
   let id = localStorage.getItem(USER_KEY);
@@ -235,10 +225,7 @@ function getOrCreateUserId(){
 }
 const userId = getOrCreateUserId();
 
-/* ================= Tab session identity (sessionStorage) =================
-   Refresh in same tab -> same session
-   New tab/window -> new session
-*/
+/* ================= Tab session ================= */
 const TAB_SESSION_KEY = "scamme_tab_session_v1";
 function getTabSession(){
   try { return JSON.parse(sessionStorage.getItem(TAB_SESSION_KEY) || "null"); } catch { return null; }
@@ -247,10 +234,7 @@ function setTabSession(obj){
   sessionStorage.setItem(TAB_SESSION_KEY, JSON.stringify(obj));
 }
 
-/* ================= Timer rules =================
-   First load in a tab: random 30s..5m
-   Every refresh in same tab: +30 seconds
-*/
+/* ================= Timer rules ================= */
 const minMs = 30_000, maxMs = 300_000;
 const REFRESH_BONUS_MS = 30_000;
 
@@ -262,7 +246,7 @@ function ensureEndAtForTab(eventName){
   const tabState = getTabSession();
 
   if (tabState && tabState.eventName === eventName && tabState.endAt && tabState.endAt > now) {
-    tabState.endAt += REFRESH_BONUS_MS; // refresh bonus
+    tabState.endAt += REFRESH_BONUS_MS;
     setTabSession(tabState);
     return tabState.endAt;
   }
@@ -273,15 +257,14 @@ function ensureEndAtForTab(eventName){
   return endAt;
 }
 
-/* ================= Runtime state ================= */
+/* ================= Runtime ================= */
 let endAt = null;
 let baselineMs = null;
 let finished = false;
-
-let visible = (document.visibilityState === "visible");
+let visible = document.visibilityState === "visible";
 document.addEventListener("visibilitychange", () => visible = (document.visibilityState === "visible"));
 
-/* ================= DB refs/state ================= */
+/* ================= DB state ================= */
 let sessionRef = null;
 let totalRef = null;
 let userRef = null;
@@ -295,7 +278,6 @@ async function flush(){
   if (!sessionRef || !totalRef || buffer <= 0) return;
   const delta = buffer;
   buffer = 0;
-
   try {
     await totalRef.transaction(v => safeNumber(v) + delta);
     if (userTotalWaitedRef) {
@@ -303,24 +285,21 @@ async function flush(){
     }
     await sessionRef.update({ total_waiting: waited });
   } catch {
-    buffer += delta; // retry later
+    buffer += delta;
   }
 }
 
 function tickOnce(){
   const left = Math.max(0, endAt - Date.now());
   timerEl.textContent = fmt(left);
-
   const pct = 100 - (left / baselineMs) * 100;
   barEl.style.width = Math.min(100, Math.max(0, pct)).toFixed(2) + "%";
-
   return left;
 }
 
 async function finishNow(){
   if (finished) return;
   finished = true;
-
   statusEl.textContent = "Done!";
   if (minus30Btn) minus30Btn.disabled = true;
 
@@ -329,7 +308,6 @@ async function finishNow(){
 
   youWaitedEl.textContent = waited.toLocaleString();
 
-  // Only show total after done
   try {
     const snap = await totalRef.get();
     eventTotalEl.textContent = safeNumber(snap.val()).toLocaleString();
@@ -337,7 +315,6 @@ async function finishNow(){
     eventTotalEl.textContent = "0";
   }
 
-  // Remove timer + progress + dev controls; show end image ABOVE end message
   waitingUI.style.display = "none";
   endOverlayEl.style.display = "block";
   doneEl.style.display = "block";
@@ -347,15 +324,11 @@ async function finishNow(){
 if (devMode) {
   minus30Btn.addEventListener("click", () => {
     if (finished) return;
-    const now = Date.now();
-    endAt = Math.max(now, endAt - 30_000);
-
-    // persist within tab state
+    endAt = Math.max(Date.now(), endAt - 30_000);
     const st = getTabSession() || {};
     st.eventName = st.eventName || "";
     st.endAt = endAt;
     setTabSession(st);
-
     tickOnce();
   });
 }
@@ -366,31 +339,28 @@ if (devMode) {
 
   const eventName = await resolveEventName();
   if (!eventName) {
-    block("No event specified and /defaultEvent is missing or invalid.");
+    block("No event specified and defaultEvent is missing.");
     return;
   }
   eventLabel.textContent = eventName;
 
-  // Validate event
   statusEl.textContent = "Checking event…";
   const eventRef = db.ref(`events/${eventName}`);
   const eventSnap = await eventRef.get();
 
   if (!eventSnap.exists()) { block("Event does not exist."); return; }
   const ev = eventSnap.val() || {};
-  if (ev.done === true) { block("Event already finished (done=true)."); return; }
+  if (ev.done === true) { block("Event already finished."); return; }
   if (typeof ev.totalSeconds !== "number") {
     await eventRef.update({ totalSeconds: 0, done: false });
   }
 
   totalRef = eventRef.child("totalSeconds");
 
-  // userStats
   userRef = db.ref(`userStats/${eventName}/${userId}`);
   userSessionsCountRef = userRef.child("sessionsCount");
   userTotalWaitedRef = userRef.child("totalWaited");
 
-  // Display current sessions count (best effort)
   try {
     const us = await userRef.get();
     const count = us.exists() ? safeNumber((us.val() || {}).sessionsCount) : 0;
@@ -399,11 +369,9 @@ if (devMode) {
     sessionCountPill.textContent = "—";
   }
 
-  // Timer state for this tab (refresh adds +30s)
   endAt = ensureEndAtForTab(eventName);
   baselineMs = Math.max(1, endAt - Date.now());
 
-  // Session for this tab: reuse on refresh, new on new tab
   statusEl.textContent = "Creating session…";
   const tabState = getTabSession() || { eventName, endAt };
 
@@ -418,14 +386,12 @@ if (devMode) {
     tabState.endAt = endAt;
     setTabSession(tabState);
 
-    // increment sessions count
     try {
       await userSessionsCountRef.transaction(v => safeNumber(v) + 1);
       const updated = await userSessionsCountRef.get();
       sessionCountPill.textContent = safeNumber(updated.val()).toLocaleString();
     } catch {}
 
-    // create session record
     await sessionRef.set({
       event_name: eventName,
       user_id: userId,
@@ -435,7 +401,6 @@ if (devMode) {
       lastSeenAt: firebase.database.ServerValue.TIMESTAMP
     });
 
-    // ensure user node exists
     try {
       await userRef.update({
         user_id: userId,
@@ -444,29 +409,22 @@ if (devMode) {
     } catch {}
   }
 
-  // Start ticking
   statusEl.textContent = "Counting down…";
   tickOnce();
 
-  // count seconds only while visible
   setInterval(() => {
-    if (finished) return;
-    if (!visible) return;
-    waited += 1;
-    buffer += 1;
+    if (finished || !visible) return;
+    waited++; buffer++;
   }, 1000);
 
-  // flush every 5s
   setInterval(() => {
     if (finished) return;
     flush();
   }, 5000);
 
-  // timer loop
   setInterval(() => {
     if (finished) return;
-    const left = tickOnce();
-    if (left <= 0) finishNow();
+    if (tickOnce() <= 0) finishNow();
   }, 200);
 })();
 </script>
