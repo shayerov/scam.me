@@ -209,7 +209,6 @@ if (devMode) btnRowEl.style.display = "flex";
 function sanitizeEventName(s){
   return (s || "")
     .trim()
-    .toLowerCase()
     .replace(/[^a-z0-9-_]/g, "-")
     .slice(0, 64);
 }
