@@ -192,6 +192,11 @@ function fmt(ms){
   return `${String(m).padStart(2,'0')}:${r}`;
 }
 function safeNumber(x){ return (typeof x === "number" && isFinite(x)) ? x : 0; }
+function describeFirebaseError(e){
+  const code = (e && (e.code || e.name)) ? String(e.code || e.name) : "";
+  const msg = (e && e.message) ? String(e.message) : String(e);
+  return (code ? `${code}: ` : "") + msg;
+}
 
 /* ================= URL params ================= */
 const params = new URLSearchParams(location.search);
@@ -201,16 +206,28 @@ if (devMode) btnRowEl.style.display = "flex";
 
 /* ================= Resolve eventName (CASE-SENSITIVE) ================= */
 function sanitizeEventName(s){
-  return (s || "").trim().slice(0, 64);
+  // Case-sensitive: do NOT change case.
+  // Keep it safe-ish: trim and cap length.
+  // (Avoid slashes in keys; replace them to keep your data shape predictable.)
+  return (s || "")
+    .trim()
+    .replace(/[\/#\.\$\[\]]/g, "-")  // Firebase key illegal chars + '/'
+    .slice(0, 64);
 }
 
 async function resolveEventName(){
   const fromUrl = sanitizeEventName(params.get("event_name"));
   if (fromUrl) return fromUrl;
 
-  const snap = await db.ref("defaultEvent").get();
-  if (!snap.exists() || typeof snap.val() !== "string") return "";
-  return sanitizeEventName(snap.val());
+  statusEl.textContent = "Loading default event…";
+  try {
+    const snap = await db.ref("defaultEvent").get();
+    if (!snap.exists() || typeof snap.val() !== "string") return "";
+    return sanitizeEventName(snap.val());
+  } catch (e) {
+    console.error("Failed to read /defaultEvent", e);
+    throw new Error("Could not read /defaultEvent (check DB rules). " + describeFirebaseError(e));
+  }
 }
 
 /* ================= User identity ================= */
@@ -326,7 +343,6 @@ if (devMode) {
     if (finished) return;
     endAt = Math.max(Date.now(), endAt - 30_000);
     const st = getTabSession() || {};
-    st.eventName = st.eventName || "";
     st.endAt = endAt;
     setTabSession(st);
     tickOnce();
@@ -337,26 +353,50 @@ if (devMode) {
 (async function start(){
   statusEl.textContent = "Connecting…";
 
-  const eventName = await resolveEventName();
+  let eventName = "";
+  try {
+    eventName = await resolveEventName();
+  } catch (e) {
+    block(String(e.message || e));
+    return;
+  }
+
   if (!eventName) {
-    block("No event specified and defaultEvent is missing.");
+    block("No event specified and defaultEvent is missing/invalid.");
     return;
   }
   eventLabel.textContent = eventName;
 
+  // Validate event
   statusEl.textContent = "Checking event…";
   const eventRef = db.ref(`events/${eventName}`);
-  const eventSnap = await eventRef.get();
+
+  let eventSnap;
+  try {
+    eventSnap = await eventRef.get();
+  } catch (e) {
+    console.error("Failed to read event", eventName, e);
+    block("Could not read event (check DB rules). " + describeFirebaseError(e));
+    return;
+  }
 
   if (!eventSnap.exists()) { block("Event does not exist."); return; }
   const ev = eventSnap.val() || {};
   if (ev.done === true) { block("Event already finished."); return; }
+
+  // Ensure totalSeconds exists
   if (typeof ev.totalSeconds !== "number") {
-    await eventRef.update({ totalSeconds: 0, done: false });
+    try { await eventRef.update({ totalSeconds: 0, done: false }); }
+    catch (e) {
+      console.error("Failed to init event fields", e);
+      block("Event exists but could not initialize fields (rules?). " + describeFirebaseError(e));
+      return;
+    }
   }
 
   totalRef = eventRef.child("totalSeconds");
 
+  // userStats
   userRef = db.ref(`userStats/${eventName}/${userId}`);
   userSessionsCountRef = userRef.child("sessionsCount");
   userTotalWaitedRef = userRef.child("totalWaited");
@@ -369,9 +409,11 @@ if (devMode) {
     sessionCountPill.textContent = "—";
   }
 
+  // Timer state for this tab (refresh adds +30s)
   endAt = ensureEndAtForTab(eventName);
   baselineMs = Math.max(1, endAt - Date.now());
 
+  // Session for this tab: reuse on refresh, new on new tab
   statusEl.textContent = "Creating session…";
   const tabState = getTabSession() || { eventName, endAt };
 
@@ -386,21 +428,30 @@ if (devMode) {
     tabState.endAt = endAt;
     setTabSession(tabState);
 
+    // increment sessions count
     try {
       await userSessionsCountRef.transaction(v => safeNumber(v) + 1);
       const updated = await userSessionsCountRef.get();
       sessionCountPill.textContent = safeNumber(updated.val()).toLocaleString();
     } catch {}
 
-    await sessionRef.set({
-      event_name: eventName,
-      user_id: userId,
-      total_waiting: 0,
-      didFinish: false,
-      createdAt: firebase.database.ServerValue.TIMESTAMP,
-      lastSeenAt: firebase.database.ServerValue.TIMESTAMP
-    });
+    // create session record
+    try {
+      await sessionRef.set({
+        event_name: eventName,
+        user_id: userId,
+        total_waiting: 0,
+        didFinish: false,
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        lastSeenAt: firebase.database.ServerValue.TIMESTAMP
+      });
+    } catch (e) {
+      console.error("Failed to create session", e);
+      block("Could not create session (check write rules). " + describeFirebaseError(e));
+      return;
+    }
 
+    // ensure user node exists
     try {
       await userRef.update({
         user_id: userId,
@@ -409,6 +460,7 @@ if (devMode) {
     } catch {}
   }
 
+  // Start ticking
   statusEl.textContent = "Counting down…";
   tickOnce();
 
