@@ -88,18 +88,6 @@
       cursor:pointer;
     }
     button[disabled]{opacity:.5; cursor:not-allowed}
-
-    footer{
-      margin-top:14px;
-      text-align:center;
-      color:var(--muted);
-      font-size:.9rem;
-    }
-    code{
-      background:rgba(255,255,255,.12);
-      padding:.15rem .35rem;
-      border-radius:.35rem;
-    }
   </style>
 </head>
 
@@ -128,8 +116,6 @@
         <div class="btnRow" id="btnRow" style="display:none;">
           <button id="minus30" type="button">− 30 seconds</button>
         </div>
-
-        <footer>URL format: <code>?event_name=MyEvent</code></footer>
       </div>
 
       <div class="done" id="done">
@@ -192,11 +178,6 @@ function fmt(ms){
   return `${String(m).padStart(2,'0')}:${r}`;
 }
 function safeNumber(x){ return (typeof x === "number" && isFinite(x)) ? x : 0; }
-function describeFirebaseError(e){
-  const code = (e && (e.code || e.name)) ? String(e.code || e.name) : "";
-  const msg = (e && e.message) ? String(e.message) : String(e);
-  return (code ? `${code}: ` : "") + msg;
-}
 
 /* ================= URL params ================= */
 const params = new URLSearchParams(location.search);
@@ -204,30 +185,21 @@ const DEV_PASSWORD = "WaitingIsThePoint";
 const devMode = params.get("devPassword") === DEV_PASSWORD;
 if (devMode) btnRowEl.style.display = "flex";
 
-/* ================= Resolve eventName (CASE-SENSITIVE) ================= */
+/* ================= Resolve eventName (case-sensitive) ================= */
 function sanitizeEventName(s){
-  // Case-sensitive: do NOT change case.
-  // Keep it safe-ish: trim and cap length.
-  // (Avoid slashes in keys; replace them to keep your data shape predictable.)
   return (s || "")
     .trim()
-    .replace(/[\/#\.\$\[\]]/g, "-")  // Firebase key illegal chars + '/'
+    .replace(/[\/#\.\$\[\]]/g, "-")
     .slice(0, 64);
 }
-
 async function resolveEventName(){
   const fromUrl = sanitizeEventName(params.get("event_name"));
   if (fromUrl) return fromUrl;
 
   statusEl.textContent = "Loading default event…";
-  try {
-    const snap = await db.ref("defaultEvent").get();
-    if (!snap.exists() || typeof snap.val() !== "string") return "";
-    return sanitizeEventName(snap.val());
-  } catch (e) {
-    console.error("Failed to read /defaultEvent", e);
-    throw new Error("Could not read /defaultEvent (check DB rules). " + describeFirebaseError(e));
-  }
+  const snap = await db.ref("defaultEvent").get();
+  if (!snap.exists() || typeof snap.val() !== "string") return "";
+  return sanitizeEventName(snap.val());
 }
 
 /* ================= User identity ================= */
@@ -278,8 +250,40 @@ function ensureEndAtForTab(eventName){
 let endAt = null;
 let baselineMs = null;
 let finished = false;
-let visible = document.visibilityState === "visible";
-document.addEventListener("visibilitychange", () => visible = (document.visibilityState === "visible"));
+
+/* Pause/resume bookkeeping */
+let visible = (document.visibilityState === "visible");
+let hiddenAt = null;
+
+function persistEndAt(){
+  const st = getTabSession() || {};
+  st.endAt = endAt;
+  setTabSession(st);
+}
+
+document.addEventListener("visibilitychange", () => {
+  const nowVisible = (document.visibilityState === "visible");
+  if (finished) { visible = nowVisible; return; }
+
+  if (!nowVisible && visible) {
+    // going hidden: freeze timer + counting
+    hiddenAt = Date.now();
+    statusEl.textContent = "Paused…";
+  } else if (nowVisible && !visible) {
+    // coming back: push endAt forward by hidden duration (true pause)
+    if (hiddenAt) {
+      const delta = Date.now() - hiddenAt;
+      endAt += delta;
+      baselineMs += delta;       // keep progress bar consistent
+      persistEndAt();
+      hiddenAt = null;
+    }
+    statusEl.textContent = "Counting down…";
+    // refresh UI immediately
+    tickOnce();
+  }
+  visible = nowVisible;
+});
 
 /* ================= DB state ================= */
 let sessionRef = null;
@@ -291,10 +295,18 @@ let userTotalWaitedRef = null;
 let waited = 0;
 let buffer = 0;
 
+/* interval handles */
+let intervalCount = null;
+let intervalFlush = null;
+let intervalTick = null;
+
 async function flush(){
+  if (finished) return;
   if (!sessionRef || !totalRef || buffer <= 0) return;
+
   const delta = buffer;
   buffer = 0;
+
   try {
     await totalRef.transaction(v => safeNumber(v) + delta);
     if (userTotalWaitedRef) {
@@ -317,10 +329,28 @@ function tickOnce(){
 async function finishNow(){
   if (finished) return;
   finished = true;
+
+  // stop all intervals
+  if (intervalCount) clearInterval(intervalCount);
+  if (intervalFlush) clearInterval(intervalFlush);
+  if (intervalTick)  clearInterval(intervalTick);
+
+  // final one-time flush
+  if (buffer > 0) {
+    const delta = buffer;
+    buffer = 0;
+    try {
+      await totalRef.transaction(v => safeNumber(v) + delta);
+      if (userTotalWaitedRef) {
+        await userTotalWaitedRef.transaction(v => safeNumber(v) + delta);
+      }
+      await sessionRef.update({ total_waiting: waited });
+    } catch {}
+  }
+
   statusEl.textContent = "Done!";
   if (minus30Btn) minus30Btn.disabled = true;
 
-  await flush();
   try { await sessionRef.update({ didFinish: true }); } catch {}
 
   youWaitedEl.textContent = waited.toLocaleString();
@@ -342,9 +372,7 @@ if (devMode) {
   minus30Btn.addEventListener("click", () => {
     if (finished) return;
     endAt = Math.max(Date.now(), endAt - 30_000);
-    const st = getTabSession() || {};
-    st.endAt = endAt;
-    setTabSession(st);
+    persistEndAt();
     tickOnce();
   });
 }
@@ -353,50 +381,24 @@ if (devMode) {
 (async function start(){
   statusEl.textContent = "Connecting…";
 
-  let eventName = "";
-  try {
-    eventName = await resolveEventName();
-  } catch (e) {
-    block(String(e.message || e));
-    return;
-  }
-
-  if (!eventName) {
-    block("No event specified and defaultEvent is missing/invalid.");
-    return;
-  }
+  const eventName = await resolveEventName();
+  if (!eventName) { block("No event specified and defaultEvent is missing/invalid."); return; }
   eventLabel.textContent = eventName;
 
-  // Validate event
   statusEl.textContent = "Checking event…";
   const eventRef = db.ref(`events/${eventName}`);
 
   let eventSnap;
-  try {
-    eventSnap = await eventRef.get();
-  } catch (e) {
-    console.error("Failed to read event", eventName, e);
-    block("Could not read event (check DB rules). " + describeFirebaseError(e));
-    return;
-  }
+  try { eventSnap = await eventRef.get(); }
+  catch { block("Could not read event (rules?)."); return; }
 
   if (!eventSnap.exists()) { block("Event does not exist."); return; }
   const ev = eventSnap.val() || {};
   if (ev.done === true) { block("Event already finished."); return; }
-
-  // Ensure totalSeconds exists
-  if (typeof ev.totalSeconds !== "number") {
-    try { await eventRef.update({ totalSeconds: 0, done: false }); }
-    catch (e) {
-      console.error("Failed to init event fields", e);
-      block("Event exists but could not initialize fields (rules?). " + describeFirebaseError(e));
-      return;
-    }
-  }
+  if (typeof ev.totalSeconds !== "number") { block("Event missing totalSeconds number."); return; }
 
   totalRef = eventRef.child("totalSeconds");
 
-  // userStats
   userRef = db.ref(`userStats/${eventName}/${userId}`);
   userSessionsCountRef = userRef.child("sessionsCount");
   userTotalWaitedRef = userRef.child("totalWaited");
@@ -409,18 +411,15 @@ if (devMode) {
     sessionCountPill.textContent = "—";
   }
 
-  // Timer state for this tab (refresh adds +30s)
   endAt = ensureEndAtForTab(eventName);
   baselineMs = Math.max(1, endAt - Date.now());
 
-  // Session for this tab: reuse on refresh, new on new tab
   statusEl.textContent = "Creating session…";
   const tabState = getTabSession() || { eventName, endAt };
 
   if (tabState.sessionId && tabState.eventName === eventName) {
     sessionRef = db.ref(`sessions/${tabState.sessionId}`);
-    statusEl.textContent = "Resuming…";
-    try { await sessionRef.update({ lastSeenAt: firebase.database.ServerValue.TIMESTAMP }); } catch {}
+    statusEl.textContent = (visible ? "Resuming…" : "Paused…");
   } else {
     sessionRef = db.ref("sessions").push();
     tabState.sessionId = sessionRef.key;
@@ -428,56 +427,43 @@ if (devMode) {
     tabState.endAt = endAt;
     setTabSession(tabState);
 
-    // increment sessions count
     try {
       await userSessionsCountRef.transaction(v => safeNumber(v) + 1);
       const updated = await userSessionsCountRef.get();
       sessionCountPill.textContent = safeNumber(updated.val()).toLocaleString();
     } catch {}
 
-    // create session record
-    try {
-      await sessionRef.set({
-        event_name: eventName,
-        user_id: userId,
-        total_waiting: 0,
-        didFinish: false,
-        createdAt: firebase.database.ServerValue.TIMESTAMP,
-        lastSeenAt: firebase.database.ServerValue.TIMESTAMP
-      });
-    } catch (e) {
-      console.error("Failed to create session", e);
-      block("Could not create session (check write rules). " + describeFirebaseError(e));
-      return;
-    }
-
-    // ensure user node exists
-    try {
-      await userRef.update({
-        user_id: userId,
-        firstSeenAt: firebase.database.ServerValue.TIMESTAMP
-      });
-    } catch {}
+    await sessionRef.set({
+      event_name: eventName,
+      user_id: userId,
+      total_waiting: 0,
+      didFinish: false,
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
+      lastSeenAt: firebase.database.ServerValue.TIMESTAMP
+    });
   }
 
-  // Start ticking
-  statusEl.textContent = "Counting down…";
+  statusEl.textContent = (visible ? "Counting down…" : "Paused…");
   tickOnce();
 
-  setInterval(() => {
-    if (finished || !visible) return;
+  intervalCount = setInterval(() => {
+    if (finished) return;
+    if (!visible) return;         // stop counting while hidden
     waited++; buffer++;
   }, 1000);
 
-  setInterval(() => {
+  intervalFlush = setInterval(() => {
     if (finished) return;
+    if (!visible) return;         // don't flush while hidden either
     flush();
   }, 5000);
 
-  setInterval(() => {
+  intervalTick = setInterval(() => {
     if (finished) return;
+    if (!visible) return;         // stop timer/progress updates while hidden
     if (tickOnce() <= 0) finishNow();
   }, 200);
+
 })();
 </script>
 
