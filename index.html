@@ -13,6 +13,7 @@
       --accent:#7c3aed;
       --ok:#34d399;
       --bad:#fb7185;
+      --warn:#fbbf24;
     }
     html,body{height:100%}
     body{
@@ -41,6 +42,17 @@
       border-radius:999px;
       background:rgba(255,255,255,.12);
       font-size:.9rem;
+    }
+    .banner{
+      display:none;
+      margin:0 0 12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(251,191,36,.10);
+      color:var(--warn);
+      font-weight:800;
+      text-align:center;
     }
     .timer{
       font-size:clamp(3rem,10vw,6rem);
@@ -77,15 +89,19 @@
     #blocked{display:none; text-align:center}
     #blocked p{color:var(--bad)}
 
-    .btnRow{margin-top:18px; display:flex; justify-content:center}
+    .btnRow{margin-top:18px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap}
     button{
       background:rgba(255,255,255,.08);
       color:var(--fg);
       border:1px solid rgba(255,255,255,.18);
       padding:10px 18px;
       border-radius:14px;
-      font-weight:700;
+      font-weight:800;
       cursor:pointer;
+    }
+    button.danger{
+      border-color: rgba(251,113,133,.55);
+      background: rgba(251,113,133,.10);
     }
     button[disabled]{opacity:.5; cursor:not-allowed}
   </style>
@@ -109,12 +125,16 @@
 
     <div id="active">
       <div id="waitingUI">
+        <div class="banner" id="doneBanner">This event is marked DONE (dev view)</div>
+
         <div class="timer" id="timer">--:--</div>
         <div class="sub" id="status">Connecting…</div>
-        <div class="progress"><div class="bar" id="bar"></div></div>
+        <div class="progress" id="progress"><div class="bar" id="bar"></div></div>
 
+        <!-- DEV controls (only shown when devPassword matches) -->
         <div class="btnRow" id="btnRow" style="display:none;">
           <button id="minus30" type="button">− 30 seconds</button>
+          <button id="resetEventBtn" type="button" class="danger">Reset event (delete data)</button>
         </div>
       </div>
 
@@ -156,10 +176,13 @@ const blockedEl = $("blocked");
 const blockedReasonEl = $("blockedReason");
 const activeEl = $("active");
 const waitingUI = $("waitingUI");
+const doneBanner = $("doneBanner");
 const timerEl = $("timer");
+const progressEl = $("progress");
 const barEl = $("bar");
 const btnRowEl = $("btnRow");
 const minus30Btn = $("minus30");
+const resetEventBtn = $("resetEventBtn");
 const doneEl = $("done");
 const endOverlayEl = $("endOverlay");
 const youWaitedEl = $("youWaited");
@@ -179,7 +202,7 @@ function fmt(ms){
 }
 function safeNumber(x){ return (typeof x === "number" && isFinite(x)) ? x : 0; }
 
-/* ================= URL params ================= */
+/* ================= URL params / dev mode ================= */
 const params = new URLSearchParams(location.search);
 const DEV_PASSWORD = "WaitingIsThePoint";
 const devMode = params.get("devPassword") === DEV_PASSWORD;
@@ -274,20 +297,22 @@ document.addEventListener("visibilitychange", () => {
     if (hiddenAt) {
       const delta = Date.now() - hiddenAt;
       endAt += delta;
-      baselineMs += delta;       // keep progress bar consistent
+      baselineMs += delta;
       persistEndAt();
       hiddenAt = null;
     }
     statusEl.textContent = "Counting down…";
-    // refresh UI immediately
     tickOnce();
   }
   visible = nowVisible;
 });
 
 /* ================= DB state ================= */
-let sessionRef = null;
+let eventName = "";
+let eventRef = null;
 let totalRef = null;
+
+let sessionRef = null;
 let userRef = null;
 let userSessionsCountRef = null;
 let userTotalWaitedRef = null;
@@ -300,8 +325,13 @@ let intervalCount = null;
 let intervalFlush = null;
 let intervalTick = null;
 
+/* When event is done, dev mode should still show timer (preview),
+   but we DO NOT write sessions/totalSeconds (to avoid polluting closed events). */
+let devDonePreview = false;
+
 async function flush(){
   if (finished) return;
+  if (devDonePreview) return;
   if (!sessionRef || !totalRef || buffer <= 0) return;
 
   const delta = buffer;
@@ -321,8 +351,10 @@ async function flush(){
 function tickOnce(){
   const left = Math.max(0, endAt - Date.now());
   timerEl.textContent = fmt(left);
+
   const pct = 100 - (left / baselineMs) * 100;
   barEl.style.width = Math.min(100, Math.max(0, pct)).toFixed(2) + "%";
+
   return left;
 }
 
@@ -335,8 +367,8 @@ async function finishNow(){
   if (intervalFlush) clearInterval(intervalFlush);
   if (intervalTick)  clearInterval(intervalTick);
 
-  // final one-time flush
-  if (buffer > 0) {
+  // final one-time flush (only if not in dev preview)
+  if (!devDonePreview && buffer > 0 && totalRef && sessionRef) {
     const delta = buffer;
     buffer = 0;
     try {
@@ -346,20 +378,29 @@ async function finishNow(){
       }
       await sessionRef.update({ total_waiting: waited });
     } catch {}
+  } else {
+    buffer = 0;
   }
 
   statusEl.textContent = "Done!";
   if (minus30Btn) minus30Btn.disabled = true;
+  if (resetEventBtn) resetEventBtn.disabled = false;
 
-  try { await sessionRef.update({ didFinish: true }); } catch {}
+  if (!devDonePreview && sessionRef) {
+    try { await sessionRef.update({ didFinish: true }); } catch {}
+  }
 
   youWaitedEl.textContent = waited.toLocaleString();
 
-  try {
-    const snap = await totalRef.get();
-    eventTotalEl.textContent = safeNumber(snap.val()).toLocaleString();
-  } catch {
-    eventTotalEl.textContent = "0";
+  if (!devDonePreview && totalRef) {
+    try {
+      const snap = await totalRef.get();
+      eventTotalEl.textContent = safeNumber(snap.val()).toLocaleString();
+    } catch {
+      eventTotalEl.textContent = "0";
+    }
+  } else {
+    eventTotalEl.textContent = "—";
   }
 
   waitingUI.style.display = "none";
@@ -367,7 +408,7 @@ async function finishNow(){
   doneEl.style.display = "block";
 }
 
-/* ================= Dev control ================= */
+/* ================= Dev controls ================= */
 if (devMode) {
   minus30Btn.addEventListener("click", () => {
     if (finished) return;
@@ -375,30 +416,112 @@ if (devMode) {
     persistEndAt();
     tickOnce();
   });
+
+  resetEventBtn.addEventListener("click", async () => {
+    if (!eventName) return;
+
+    const ok = confirm(
+      `RESET EVENT "${eventName}"?\n\nThis will:\n- set events/${eventName}/totalSeconds = 0\n- set events/${eventName}/done = false\n- delete all sessions where event_name == "${eventName}"\n- delete userStats for this event\n\nThis cannot be undone.`
+    );
+    if (!ok) return;
+
+    resetEventBtn.disabled = true;
+    statusEl.textContent = "Resetting event…";
+
+    try {
+      // 1) Reset event counters/flags
+      // NOTE: requires rules allowing these writes.
+      await db.ref(`events/${eventName}`).update({ totalSeconds: 0, done: false });
+
+      // 2) Delete all sessions for this event (client-side query + remove)
+      // This can be heavy if you have lots of sessions; still simplest without Cloud Functions.
+      const sessionsSnap = await db.ref("sessions")
+        .orderByChild("event_name")
+        .equalTo(eventName)
+        .get();
+
+      if (sessionsSnap.exists()) {
+        const updates = {};
+        sessionsSnap.forEach(child => { updates[`sessions/${child.key}`] = null; });
+        await db.ref().update(updates); // multi-location delete
+      }
+
+      // 3) Delete userStats for this event
+      await db.ref(`userStats/${eventName}`).remove().catch(() => {});
+
+      statusEl.textContent = "Event reset. Reloading…";
+      setTimeout(() => location.reload(), 400);
+    } catch (e) {
+      console.error("Reset failed", e);
+      resetEventBtn.disabled = false;
+      statusEl.textContent = "Reset failed (rules?).";
+      alert("Reset failed. This usually means your RTDB rules don't allow one of the deletes/updates.\n\n" + (e?.message || e));
+    }
+  });
 }
 
 /* ================= Main ================= */
 (async function start(){
   statusEl.textContent = "Connecting…";
 
-  const eventName = await resolveEventName();
+  eventName = await resolveEventName();
   if (!eventName) { block("No event specified and defaultEvent is missing/invalid."); return; }
   eventLabel.textContent = eventName;
 
   statusEl.textContent = "Checking event…";
-  const eventRef = db.ref(`events/${eventName}`);
+  eventRef = db.ref(`events/${eventName}`);
 
   let eventSnap;
   try { eventSnap = await eventRef.get(); }
   catch { block("Could not read event (rules?)."); return; }
 
   if (!eventSnap.exists()) { block("Event does not exist."); return; }
+
   const ev = eventSnap.val() || {};
-  if (ev.done === true) { block("Event already finished."); return; }
-  if (typeof ev.totalSeconds !== "number") { block("Event missing totalSeconds number."); return; }
+  const isDone = (ev.done === true);
 
-  totalRef = eventRef.child("totalSeconds");
+  // If done:
+  // - normal users: block
+  // - dev mode: allow timer preview + banner, but do NOT write totals/sessions
+  if (isDone && !devMode) {
+    block("Event already finished.");
+    return;
+  }
+  if (isDone && devMode) {
+    devDonePreview = true;
+    doneBanner.style.display = "block";
+  }
 
+  // totalSeconds must exist as a number for counting mode (not required for dev preview)
+  if (!devDonePreview && typeof ev.totalSeconds !== "number") {
+    block("Event missing totalSeconds number.");
+    return;
+  }
+
+  if (!devDonePreview) {
+    totalRef = eventRef.child("totalSeconds");
+  }
+
+  // Timer state for this tab (refresh adds +30s)
+  endAt = ensureEndAtForTab(eventName);
+  baselineMs = Math.max(1, endAt - Date.now());
+
+  // If dev preview (event done): do NOT create session or touch userStats
+  if (devDonePreview) {
+    statusEl.textContent = (visible ? "Counting down… (dev preview)" : "Paused…");
+    tickOnce();
+
+    intervalTick = setInterval(() => {
+      if (finished) return;
+      if (!visible) return;
+      if (tickOnce() <= 0) finishNow();
+    }, 200);
+
+    // no counting, no flush
+    return;
+  }
+
+  // userStats + sessions only when NOT done
   userRef = db.ref(`userStats/${eventName}/${userId}`);
   userSessionsCountRef = userRef.child("sessionsCount");
   userTotalWaitedRef = userRef.child("totalWaited");
@@ -410,9 +533,6 @@ if (devMode) {
   } catch {
     sessionCountPill.textContent = "—";
   }
-
-  endAt = ensureEndAtForTab(eventName);
-  baselineMs = Math.max(1, endAt - Date.now());
 
   statusEl.textContent = "Creating session…";
   const tabState = getTabSession() || { eventName, endAt };
@@ -448,22 +568,21 @@ if (devMode) {
 
   intervalCount = setInterval(() => {
     if (finished) return;
-    if (!visible) return;         // stop counting while hidden
+    if (!visible) return; // stop counting while hidden
     waited++; buffer++;
   }, 1000);
 
   intervalFlush = setInterval(() => {
     if (finished) return;
-    if (!visible) return;         // don't flush while hidden either
+    if (!visible) return; // don't flush while hidden
     flush();
   }, 5000);
 
   intervalTick = setInterval(() => {
     if (finished) return;
-    if (!visible) return;         // stop timer/progress updates while hidden
+    if (!visible) return; // stop timer/progress while hidden
     if (tickOnce() <= 0) finishNow();
   }, 200);
-
 })();
 </script>
 
