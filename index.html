@@ -113,8 +113,6 @@
 
   <p class="lead">
     Event: <span class="pill" id="eventLabel">—</span>
-    <span style="margin:0 .4rem">•</span>
-    Sessions you’ve started: <span class="pill" id="sessionCountPill">—</span>
   </p>
 
   <section class="card">
@@ -143,8 +141,14 @@
           <img src="WaitingPoint_End.jpg" alt="End image"/>
         </div>
         <h2 class="thanks">Thank you for waiting 🙏</h2>
+
         <p>You waited <b><span id="youWaited">0</span></b> seconds.</p>
-        <p>Total for this event: <b><span id="eventTotal">—</span></b> seconds.</p>
+
+        <p>
+          So far, at this burn
+          <b><span id="eventTotal">—</span></b>
+          seconds have been spent waiting online
+        </p>
       </div>
     </div>
   </section>
@@ -170,7 +174,6 @@ const db = firebase.database();
 /* ================= DOM ================= */
 const $ = id => document.getElementById(id);
 const eventLabel = $("eventLabel");
-const sessionCountPill = $("sessionCountPill");
 const statusEl = $("status");
 const blockedEl = $("blocked");
 const blockedReasonEl = $("blockedReason");
@@ -178,15 +181,14 @@ const activeEl = $("active");
 const waitingUI = $("waitingUI");
 const doneBanner = $("doneBanner");
 const timerEl = $("timer");
-const progressEl = $("progress");
 const barEl = $("bar");
 const btnRowEl = $("btnRow");
 const minus30Btn = $("minus30");
 const resetEventBtn = $("resetEventBtn");
 const doneEl = $("done");
 const endOverlayEl = $("endOverlay");
-const youWaitedEl = $("youWaited");
 const eventTotalEl = $("eventTotal");
+const youWaitedEl = $("youWaited");
 
 /* ================= Helpers ================= */
 function block(msg){
@@ -225,7 +227,7 @@ async function resolveEventName(){
   return sanitizeEventName(snap.val());
 }
 
-/* ================= User identity ================= */
+/* ================= User id (for session records only) ================= */
 const USER_KEY = "scamme_user_id_v1";
 function getOrCreateUserId(){
   let id = localStorage.getItem(USER_KEY);
@@ -237,7 +239,7 @@ function getOrCreateUserId(){
 }
 const userId = getOrCreateUserId();
 
-/* ================= Tab session ================= */
+/* ================= Tab session (refresh does NOT create new session) ================= */
 const TAB_SESSION_KEY = "scamme_tab_session_v1";
 function getTabSession(){
   try { return JSON.parse(sessionStorage.getItem(TAB_SESSION_KEY) || "null"); } catch { return null; }
@@ -270,11 +272,16 @@ function ensureEndAtForTab(eventName){
 }
 
 /* ================= Runtime ================= */
+let eventName = "";
+let eventRef = null;
+let totalRef = null;
+let sessionRef = null;
+
 let endAt = null;
 let baselineMs = null;
 let finished = false;
 
-/* Pause/resume bookkeeping */
+/* Pause/resume */
 let visible = (document.visibilityState === "visible");
 let hiddenAt = null;
 
@@ -289,11 +296,9 @@ document.addEventListener("visibilitychange", () => {
   if (finished) { visible = nowVisible; return; }
 
   if (!nowVisible && visible) {
-    // going hidden: freeze timer + counting
     hiddenAt = Date.now();
     statusEl.textContent = "Paused…";
   } else if (nowVisible && !visible) {
-    // coming back: push endAt forward by hidden duration (true pause)
     if (hiddenAt) {
       const delta = Date.now() - hiddenAt;
       endAt += delta;
@@ -307,16 +312,7 @@ document.addEventListener("visibilitychange", () => {
   visible = nowVisible;
 });
 
-/* ================= DB state ================= */
-let eventName = "";
-let eventRef = null;
-let totalRef = null;
-
-let sessionRef = null;
-let userRef = null;
-let userSessionsCountRef = null;
-let userTotalWaitedRef = null;
-
+/* ================= Counting + DB buffer ================= */
 let waited = 0;
 let buffer = 0;
 
@@ -325,8 +321,7 @@ let intervalCount = null;
 let intervalFlush = null;
 let intervalTick = null;
 
-/* When event is done, dev mode should still show timer (preview),
-   but we DO NOT write sessions/totalSeconds (to avoid polluting closed events). */
+/* If event is done and devMode: show timer (banner) but DO NOT write anything */
 let devDonePreview = false;
 
 async function flush(){
@@ -339,10 +334,7 @@ async function flush(){
 
   try {
     await totalRef.transaction(v => safeNumber(v) + delta);
-    if (userTotalWaitedRef) {
-      await userTotalWaitedRef.transaction(v => safeNumber(v) + delta);
-    }
-    await sessionRef.update({ total_waiting: waited });
+    await sessionRef.update({ total_waiting: waited, lastSeenAt: firebase.database.ServerValue.TIMESTAMP });
   } catch {
     buffer += delta;
   }
@@ -351,10 +343,8 @@ async function flush(){
 function tickOnce(){
   const left = Math.max(0, endAt - Date.now());
   timerEl.textContent = fmt(left);
-
   const pct = 100 - (left / baselineMs) * 100;
   barEl.style.width = Math.min(100, Math.max(0, pct)).toFixed(2) + "%";
-
   return left;
 }
 
@@ -362,45 +352,31 @@ async function finishNow(){
   if (finished) return;
   finished = true;
 
-  // stop all intervals
+  // stop intervals
   if (intervalCount) clearInterval(intervalCount);
   if (intervalFlush) clearInterval(intervalFlush);
   if (intervalTick)  clearInterval(intervalTick);
 
-  // final one-time flush (only if not in dev preview)
+  // final flush
   if (!devDonePreview && buffer > 0 && totalRef && sessionRef) {
     const delta = buffer;
     buffer = 0;
     try {
       await totalRef.transaction(v => safeNumber(v) + delta);
-      if (userTotalWaitedRef) {
-        await userTotalWaitedRef.transaction(v => safeNumber(v) + delta);
-      }
-      await sessionRef.update({ total_waiting: waited });
+      await sessionRef.update({ total_waiting: waited, didFinish: true, lastSeenAt: firebase.database.ServerValue.TIMESTAMP });
     } catch {}
   } else {
     buffer = 0;
   }
 
   statusEl.textContent = "Done!";
-  if (minus30Btn) minus30Btn.disabled = true;
-  if (resetEventBtn) resetEventBtn.disabled = false;
-
-  if (!devDonePreview && sessionRef) {
-    try { await sessionRef.update({ didFinish: true }); } catch {}
-  }
-
   youWaitedEl.textContent = waited.toLocaleString();
 
-  if (!devDonePreview && totalRef) {
-    try {
-      const snap = await totalRef.get();
-      eventTotalEl.textContent = safeNumber(snap.val()).toLocaleString();
-    } catch {
-      eventTotalEl.textContent = "0";
-    }
-  } else {
-    eventTotalEl.textContent = "—";
+  try {
+    const snap = totalRef ? await totalRef.get() : null;
+    eventTotalEl.textContent = snap ? safeNumber(snap.val()).toLocaleString() : "—";
+  } catch {
+    eventTotalEl.textContent = "0";
   }
 
   waitingUI.style.display = "none";
@@ -421,7 +397,7 @@ if (devMode) {
     if (!eventName) return;
 
     const ok = confirm(
-      `RESET EVENT "${eventName}"?\n\nThis will:\n- set events/${eventName}/totalSeconds = 0\n- set events/${eventName}/done = false\n- delete all sessions where event_name == "${eventName}"\n- delete userStats for this event\n\nThis cannot be undone.`
+      `RESET EVENT "${eventName}"?\n\nThis will:\n- set events/${eventName}/totalSeconds = 0\n- set events/${eventName}/done = false\n- delete all sessions where event_name == "${eventName}"\n\nThis cannot be undone.`
     );
     if (!ok) return;
 
@@ -429,12 +405,8 @@ if (devMode) {
     statusEl.textContent = "Resetting event…";
 
     try {
-      // 1) Reset event counters/flags
-      // NOTE: requires rules allowing these writes.
       await db.ref(`events/${eventName}`).update({ totalSeconds: 0, done: false });
 
-      // 2) Delete all sessions for this event (client-side query + remove)
-      // This can be heavy if you have lots of sessions; still simplest without Cloud Functions.
       const sessionsSnap = await db.ref("sessions")
         .orderByChild("event_name")
         .equalTo(eventName)
@@ -443,11 +415,8 @@ if (devMode) {
       if (sessionsSnap.exists()) {
         const updates = {};
         sessionsSnap.forEach(child => { updates[`sessions/${child.key}`] = null; });
-        await db.ref().update(updates); // multi-location delete
+        await db.ref().update(updates);
       }
-
-      // 3) Delete userStats for this event
-      await db.ref(`userStats/${eventName}`).remove().catch(() => {});
 
       statusEl.textContent = "Event reset. Reloading…";
       setTimeout(() => location.reload(), 400);
@@ -455,7 +424,7 @@ if (devMode) {
       console.error("Reset failed", e);
       resetEventBtn.disabled = false;
       statusEl.textContent = "Reset failed (rules?).";
-      alert("Reset failed. This usually means your RTDB rules don't allow one of the deletes/updates.\n\n" + (e?.message || e));
+      alert("Reset failed. This usually means your RTDB rules don't allow reset/deletes.\n\n" + (e?.message || e));
     }
   });
 }
@@ -480,9 +449,6 @@ if (devMode) {
   const ev = eventSnap.val() || {};
   const isDone = (ev.done === true);
 
-  // If done:
-  // - normal users: block
-  // - dev mode: allow timer preview + banner, but do NOT write totals/sessions
   if (isDone && !devMode) {
     block("Event already finished.");
     return;
@@ -492,21 +458,16 @@ if (devMode) {
     doneBanner.style.display = "block";
   }
 
-  // totalSeconds must exist as a number for counting mode (not required for dev preview)
-  if (!devDonePreview && typeof ev.totalSeconds !== "number") {
-    block("Event missing totalSeconds number.");
-    return;
-  }
-
   if (!devDonePreview) {
+    if (typeof ev.totalSeconds !== "number") { block("Event missing totalSeconds number."); return; }
     totalRef = eventRef.child("totalSeconds");
   }
 
-  // Timer state for this tab (refresh adds +30s)
+  // Timer state for this tab
   endAt = ensureEndAtForTab(eventName);
   baselineMs = Math.max(1, endAt - Date.now());
 
-  // If dev preview (event done): do NOT create session or touch userStats
+  // In dev preview (event done): show timer only (no DB writes)
   if (devDonePreview) {
     statusEl.textContent = (visible ? "Counting down… (dev preview)" : "Paused…");
     tickOnce();
@@ -516,29 +477,16 @@ if (devMode) {
       if (!visible) return;
       if (tickOnce() <= 0) finishNow();
     }, 200);
-
-    // no counting, no flush
     return;
   }
 
-  // userStats + sessions only when NOT done
-  userRef = db.ref(`userStats/${eventName}/${userId}`);
-  userSessionsCountRef = userRef.child("sessionsCount");
-  userTotalWaitedRef = userRef.child("totalWaited");
-
-  try {
-    const us = await userRef.get();
-    const count = us.exists() ? safeNumber((us.val() || {}).sessionsCount) : 0;
-    sessionCountPill.textContent = count.toLocaleString();
-  } catch {
-    sessionCountPill.textContent = "—";
-  }
-
+  // Create/resume session for this tab
   statusEl.textContent = "Creating session…";
   const tabState = getTabSession() || { eventName, endAt };
 
   if (tabState.sessionId && tabState.eventName === eventName) {
     sessionRef = db.ref(`sessions/${tabState.sessionId}`);
+    try { await sessionRef.update({ lastSeenAt: firebase.database.ServerValue.TIMESTAMP }); } catch {}
     statusEl.textContent = (visible ? "Resuming…" : "Paused…");
   } else {
     sessionRef = db.ref("sessions").push();
@@ -546,12 +494,6 @@ if (devMode) {
     tabState.eventName = eventName;
     tabState.endAt = endAt;
     setTabSession(tabState);
-
-    try {
-      await userSessionsCountRef.transaction(v => safeNumber(v) + 1);
-      const updated = await userSessionsCountRef.get();
-      sessionCountPill.textContent = safeNumber(updated.val()).toLocaleString();
-    } catch {}
 
     await sessionRef.set({
       event_name: eventName,
@@ -561,26 +503,27 @@ if (devMode) {
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       lastSeenAt: firebase.database.ServerValue.TIMESTAMP
     });
+
+    statusEl.textContent = (visible ? "Counting down…" : "Paused…");
   }
 
-  statusEl.textContent = (visible ? "Counting down…" : "Paused…");
   tickOnce();
 
   intervalCount = setInterval(() => {
     if (finished) return;
-    if (!visible) return; // stop counting while hidden
+    if (!visible) return;
     waited++; buffer++;
   }, 1000);
 
   intervalFlush = setInterval(() => {
     if (finished) return;
-    if (!visible) return; // don't flush while hidden
+    if (!visible) return;
     flush();
   }, 5000);
 
   intervalTick = setInterval(() => {
     if (finished) return;
-    if (!visible) return; // stop timer/progress while hidden
+    if (!visible) return;
     if (tickOnce() <= 0) finishNow();
   }, 200);
 })();
