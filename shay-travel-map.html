@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shay's Travel Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0f1117;
+      color: #e8eaf0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1d2e 0%, #252840 100%);
+      border-bottom: 1px solid #2e3250;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header-left h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #7c9ef0, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .header-left p {
+      color: #8b93b8;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #7c9ef0, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: #8b93b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 3px;
+    }
+
+    #map {
+      width: 100%;
+      height: 60vh;
+      min-height: 400px;
+      background: #0f1117;
+    }
+
+    .leaflet-tile-pane { filter: invert(92%) hue-rotate(180deg) brightness(0.9) contrast(0.95); }
+
+    .countries-section {
+      padding: 32px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #c5cae9;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #2e3250;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #2e3250;
+      background: transparent;
+      color: #8b93b8;
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: #7c9ef0;
+      border-color: #7c9ef0;
+      color: #fff;
+    }
+
+    .countries-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .country-card {
+      background: #1a1d2e;
+      border: 1px solid #2e3250;
+      border-radius: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .country-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #7c9ef0, #a78bfa);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .country-card:hover, .country-card.highlighted {
+      border-color: #7c9ef0;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(124, 158, 240, 0.15);
+    }
+
+    .country-card:hover::before, .country-card.highlighted::before {
+      opacity: 1;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .country-flag {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .visit-count {
+      background: rgba(124, 158, 240, 0.15);
+      color: #7c9ef0;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    .country-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #e8eaf0;
+      margin-bottom: 2px;
+    }
+
+    .city-name {
+      font-size: 0.82rem;
+      color: #8b93b8;
+      margin-bottom: 10px;
+    }
+
+    .city-name span {
+      color: #7c9ef0;
+    }
+
+    .visits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .visit-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: #6b7499;
+    }
+
+    .visit-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #a78bfa;
+      flex-shrink: 0;
+    }
+
+    /* Custom map marker */
+    .custom-marker {
+      background: linear-gradient(135deg, #7c9ef0, #a78bfa);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      width: 24px;
+      height: 24px;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      cursor: pointer;
+    }
+
+    .custom-marker-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      transform: rotate(45deg);
+    }
+
+    .leaflet-popup-content-wrapper {
+      background: #1a1d2e;
+      border: 1px solid #2e3250;
+      border-radius: 10px;
+      color: #e8eaf0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .leaflet-popup-tip {
+      background: #1a1d2e;
+    }
+
+    .popup-content {
+      min-width: 180px;
+    }
+
+    .popup-flag { font-size: 1.8rem; margin-bottom: 4px; }
+    .popup-country { font-weight: 700; font-size: 1rem; margin-bottom: 2px; }
+    .popup-city { color: #7c9ef0; font-size: 0.82rem; margin-bottom: 8px; }
+    .popup-dates { font-size: 0.75rem; color: #8b93b8; }
+    .popup-dates div { margin-bottom: 2px; padding-left: 10px; position: relative; }
+    .popup-dates div::before { content: '→'; position: absolute; left: 0; color: #a78bfa; }
+
+    .timeline-section {
+      padding: 0 32px 32px;
+    }
+
+    .tl-log {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .tl-log::before {
+      content: '';
+      position: absolute;
+      left: 112px;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #7c9ef0, #a78bfa, #3d4166);
+    }
+
+    .tl-entry {
+      display: grid;
+      grid-template-columns: 110px 2px 1fr;
+      gap: 0 16px;
+      align-items: flex-start;
+      min-height: 48px;
+    }
+
+    .tl-date-col {
+      text-align: right;
+      padding: 10px 0;
+    }
+
+    .tl-date-main {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #c5cae9;
+      line-height: 1.2;
+    }
+
+    .tl-date-year {
+      font-size: 0.68rem;
+      color: #4a5080;
+      margin-top: 2px;
+    }
+
+    .tl-spine {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 12px;
+    }
+
+    .tl-node {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #7c9ef0;
+      border: 2px solid #0f1117;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .tl-node.future {
+      background: #3d4166;
+      border-color: #4a5080;
+    }
+
+    .tl-body {
+      padding: 8px 0 8px 0;
+    }
+
+    .tl-flag-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e8eaf0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tl-city {
+      font-size: 0.76rem;
+      color: #6b7499;
+      margin-top: 2px;
+    }
+
+    .tl-year-divider {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #3d4166;
+      text-transform: uppercase;
+      padding: 16px 0 8px;
+      position: relative;
+    }
+
+    .events-section {
+      padding: 0 32px 32px;
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .event-card {
+      background: #141620;
+      border: 1px solid #2a2d45;
+      border-left: 3px solid #f59e0b;
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .event-card:hover {
+      border-color: #f59e0b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.12);
+    }
+
+    .event-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #e8eaf0;
+      margin-bottom: 3px;
+    }
+
+    .event-venue {
+      font-size: 0.78rem;
+      color: #f59e0b;
+      margin-bottom: 6px;
+    }
+
+    .event-date {
+      font-size: 0.75rem;
+      color: #6b7499;
+    }
+
+    .event-marker {
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      width: 26px;
+      height: 26px;
+      border: 2px solid #fff;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px 32px;
+      color: #3d4166;
+      font-size: 0.75rem;
+      border-top: 1px solid #1a1d2e;
+    }
+
+    /* ── Calendar Section ── */
+    .calendar-section { padding: 0 32px 32px; }
+
+    .cal-wrapper {
+      background: #1a1d2e;
+      border: 1px solid #2e3250;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 680px;
+    }
+
+    .cal-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .cal-nav {
+      background: transparent;
+      border: 1px solid #2e3250;
+      color: #8b93b8;
+      cursor: pointer;
+      font-size: 1.3rem;
+      line-height: 1;
+      padding: 4px 14px 6px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .cal-nav:hover { background: #7c9ef0; border-color: #7c9ef0; color: #fff; }
+
+    .cal-month-label {
+      flex: 1;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #c5cae9;
+      min-width: 160px;
+    }
+
+    .cal-date-jump {
+      background: #12152a;
+      border: 1px solid #2e3250;
+      color: #8b93b8;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .cal-date-jump::-webkit-calendar-picker-indicator { filter: invert(0.5); cursor: pointer; }
+
+    .cal-day-names {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      margin-bottom: 5px;
+    }
+    .cal-day-names span {
+      text-align: center;
+      font-size: 0.65rem;
+      color: #4a5080;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 0;
+    }
+
+    .cal-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+
+    .cal-cell {
+      min-height: 38px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+      user-select: none;
+      position: relative;
+    }
+    .cal-cell:hover:not(.empty) { transform: scale(1.12); z-index: 1; }
+    .cal-cell.empty { background: transparent !important; cursor: default; border: none; }
+    .cal-cell.today { box-shadow: 0 0 0 2px #7c9ef0; }
+    .cal-cell.selected { box-shadow: 0 0 0 2.5px #fff; transform: scale(1.12); z-index: 1; }
+
+    .cal-result {
+      margin-top: 18px;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: #12152a;
+      border-radius: 10px;
+      border: 1px solid #2e3250;
+    }
+    .cal-result-flag { font-size: 2.4rem; line-height: 1; }
+    .cal-result-country { font-size: 1rem; font-weight: 700; }
+    .cal-result-city { font-size: 0.8rem; color: #6b7499; margin-top: 3px; }
+    .cal-result-date { font-size: 0.72rem; color: #4a5080; margin-top: 5px; }
+
+    .cal-legend {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .cal-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      padding: 3px 9px 3px 6px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>✈️ Shay's Travel Map</h1>
+    <p>Built from flight, train &amp; booking confirmations</p>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-number">31</div>
+      <div class="stat-label">Countries</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">17</div>
+      <div class="stat-label">Years</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">7</div>
+      <div class="stat-label">Continents</div>
+    </div>
+  </div>
+</header>
+
+<div id="map"></div>
+
+<div class="countries-section">
+  <div class="section-title">All Countries Visited</div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterCards('all', this)">All</button>
+    <button class="filter-btn" onclick="filterCards('europe', this)">Europe</button>
+    <button class="filter-btn" onclick="filterCards('oceania', this)">Oceania</button>
+    <button class="filter-btn" onclick="filterCards('americas', this)">Americas</button>
+    <button class="filter-btn" onclick="filterCards('middleeast', this)">Middle East</button>
+    <button class="filter-btn" onclick="filterCards('asia', this)">Asia</button>
+    <button class="filter-btn" onclick="filterCards('africa', this)">Africa</button>
+  </div>
+  <div class="countries-grid" id="countries-grid"></div>
+</div>
+
+<div class="events-section">
+  <div class="section-title">Events &amp; Venues</div>
+  <div class="events-grid" id="events-grid"></div>
+</div>
+
+<div class="calendar-section">
+  <div class="section-title">📅 Where Was Shay?</div>
+  <div class="cal-wrapper">
+    <div class="cal-header">
+      <button class="cal-nav" id="cal-prev">‹</button>
+      <span class="cal-month-label" id="cal-month-label"></span>
+      <button class="cal-nav" id="cal-next">›</button>
+      <input type="date" class="cal-date-jump" id="cal-date-jump" title="Jump to any date">
+    </div>
+    <div class="cal-day-names">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+    <div class="cal-days" id="cal-days"></div>
+    <div class="cal-result" id="cal-result">
+      <div class="cal-result-flag">🌍</div>
+      <div><div class="cal-result-country" style="color:#8b93b8">Click any day to see location</div></div>
+    </div>
+    <div class="cal-legend" id="cal-legend"></div>
+  </div>
+</div>
+
+<div class="timeline-section">
+  <div class="section-title">Trip Timeline</div>
+  <div class="timeline" id="timeline"></div>
+</div>
+
+<footer>
+  Data sourced from flight confirmations, train bookings &amp; accommodation emails in shay.erov@gmail.com
+</footer>
+
+<script>
+const countries = [
+  {
+    flag: "🇮🇱", name: "Israel", city: "Tel Aviv", region: "middleeast",
+    lat: 32.0853, lng: 34.7818,
+    visits: ["Home base 2005–present", "Ben Gurion Airport (TLV) – departure point for all trips"],
+    note: "Home country · Tel Aviv · Ben Gurion Airport (TLV)"
+  },
+  {
+    flag: "🇳🇿", name: "New Zealand", city: "Auckland", region: "oceania",
+    lat: -36.8509, lng: 174.7645,
+    visits: ["Jan 2024 – present", "Kahurangi NP, Nelson Lakes, Milford, Coromandel..."],
+    note: "Extensive road trip & camping"
+  },
+  {
+    flag: "🇦🇺", name: "Australia", city: "Melbourne", region: "oceania",
+    lat: -37.8136, lng: 144.9631,
+    visits: ["Feb 2024 (Jetstar JQ202)", "Feb 2025 (Melbourne Tullamarine, Expedia Feb 12)"],
+    note: "Jetstar & Expedia flights · Melbourne Tullamarine Airport"
+  },
+  {
+    flag: "🇦🇹", name: "Austria", city: "Vienna", region: "europe",
+    lat: 48.2082, lng: 16.3738,
+    visits: ["Jul 2020", "Jan, Feb, Sep, Dec 2022", "Mar 2024 (Expedia)", "Aug 2024", "Aug 2025 (departure VIE→SFO)", "Oct 14–23, 2025 (Airbnb, 9 nights)"],
+    note: "Frequent Ryanair TLV ↔ VIE hub"
+  },
+  {
+    flag: "🇩🇪", name: "Germany", city: "Berlin / Munich / Frankfurt", region: "europe",
+    lat: 52.5200, lng: 13.4050,
+    visits: ["Sep 2018 (Berlin – Kiwi.com, BER→VIE→TLV)", "Jun 2019 (TXL, Lufthansa)", "Sep 2020 (Ryanair TLV→BER)", "Aug 2021 (Ryanair)", "Jul 2022 (Madrid→Berlin)", "Jun 2024 (BA London→Berlin)", "Jul 7, 2025 (Sofia→Berlin, Ryanair)", "Oct 29, 2025 (Eurowings, Düsseldorf)"],
+    note: "Berlin · Munich (Jul 2021) · Frankfurt transit · Düsseldorf"
+  },
+  {
+    flag: "🇨🇭", name: "Switzerland", city: "Zurich", region: "europe",
+    lat: 47.3769, lng: 8.5417,
+    visits: ["May, Jul, Sep, Nov 2019 (SWISS TLV↔ZRH)", "Feb 2023 (SWISS TLV→ZRH)", "Oct 2025 (Eurowings ZRH departure)"],
+    note: "SWISS Airlines hub"
+  },
+  {
+    flag: "🇩🇰", name: "Denmark", city: "Copenhagen", region: "europe",
+    lat: 55.6761, lng: 12.5683,
+    visits: ["Jul 21, 2018 (UIA PS163 KBP→CPH)", "Jul–Aug 2019 (SWISS ZRH↔CPH)", "Jul 2021 (Lufthansa MUC→CPH, then SWISS LX1267 CPH→ZRH)", "Oct 2025 (Eurowings DUS→CPH)", "Nov 4, 2025 (Digital Tech Summit)"],
+    note: "SWISS · Lufthansa · Eurowings · UIA"
+  },
+  {
+    flag: "🇬🇧", name: "United Kingdom", city: "London", region: "europe",
+    lat: 51.5074, lng: -0.1278,
+    visits: ["Jun 4–12, 2008 (London + Horsham – friend's wedding Jun 7; with Yana)", "Jul 12–20, 2010 (London – Eurolines from Amsterdam; side trips to Oxford Jul 15 and Horsham Jul 17–18; left Jul 20)", "May 19, 2024 (FlixBus Brussels→London Victoria)", "Jun 2024 (BA RKRRI5, then London→Berlin)", "May 2025 (Gatwick→London Victoria, Trainline)", "Jun 2025 (BA XP4Z6P)"],
+    note: "London + Horsham (Jun 2008, Jul 2010) · Oxford (Jul 2010) · Eurolines AMS→LON · British Airways · FlixBus"
+  },
+  {
+    flag: "🇧🇪", name: "Belgium", city: "Brussels", region: "europe",
+    lat: 50.8503, lng: 4.3517,
+    visits: ["Dec 2017 (Brussels Airlines RKQ26Q – business)", "Dec 2018 / Jan 2019 (Brussels Airlines L3LKK9 – business)", "Apr 24, 2022 (Thalys Brussels-Midi → Amsterdam)", "May 19, 2024 (FlixBus Brussels-North → London Victoria)"],
+    note: "Brussels Airlines · Thalys · FlixBus"
+  },
+  {
+    flag: "🇪🇸", name: "Spain", city: "Barcelona / Madrid", region: "europe",
+    lat: 40.4168, lng: -3.7038,
+    visits: ["Jul 14, 2019 (Renfe Tarragona → Barcelona-Sants)", "Jul 2022 (Air Europa TLV→MAD, then Ryanair MAD→Berlin)"],
+    note: "Barcelona Jul 2019 · Madrid Jul 2022"
+  },
+  {
+    flag: "🇭🇺", name: "Hungary", city: "Budapest", region: "europe",
+    lat: 47.4979, lng: 19.0402,
+    visits: ["Jul 2013 (SUN Festival – OnTour package, 585 EUR; Wizzair flight from Budapest)", "Aug 2021 (Ryanair Berlin→Budapest)"],
+    note: "Budapest · SUN Festival Jul 2013 (OnTour/Wizzair) · Ryanair FR196 Aug 2021"
+  },
+  {
+    flag: "🇮🇪", name: "Ireland", city: "Dublin", region: "europe",
+    lat: 53.3498, lng: -6.2603,
+    visits: ["Jul 2023 (Ryanair Amsterdam→Dublin)", "Jul 2023 (Ryanair Dublin→Gothenburg)"],
+    note: "Ryanair AMS→DUB · DUB→GOT"
+  },
+  {
+    flag: "🇳🇱", name: "Netherlands", city: "Amsterdam", region: "europe",
+    lat: 52.3676, lng: 4.9041,
+    visits: ["Oct 2007 (Amsterdam – visited during Europe trip; ~2 days)", "Jul 8–12, 2010 (Amsterdam – 4 days; Utrecht capoeira class with Jorine Jul 9; Eurolines bus AMS→London Jul 12)", "Jul 2023 (Ryanair AMS→Dublin departure)", "Nov 5, 2025 (KLM flight to Amsterdam)"],
+    note: "Amsterdam (Oct 2007, Jul 2010) · Utrecht capoeira (Jul 2010) · Eurolines AMS→LON · Ryanair · KLM"
+  },
+  {
+    flag: "🇸🇪", name: "Sweden", city: "Gothenburg / Stockholm", region: "europe",
+    lat: 57.7089, lng: 11.9746,
+    visits: ["Jul 21, 2022 (FlixBus to Gothenburg)", "Jul 2023 (Ryanair Dublin→Gothenburg Landvetter)", "Aug 2024 (Ryanair ARN→Vienna, from Stockholm Arlanda)", "Jul 15, 2025 (SAS flight to Stockholm)"],
+    note: "Gothenburg (GOT) · Stockholm Arlanda (ARN)"
+  },
+  {
+    flag: "🇧🇬", name: "Bulgaria", city: "Bansko / Sofia", region: "europe",
+    lat: 42.6977, lng: 23.3219,
+    visits: ["Jun 20–Jul 6, 2025 (Bansko – Airbnb, 16 nights)", "Jul 7, 2025 (Sofia → Berlin, Ryanair FR1149)"],
+    note: "Bansko ski resort · Sofia Airport departure"
+  },
+  {
+    flag: "🇯🇵", name: "Japan", city: "Yokohama / Tokyo / Otsu", region: "asia",
+    lat: 35.4437, lng: 139.6380,
+    visits: ["Oct 13–16, 2024 (Hotel Resol Yokohama, Naka-ku)", "Oct 17, 2024 (Tokyo – SIDI Hub Social Night)", "Oct 23–25, 2024 (Otsu, near Kyoto – Koke Musu Inn)"],
+    note: "Yokohama · Tokyo · Otsu (Shiga Prefecture, near Kyoto)"
+  },
+  {
+    flag: "🇸🇨", name: "Seychelles", city: "Mahé Island", region: "africa",
+    lat: -4.6796, lng: 55.4920,
+    visits: ["Dec 8–22, 2020 (Le Domaine de Bacova villa, SeyVillas – extended stay)"],
+    note: "Le Domaine de Bacova · Mahé · Diving with Blue Safari"
+  },
+  {
+    flag: "🇿🇦", name: "South Africa", city: "Cape Town / Tankwa Karoo", region: "africa",
+    lat: -33.9249, lng: 18.4241,
+    visits: ["2022–2023 (El Al SW38NB – AfrikaBurn, Tankwa Karoo, Western Cape)"],
+    note: "AfrikaBurn · Tankwa Karoo National Park · El Al LY"
+  },
+  {
+    flag: "🇨🇷", name: "Costa Rica", city: "San José / Arenal / rainforest", region: "americas",
+    lat: 9.9281, lng: -84.0907,
+    visits: ["Jul 17–21, 2005 (Kabata Hostel + Costa Rica Backpackers, San José; rainforest canopy tour at Omega, Arenal active volcano, San José history museum, waterfalls, butterfly reserve – 4 days before SA backpacking)"],
+    note: "Kabata Hostel · Costa Rica Backpackers · San José · Arenal Volcano · Omega canopy tour"
+  },
+  {
+    flag: "🇮🇹", name: "Italy", city: "Venice", region: "europe",
+    lat: 45.4408, lng: 12.3155,
+    visits: ["Oct 2007 (Como – met friends, Oktoberfest-style trip; ~1 week)", "Jul 1–7, 2010 (Venice – eDreams ZQZVTV, TLV→VCE; Ryanair FR6054 VCE-Treviso→Brussels Charleroi NHGUJE on Jul 7)"],
+    note: "Como (Oct 2007) · Venice (VCE Jul 2010, with Nogah & Hadar) · eDreams ZQZVTV · Ryanair NHGUJE"
+  },
+  {
+    flag: "🇦🇷", name: "Argentina", city: "Buenos Aires / Bariloche / Ushuaia / Patagonia", region: "americas",
+    lat: -34.6037, lng: -58.3816,
+    visits: [
+      "Sep 2005 (Buenos Aires – 2 days, tango show & tango club; 19h bus to Bariloche – 9 days snowboarding Cerro Cathedral, 7 lakes car tour, horseback riding; back to Buenos Aires – Lujan Zoo petting lions; Iguassu Falls – Argentinian side, boat under the falls)",
+      "Dec 1, 2009 (Buenos Aires – arrived from TLV on Iberia NQDCVJ; Hostel Clan & YMCA, 912 Alsina St.; 2 days; met Israeli travel companion; then Córdoba, Rosario)",
+      "Dec 2009 (Salta – Las Nubes excursion, cable car mirador, asado)",
+      "Jan 2010 (Bariloche – Pudu Hostel, NYE 2010, Circuito Chico, Cerro Otto)",
+      "Jan 10, 2010 (Ushuaia – Fin del Mundo, national park – 3 buses, 55 hours!)",
+      "Feb 14, 2010 (El Calafate – Perito Moreno glacier; El Chalten – Fitz Roy, ice walking)",
+      "Mar 6, 2010 (El Bolson – Rey Sol Italian Farm, Bosque Tallado, Cerro Lindo hike)",
+      "Mar 10, 2010 (Buenos Aires 2nd – rollerblading with Ky & Nicola)",
+      "Mar 15, 2010 (Puerto Iguazu – Iguazu Falls, Great Adventure boat)"
+    ],
+    note: "Buenos Aires · Salta · Bariloche · Ushuaia · El Calafate · El Chalten · El Bolson · Puerto Iguazu"
+  },
+  {
+    flag: "🇧🇴", name: "Bolivia", city: "Uyuni / Salar de Uyuni", region: "americas",
+    lat: -20.4553, lng: -66.8253,
+    visits: ["Dec 2009 (Villazon border crossing → Uyuni – 3-day Salar de Uyuni jeep tour: train graveyard, salt flats, salt hotel, lagoons, flamingos, geysers, hot springs)"],
+    note: "Villazon border · Salar de Uyuni · Uyuni"
+  },
+  {
+    flag: "🇨🇱", name: "Chile", city: "Atacama / Pucon / Patagonia / Carretera Austral", region: "americas",
+    lat: -33.4489, lng: -70.6693,
+    visits: [
+      "Dec 18, 2009 (San Pedro de Atacama – Valle de la Luna, sunrise geysers)",
+      "Dec 2009 (Pisco Elqui – observatory & stargazing)",
+      "Dec 24–26, 2009 (Pucon – Villarica volcano climb, Christmas asado, hydro-speed)",
+      "Feb 5–12, 2010 (Torres del Paine – 8-day 'O' circuit trek, via Punta Arenas & Puerto Natales)",
+      "Feb–Mar 2010 (Carretera Austral – 12 days hitchhiking: Chile Chico → Cerro Castillo → Coihaique → Chaiten → Futaleufu)"
+    ],
+    note: "San Pedro de Atacama · Pisco Elqui · Pucon · Punta Arenas · Puerto Natales · Torres del Paine · Carretera Austral"
+  },
+  {
+    flag: "🇦🇶", name: "Antarctica", city: "Antarctic Peninsula / Drake Passage", region: "americas",
+    lat: -70.0, lng: -25.0,
+    visits: ["Jan 2010 (14-day cruise on Ocean Nova from Ushuaia – crossed polar circle, Zodiac cruises between icebergs, penguin colonies, polar plunge at 0.8°C, southernmost bar in the world)"],
+    note: "Ocean Nova cruise · Drake Passage · Crossed the polar circle"
+  },
+  {
+    flag: "🇵🇪", name: "Peru", city: "Huaraz / Cuzco / Machu Picchu / Lima", region: "americas",
+    lat: -13.1631, lng: -72.5450,
+    visits: ["Jul–Sep 2005 (Lima transit; Huaraz – 2 weeks: Churup Lagoon, ice climbing, Lagoon 69 trek, HuayHuash 9-day trek rated 2nd most beautiful in world by National Geographic; Pisco – Islas Ballestas sea lions & penguins, Paracas reserve; Huacachina oasis – buggy ride & sandboarding; Nazca – 40-min Nazca Lines overflight; Cuzco 2.5 weeks – 122m bungee jump, Superman slingshot, 3-day class 5 white-water rafting, salsa dancing at Mama America; Machu Picchu – climbed 1,600 stairs in darkness for sunrise)"],
+    note: "Lima · Huaraz · HuayHuash trek · Pisco · Islas Ballestas · Huacachina · Nazca Lines · Cuzco · Machu Picchu"
+  },
+  {
+    flag: "🇧🇷", name: "Brazil", city: "Salvador / Rio de Janeiro / Jericoacoara / São Paulo", region: "americas",
+    lat: -12.9714, lng: -38.5014,
+    visits: [
+      "Sep–Oct 2005 (Iguassu Falls Brazilian side; Salvador – Capoeira rhoda in the street; Fortaleza; Jericoacoara – 5 days: Capoeira on the beach at sunrise, sand streets, sunset rhoda; Morro de São Paulo)",
+      "Mar 13, 2010 (TAM JJ3186 Iguazu → Rio de Janeiro)",
+      "Mar–Apr 2010 (Rio de Janeiro – flew from Foz de Iguaçu)",
+      "Mar 31, 2010 (Salvador – Nega Maluca Guesthouse, Pelourinho; TAM JJ3190 Rio→Salvador)",
+      "Apr–May 2010 (Ribeirao Preto – CouchSurfing; São Paulo)",
+      "May 4–9, 2010 (Manaus – Amazon region; TAM JJ3746 SP→Manaus, then JJ3859 Manaus→Fortaleza)",
+      "May 9–22, 2010 (Fortaleza; Natal – northeast Brazil; TAM JJ3307 Natal→SP)"
+    ],
+    note: "Iguassu/Salvador/Jericoacoara (2005) · Rio · Salvador/Pelourinho · Ribeirao Preto · Manaus (Amazon) · Fortaleza · Natal · São Paulo GRU"
+  },
+  {
+    flag: "🇮🇳", name: "India", city: "Andaman Islands", region: "asia",
+    lat: 11.7401, lng: 92.6586,
+    visits: ["Oct 2008 (Andaman Islands – ~4 weeks; scuba diving, island hopping, remote beaches)"],
+    note: "Andaman Islands · Port Blair"
+  },
+  {
+    flag: "🇵🇹", name: "Portugal", city: "Lisbon + road trip", region: "europe",
+    lat: 38.7223, lng: -9.1393,
+    visits: ["Nov 8–18, 2012 (Lisbon – Brussels Airlines TLV→BRU→LIS (SN3292/SN6401); 10 days with Metula + Ronen, car rental, road trip around Portugal)"],
+    note: "Lisbon · road trip · Brussels Airlines via BRU · rentalcars.com voucher 220116432"
+  },
+  {
+    flag: "🇪🇨", name: "Ecuador", city: "Guayaquil / Galapagos Islands", region: "americas",
+    lat: -2.1894, lng: -79.8891,
+    visits: ["May 25–Jun 6, 2010 (Guayaquil – Nuca Pacha Hostel; Galapagos Islands – Quasar expedition; flew home from Quito on Iberia IB3752)"],
+    note: "Nuca Pacha Hostel · Guayaquil · Galapagos Islands (Quasar EX) · Quito (UIO) departure"
+  },
+  {
+    flag: "🇨🇦", name: "Canada", city: "Toronto / Barrie", region: "americas",
+    lat: 43.6511, lng: -79.3470,
+    visits: ["Sep 6, 2024 (Lake Tahoe area – Pretty Lights concert, pre-Canada leg)", "Sep 2024 (car rental Toronto Airport YYZ)", "Oct 8–9, 2025 (Barrie, Ontario – Airbnb)", "Oct 12, 2025 (Legends of Horror, Toronto – TicketWeb)"],
+    note: "Toronto YYZ · Barrie, Ontario"
+  },
+  {
+    flag: "🇺🇸", name: "United States", city: "San Francisco / Nevada / New York", region: "americas",
+    lat: 37.7749, lng: -122.4194,
+    visits: ["May–Jul 2005 (Seattle; San Diego – Ocean Beach International Hostel; New York City)", "Jan–Apr 2, 2012 (Palo Alto / San Francisco – UpWest Labs accelerator, ~3 months; returned via Toronto Apr 2)",
+      "Aug 2018 (San Francisco – Burning Man 2018, United CFJ6P1)", "Sep 6, 2024 (Pretty Lights – Lake Tahoe Outdoor Arena, Harveys, Stateline NV)", "Aug 15–24, 2025 (San Francisco – Bartlett Hotel)", "Aug 24–Sep 1, 2025 (Burning Man – Black Rock City, NV 89412)", "Sep 2–4, 2025 (Reno, Nevada – Airbnb)", "Sep 13, 2025 (OTT Live – Public Works, SF)", "Sep 22, 2025 (United M7ZB4N)", "May 2026 (Qantas AKL→JFK – upcoming, New York)"],
+    note: "SF · Lake Tahoe · Black Rock City · Reno · New York JFK"
+  }
+];
+
+const travelLog = [
+  // — 2005 —
+  { date: "May–Jul 2005", flag: "🇺🇸", country: "United States", city: "Seattle · San Diego (Ocean Beach International Hostel) · NYC", future: false },
+  { date: "Jul 17–21, 2005", flag: "🇨🇷", country: "Costa Rica", city: "San José – Kabata Hostel, Arenal volcano, Omega canopy tour", future: false },
+  { date: "Jul–Aug 2005", flag: "🇵🇪", country: "Peru", city: "Huaraz – Lagoon 69, HuayHuash 9-day trek; Pisco – Islas Ballestas", future: false },
+  { date: "Aug–Sep 2005", flag: "🇵🇪", country: "Peru", city: "Huacachina oasis · Nazca Lines · Cuzco · Machu Picchu (1,600 stairs at night)", future: false },
+  { date: "Sep 2005", flag: "🇦🇷", country: "Argentina", city: "Buenos Aires – tango; Bariloche – snowboarding Cerro Cathedral; Iguassu Falls", future: false },
+  { date: "Sep–Oct 2005", flag: "🇧🇷", country: "Brazil", city: "Iguassu Falls (BR side) · Salvador · Fortaleza · Jericoacoara · Morro de São Paulo", future: false },
+  // — 2007 —
+  { date: "Oct 2007", flag: "🇮🇹", country: "Italy", city: "Como – week-long trip with friends", future: false },
+  { date: "Oct 2007", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam – ~2 days during Europe trip", future: false },
+  // — 2008 —
+  { date: "Jun 4–12, 2008", flag: "🇬🇧", country: "United Kingdom", city: "London + Horsham – friend's wedding Jun 7, with Yana", future: false },
+  { date: "Oct 2008", flag: "🇮🇳", country: "India", city: "Andaman Islands – ~4 weeks, scuba diving, island hopping", future: false },
+  // — 2009 —
+  { date: "Sep 24–Oct 10, 2009", flag: "🇪🇸", country: "Spain", city: "Tenerife – group trip with friends, Yom Kippur in Spain, capoeira, snorkeling", future: false },
+  { date: "Oct 2009", flag: "🇪🇸", country: "Spain", city: "Barcelona – Dalí museum (Figueres), La Sagrada Família, free walking tour", future: false },
+  { date: "Dec 1, 2009", flag: "🇦🇷", country: "Argentina", city: "Buenos Aires – Hostel Clan & YMCA; 2 days, then Córdoba · Rosario with Israeli travel companion", future: false },
+  { date: "Dec 2009", flag: "🇦🇷", country: "Argentina", city: "Salta – Las Nubes excursion, cable car mirador, asado & dancing", future: false },
+  { date: "Dec 2009", flag: "🇧🇴", country: "Bolivia", city: "Villazon border → Uyuni – 3-day Salar de Uyuni jeep tour", future: false },
+  { date: "Dec 18, 2009", flag: "🇨🇱", country: "Chile", city: "San Pedro de Atacama – Valle de la Luna, sunrise geysers", future: false },
+  { date: "Dec 2009", flag: "🇨🇱", country: "Chile", city: "Pisco Elqui – observatory & stargazing", future: false },
+  { date: "Dec 24–26, 2009", flag: "🇨🇱", country: "Chile", city: "Pucon – Villarica volcano climb, Christmas asado, hydro-speed", future: false },
+  // — 2010 —
+  { date: "Jan 5, 2010", flag: "🇦🇷", country: "Argentina", city: "Bariloche – Pudu Hostel, NYE 2010 (\"Las Tres Hermanas Feas\"), Circuito Chico", future: false },
+  { date: "Jan 10, 2010", flag: "🇦🇷", country: "Argentina", city: "Ushuaia – Fin del Mundo, national park, Dublin pub", future: false },
+  { date: "Jan 2010", flag: "🇦🇶", country: "Antarctica", city: "Ocean Nova cruise – crossed polar circle, Zodiac cruises, polar plunge at 0.8°C", future: false },
+  { date: "Feb 5–12, 2010", flag: "🇨🇱", country: "Chile", city: "Torres del Paine – 8-day 'O' circuit trek (via Punta Arenas & Puerto Natales)", future: false },
+  { date: "Feb 14, 2010", flag: "🇦🇷", country: "Argentina", city: "El Calafate – Perito Moreno glacier; El Chalten – Fitz Roy trek & ice walking", future: false },
+  { date: "Feb–Mar 2010", flag: "🇨🇱", country: "Chile", city: "Carretera Austral – 12 days hitchhiking (Chile Chico → Cerro Castillo → Coihaique → Futaleufu)", future: false },
+  { date: "Mar 6, 2010", flag: "🇦🇷", country: "Argentina", city: "El Bolson – Rey Sol Italian Farm, Bosque Tallado, Cerro Lindo hike", future: false },
+  { date: "Mar 10, 2010", flag: "🇦🇷", country: "Argentina", city: "Buenos Aires – 2nd visit, rollerblading with Ky & Nicola from Bariloche", future: false },
+  { date: "Mar 15, 2010", flag: "🇦🇷", country: "Argentina", city: "Puerto Iguazu – Iguazu Falls, Great Adventure boat, hostel pool party", future: false },
+  { date: "Mar 2010", flag: "🇧🇷", country: "Brazil", city: "Foz de Iguaçu – crossed from Argentina; flew to Rio de Janeiro!", future: false },
+  { date: "Mar–Apr 2010", flag: "🇧🇷", country: "Brazil", city: "Rio de Janeiro – flew from Foz de Iguaçu", future: false },
+  { date: "Mar 31, 2010", flag: "🇧🇷", country: "Brazil", city: "Salvador – Nega Maluca Guesthouse, Pelourinho", future: false },
+  { date: "Apr 2010", flag: "🇧🇷", country: "Brazil", city: "Ribeirao Preto – CouchSurfing; São Paulo", future: false },
+  { date: "May 4–9, 2010", flag: "🇧🇷", country: "Brazil", city: "Manaus – Amazon region (TAM JJ3746 SP→Manaus, then Manaus→Fortaleza)", future: false },
+  { date: "May 9–22, 2010", flag: "🇧🇷", country: "Brazil", city: "Fortaleza · Natal – northeast Brazil (TAM Natal→SP May 22)", future: false },
+  { date: "May 25–Jun 5, 2010", flag: "🇪🇨", country: "Ecuador", city: "Guayaquil – Nuca Pacha Hostel + Galapagos Islands (Quasar expedition)", future: false },
+  { date: "Jun 6, 2010", flag: "🇪🇨", country: "Ecuador", city: "Quito (UIO) – Iberia IB3752 flight home", future: false },
+  { date: "Jul 1–7, 2010", flag: "🇮🇹", country: "Italy", city: "Venice – eDreams ZQZVTV (TLV→VCE), with Nogah & Hadar", future: false },
+  { date: "Jul 8–12, 2010", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam – 4 days; Utrecht capoeira with Jorine Jul 9; Eurolines bus to London Jul 12", future: false },
+  { date: "Jul 12–20, 2010", flag: "🇬🇧", country: "United Kingdom", city: "London – Eurolines from Amsterdam; Oxford Jul 15; Horsham (Alex Pagel) Jul 17–18", future: false },
+  // — 2012 —
+  { date: "Jan–Apr 2, 2012", flag: "🇺🇸", country: "United States", city: "Palo Alto / San Francisco – UpWest Labs accelerator (~3 months); returned via Toronto", future: false },
+  { date: "Nov 8–18, 2012", flag: "🇵🇹", country: "Portugal", city: "Lisbon – Brussels Airlines SN3292/SN6401 via BRU; with Metula + Ronen, car rental road trip", future: false },
+  // — 2013 —
+  { date: "Jul 2013", flag: "🇭🇺", country: "Hungary", city: "SUN Festival – OnTour package (585 EUR); Wizzair flight from Budapest", future: false },
+  // — 2017 —
+  { date: "Dec 2017", flag: "🇧🇪", country: "Belgium", city: "Brussels – Brussels Airlines RKQ26Q (business)", future: false },
+  // — 2018 —
+  { date: "Jan 2018", flag: "🇧🇪", country: "Belgium", city: "Brussels – Brussels Airlines (business follow-up)", future: false },
+  { date: "Jul 21, 2018", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – arrived via UIA PS163", future: false },
+  { date: "Aug 2018", flag: "🇺🇸", country: "United States", city: "San Francisco – Burning Man 2018 (United CFJ6P1 TLV→SFO)", future: false },
+  { date: "Sep 2018", flag: "🇩🇪", country: "Germany", city: "Berlin – Kiwi.com 7937947", future: false },
+  { date: "Dec 2018", flag: "🇧🇪", country: "Belgium", city: "Brussels – Brussels Airlines L3LKK9 (business)", future: false },
+  // — 2019 —
+  { date: "Jun 2019", flag: "🇩🇪", country: "Germany", city: "Berlin TXL · Frankfurt – Lufthansa LH185/LH694", future: false },
+  { date: "Jul 14, 2019", flag: "🇪🇸", country: "Spain", city: "Barcelona – Renfe Tarragona → Barcelona-Sants", future: false },
+  { date: "Jul–Aug 2019", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS LX253", future: false },
+  { date: "Aug 2019", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – SWISS LX1278", future: false },
+  { date: "Sep 2019", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS TLV↔ZRH", future: false },
+  { date: "Nov 2019", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS LX253", future: false },
+  // — 2020 —
+  { date: "Jul 2020", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair VIE", future: false },
+  { date: "Sep 2020", flag: "🇩🇪", country: "Germany", city: "Berlin SXF – Ryanair FR6473", future: false },
+  { date: "Dec 8–22, 2020", flag: "🇸🇨", country: "Seychelles", city: "Mahé – Le Domaine de Bacova villa (extended stay)", future: false },
+  // — 2021 —
+  { date: "Jul 2021", flag: "🇩🇪", country: "Germany", city: "Munich – Lufthansa TLV→MUC", future: false },
+  { date: "Jul 2021", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – Lufthansa MUC→CPH", future: false },
+  { date: "Jul 27, 2021", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS LX1267 CPH→ZRH (booking LJ3EY3)", future: false },
+  { date: "Aug 2021", flag: "🇩🇪", country: "Germany", city: "Berlin – Ryanair", future: false },
+  { date: "Aug 2021", flag: "🇭🇺", country: "Hungary", city: "Budapest – Ryanair FR196", future: false },
+  // — 2022 —
+  { date: "Jan–Feb 2022", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair TLV↔VIE (multiple)", future: false },
+  { date: "Apr 24, 2022", flag: "🇧🇪", country: "Belgium", city: "Brussels-Midi – Thalys → Amsterdam", future: false },
+  { date: "Apr 24, 2022", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam Centraal – Thalys from Brussels", future: false },
+  { date: "Jul 2022", flag: "🇪🇸", country: "Spain", city: "Madrid – Air Europa TLV→MAD (UX1302)", future: false },
+  { date: "Jul 2022", flag: "🇩🇪", country: "Germany", city: "Berlin – Ryanair MAD→BER", future: false },
+  { date: "Jul 21, 2022", flag: "🇸🇪", country: "Sweden", city: "Gothenburg – FlixBus", future: false },
+  { date: "Sep–Dec 2022", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair TLV↔VIE", future: false },
+  { date: "2022–2023", flag: "🇿🇦", country: "South Africa", city: "Tankwa Karoo – AfrikaBurn (El Al SW38NB)", future: false },
+  // — 2023 —
+  { date: "Feb 14, 2023", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS TLV→ZRH", future: false },
+  { date: "Jul 2023", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam – Ryanair AMS→DUB", future: false },
+  { date: "Jul 2023", flag: "🇮🇪", country: "Ireland", city: "Dublin – Ryanair FR3103", future: false },
+  { date: "Jul 2023", flag: "🇸🇪", country: "Sweden", city: "Gothenburg – Ryanair DUB→GOT", future: false },
+  { date: "Sep 29, 2023", flag: "🇦🇹", country: "Austria", city: "Vienna – El Al LY362 VIE→TLV (MW5YK7)", future: false },
+  // — 2024 —
+  { date: "Jan 2024", flag: "🇳🇿", country: "New Zealand", city: "Auckland – Jetstar, camping road trip begins", future: false },
+  { date: "Feb 2024", flag: "🇦🇺", country: "Australia", city: "Melbourne – Jetstar JQ202", future: false },
+  { date: "Mar 6, 2024", flag: "🇦🇹", country: "Austria", city: "Vienna – Expedia flight (VIE)", future: false },
+  { date: "May 2024", flag: "🇳🇿", country: "New Zealand", city: "Hot Water Beach, Coromandel – back in NZ", future: false },
+  { date: "May 10, 2024", flag: "🇳🇿", country: "New Zealand", city: "Auckland – DARKFIELD: FLIGHT + SÉANCE (Aotea Sq)", future: false },
+  { date: "May 19, 2024", flag: "🇧🇪", country: "Belgium", city: "Brussels-North – FlixBus → London", future: false },
+  { date: "May 19, 2024", flag: "🇬🇧", country: "United Kingdom", city: "London Victoria – FlixBus from Brussels", future: false },
+  { date: "Jun 18, 2024", flag: "🇬🇧", country: "United Kingdom", city: "London – British Airways RKRRI5", future: false },
+  { date: "Jun 2024", flag: "🇩🇪", country: "Germany", city: "Berlin – LON→BER boarding pass", future: false },
+  { date: "Aug 2024", flag: "🇸🇪", country: "Sweden", city: "Stockholm Arlanda – Ryanair (ARN→VIE)", future: false },
+  { date: "Aug 2024", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair ARN→VIE", future: false },
+  { date: "Sep 6, 2024", flag: "🇺🇸", country: "United States", city: "Lake Tahoe NV – Pretty Lights, Harveys Resort", future: false },
+  { date: "Sep 2024", flag: "🇨🇦", country: "Canada", city: "Toronto – car rental YYZ", future: false },
+  { date: "Oct 13–16, 2024", flag: "🇯🇵", country: "Japan", city: "Yokohama – Hotel Resol Sakuragicho", future: false },
+  { date: "Oct 17, 2024", flag: "🇯🇵", country: "Japan", city: "Tokyo – SIDI Hub Social Night", future: false },
+  { date: "Oct 23–25, 2024", flag: "🇯🇵", country: "Japan", city: "Otsu / Kyoto – Koke Musu Inn", future: false },
+  { date: "Nov 25, 2024", flag: "🇳🇿", country: "New Zealand", city: "Domestic NZ – Jetstar JQ239 (from Auckland)", future: false },
+  // — 2025 —
+  { date: "Jan 2025", flag: "🇳🇿", country: "New Zealand", city: "Nelson · Tauranga McLaren Falls camping", future: false },
+  { date: "Feb 12, 2025", flag: "🇦🇺", country: "Australia", city: "Melbourne Tullamarine – Expedia", future: false },
+  { date: "May 13, 2025", flag: "🇬🇧", country: "United Kingdom", city: "London Gatwick → Victoria – Trainline", future: false },
+  { date: "Jun 6, 2025", flag: "🇬🇧", country: "United Kingdom", city: "London – Loom Club, Islington (DICE)", future: false },
+  { date: "Jun 20, 2025", flag: "🇬🇧", country: "United Kingdom", city: "London – British Airways XP4Z6P", future: false },
+  { date: "Jun 20–Jul 6, 2025", flag: "🇧🇬", country: "Bulgaria", city: "Bansko – Airbnb, 16 nights", future: false },
+  { date: "Jul 7, 2025", flag: "🇩🇪", country: "Germany", city: "Berlin – Ryanair FR1149 from Sofia", future: false },
+  { date: "Jul 15, 2025", flag: "🇸🇪", country: "Sweden", city: "Stockholm – SAS ZCM7U3", future: false },
+  { date: "Aug 15–24, 2025", flag: "🇺🇸", country: "United States", city: "San Francisco – Bartlett Hotel", future: false },
+  { date: "Aug 24–Sep 1, 2025", flag: "🇺🇸", country: "United States", city: "Black Rock City NV – Burning Man 2025", future: false },
+  { date: "Sep 2–4, 2025", flag: "🇺🇸", country: "United States", city: "Reno, Nevada – Airbnb", future: false },
+  { date: "Sep 13, 2025", flag: "🇺🇸", country: "United States", city: "San Francisco – OTT Live at Public Works", future: false },
+  { date: "Sep 22, 2025", flag: "🇺🇸", country: "United States", city: "United M7ZB4N", future: false },
+  { date: "Oct 8–9, 2025", flag: "🇨🇦", country: "Canada", city: "Barrie, Ontario – Airbnb", future: false },
+  { date: "Oct 12, 2025", flag: "🇨🇦", country: "Canada", city: "Toronto – Legends of Horror (TicketWeb)", future: false },
+  { date: "Oct 14–23, 2025", flag: "🇦🇹", country: "Austria", city: "Vienna – Airbnb, 9 nights", future: false },
+  { date: "Oct 26, 2025", flag: "🇳🇱", country: "Netherlands", city: "Playa Echoes – Dutch Decompression at FLORASCEND", future: false },
+  { date: "Oct 29, 2025", flag: "🇨🇭", country: "Switzerland", city: "Zurich – Eurowings departure", future: false },
+  { date: "Oct 29, 2025", flag: "🇩🇪", country: "Germany", city: "Düsseldorf – Eurowings", future: false },
+  { date: "Oct 29, 2025", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – Eurowings", future: false },
+  { date: "Nov 4, 2025", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – Digital Tech Summit 2025", future: false },
+  { date: "Nov 5, 2025", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam – KLM flight check-in", future: false },
+  { date: "Nov 2025", flag: "🇳🇿", country: "New Zealand", city: "Back in NZ via Qatar Airways", future: false },
+  // — 2026 (upcoming) —
+  { date: "Jan–Apr 2026", flag: "🇳🇿", country: "New Zealand", city: "Nelson Lakes · Kahurangi · Parklands Marina", future: false },
+  { date: "May 6, 2026", flag: "🇺🇸", country: "United States", city: "New York JFK – Qantas AKL→JFK", future: true },
+  { date: "May 2026", flag: "🇦🇹", country: "Austria", city: "Schönburn 2026 – Austrian Burn", future: true },
+  { date: "May 2026", flag: "🇳🇱", country: "Netherlands", city: "What The Farm VIII (WTF VIII)", future: true },
+  { date: "Aug 30–Sep 7, 2026", flag: "🇺🇸", country: "United States", city: "Black Rock City NV – Burning Man 2026", future: true },
+];
+
+// Events with confirmed venue addresses
+const events = [
+  {
+    name: "Pretty Lights",
+    venue: "Lake Tahoe Outdoor Arena at Harveys",
+    address: "Stateline, Nevada, USA",
+    date: "Sep 6, 2024",
+    emoji: "🎵",
+    lat: 38.9658, lng: -119.9366
+  },
+  {
+    name: "SIDI Hub Tokyo – Social Night",
+    venue: "Tokyo",
+    address: "Tokyo, Japan",
+    date: "Oct 17, 2024",
+    emoji: "🌏",
+    lat: 35.6762, lng: 139.6503
+  },
+  {
+    name: "Loom Turns One (DICE)",
+    venue: "Loom Club",
+    address: "6 Northampton Street, Islington, London N1 2HY",
+    date: "Jun 6, 2025",
+    emoji: "🎧",
+    lat: 51.5381, lng: -0.1015
+  },
+  {
+    name: "DARKFIELD: FLIGHT + SÉANCE",
+    venue: "Aotea Square",
+    address: "50 Mayoral Dr, Auckland, NZ 1010",
+    date: "May 10, 2025",
+    emoji: "🎭",
+    lat: -36.8508, lng: 174.7645
+  },
+  {
+    name: "Burning Man 2025 – Tomorrow Today",
+    venue: "Black Rock City",
+    address: "Black Rock Desert, NV 89412, USA",
+    date: "Aug 24–Sep 1, 2025",
+    emoji: "🔥",
+    lat: 40.7864, lng: -119.2065
+  },
+  {
+    name: "OTT (Live) at Public Works",
+    venue: "Public Works",
+    address: "San Francisco, CA, USA",
+    date: "Sep 13, 2025",
+    emoji: "🎵",
+    lat: 37.7696, lng: -122.4165
+  },
+  {
+    name: "Legends of Horror",
+    venue: "Toronto (TicketWeb.ca)",
+    address: "Toronto, Ontario, Canada",
+    date: "Oct 12, 2025",
+    emoji: "🎃",
+    lat: 43.6511, lng: -79.3470
+  },
+  {
+    name: "Playa Echoes – Dutch Decompression",
+    venue: "FLORASCEND",
+    address: "Netherlands",
+    date: "Oct 26, 2025",
+    emoji: "🌸",
+    lat: 52.3676, lng: 4.9041
+  },
+  {
+    name: "Digital Tech Summit 2025",
+    venue: "Copenhagen",
+    address: "Copenhagen, Denmark",
+    date: "Nov 4, 2025",
+    emoji: "💻",
+    lat: 55.6761, lng: 12.5683
+  },
+  {
+    name: "Vengaboys – 90's Mania",
+    venue: "Auckland Town Hall, Great Hall",
+    address: "Greys Ave, Auckland CBD, NZ",
+    date: "Jan 28, 2026",
+    emoji: "🕺",
+    lat: -36.8481, lng: 174.7633
+  },
+  {
+    name: "Breathe | Mauri Ora (VR) – Te Papa",
+    venue: "Museum of New Zealand Te Papa Tongarewa",
+    address: "55 Cable Street, Wellington, NZ",
+    date: "Feb 22, 2026",
+    emoji: "🏛️",
+    lat: -41.2903, lng: 174.7817
+  },
+  {
+    name: "Schönburn 2026",
+    venue: "Schönburn (Austrian Burn)",
+    address: "Austria (exact location TBA)",
+    date: "2026 (upcoming)",
+    emoji: "🔥",
+    lat: 47.8095, lng: 13.0550
+  },
+  {
+    name: "What The Farm VIII (WTF VIII)",
+    venue: "What The Farm Festival",
+    address: "Netherlands (exact farm TBA)",
+    date: "May 2026 (upcoming)",
+    emoji: "🌾",
+    lat: 52.1326, lng: 5.2913
+  },
+  {
+    name: "Burning Man 2026",
+    venue: "Black Rock City",
+    address: "Black Rock Desert, NV 89412, USA",
+    date: "Aug 30–Sep 7, 2026 (upcoming)",
+    emoji: "🔥",
+    lat: 40.7864, lng: -119.2065
+  },
+  {
+    name: "SideBurn 2026",
+    venue: "SideBurn (Canadian Burn)",
+    address: "Canada",
+    date: "2026 (upcoming)",
+    emoji: "🔥",
+    lat: 45.4215, lng: -75.6972
+  }
+];
+
+// Initialize map
+const map = L.map('map', {
+  center: [30, 20],
+  zoom: 2.3,
+  zoomControl: true,
+  scrollWheelZoom: true
+});
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors',
+  maxZoom: 18
+}).addTo(map);
+
+// Custom icon factory
+function createIcon(flag) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="
+      background: linear-gradient(135deg, #7c9ef0, #a78bfa);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      width: 32px; height: 32px;
+      border: 2.5px solid #fff;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;">
+      <span style="transform: rotate(45deg); font-size: 14px; line-height:1;">${flag}</span>
+    </div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -34]
+  });
+}
+
+// Add markers
+countries.forEach((c, i) => {
+  const marker = L.marker([c.lat, c.lng], { icon: createIcon(c.flag) });
+
+  const datesHtml = c.visits.map(v => `<div>${v}</div>`).join('');
+
+  marker.bindPopup(`
+    <div class="popup-content">
+      <div class="popup-flag">${c.flag}</div>
+      <div class="popup-country">${c.name}</div>
+      <div class="popup-city">📍 ${c.city}</div>
+      <div class="popup-dates">${datesHtml}</div>
+    </div>
+  `, { maxWidth: 260 });
+
+  marker.on('click', () => {
+    const card = document.getElementById(`card-${i}`);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('highlighted');
+      setTimeout(() => card.classList.remove('highlighted'), 2000);
+    }
+  });
+
+  marker.addTo(map);
+});
+
+// Build country cards
+const grid = document.getElementById('countries-grid');
+
+countries.forEach((c, i) => {
+  const card = document.createElement('div');
+  card.className = 'country-card';
+  card.id = `card-${i}`;
+  card.dataset.region = c.region;
+
+  const visitsHtml = c.visits.map(v =>
+    `<div class="visit-item"><div class="visit-dot"></div><span>${v}</span></div>`
+  ).join('');
+
+  card.innerHTML = `
+    <div class="card-top">
+      <span class="country-flag">${c.flag}</span>
+      <span class="visit-count">${c.visits.length} visit${c.visits.length > 1 ? 's' : ''}</span>
+    </div>
+    <div class="country-name">${c.name}</div>
+    <div class="city-name">📍 <span>${c.city}</span></div>
+    <div class="visits-list">${visitsHtml}</div>
+  `;
+
+  card.addEventListener('click', () => {
+    map.flyTo([c.lat, c.lng], 5, { duration: 1.2 });
+  });
+
+  grid.appendChild(card);
+});
+
+// Add event markers (orange/amber style)
+function createEventIcon(emoji) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      width: 28px; height: 28px;
+      border: 2px solid #fff;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;">
+      <span style="transform: rotate(45deg); font-size: 12px; line-height:1;">${emoji}</span>
+    </div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -30]
+  });
+}
+
+events.forEach(ev => {
+  const marker = L.marker([ev.lat, ev.lng], { icon: createEventIcon(ev.emoji) });
+  marker.bindPopup(`
+    <div class="popup-content">
+      <div class="popup-flag">${ev.emoji}</div>
+      <div class="popup-country" style="color:#f59e0b;">${ev.name}</div>
+      <div class="popup-city">📍 ${ev.venue}</div>
+      <div class="popup-dates"><div>${ev.address}</div><div>${ev.date}</div></div>
+    </div>
+  `, { maxWidth: 260 });
+  marker.addTo(map);
+});
+
+// Build events grid
+const eventsGrid = document.getElementById('events-grid');
+events.forEach(ev => {
+  const card = document.createElement('div');
+  card.className = 'event-card';
+  card.innerHTML = `
+    <div class="event-name">${ev.emoji} ${ev.name}</div>
+    <div class="event-venue">📍 ${ev.venue}</div>
+    <div class="event-date">${ev.address} · ${ev.date}</div>
+  `;
+  card.addEventListener('click', () => {
+    map.flyTo([ev.lat, ev.lng], 12, { duration: 1.2 });
+  });
+  eventsGrid.appendChild(card);
+});
+
+// Build travel log timeline
+const tlContainer = document.getElementById('timeline');
+tlContainer.classList.add('tl-log');
+let lastYear = '';
+travelLog.forEach(entry => {
+  const year = entry.date.match(/\d{4}/)?.[0] || '';
+  if (year && year !== lastYear) {
+    lastYear = year;
+    const divider = document.createElement('div');
+    divider.style.cssText = 'grid-column:1/-1;text-align:center;font-size:0.7rem;font-weight:700;letter-spacing:3px;color:#3d4166;text-transform:uppercase;padding:16px 0 8px;';
+    divider.textContent = '── ' + year + ' ──';
+    tlContainer.appendChild(divider);
+  }
+  const el = document.createElement('div');
+  el.className = 'tl-entry';
+  el.innerHTML = `
+    <div class="tl-date-col"><div class="tl-date-main">${entry.date}</div></div>
+    <div class="tl-spine"><div class="tl-node${entry.future ? ' future' : ''}"></div></div>
+    <div class="tl-body">
+      <div class="tl-flag-name">${entry.flag} ${entry.country}${entry.future ? ' <span style="font-size:0.65rem;color:#4a5080;font-weight:400">(upcoming)</span>' : ''}</div>
+      <div class="tl-city">${entry.city}</div>
+    </div>
+  `;
+  tlContainer.appendChild(el);
+});
+
+// ── Calendar: known stays away from Israel ──
+// Gaps between entries = home in Israel. Sorted by 'from'.
+const stays = [
+  { from:"2005-05-28", to:"2005-07-16", flag:"🇺🇸", country:"United States", city:"Seattle / San Diego" },
+  { from:"2005-07-17", to:"2005-07-21", flag:"🇨🇷", country:"Costa Rica", city:"San José – Kabata Hostel, Arenal volcano, Omega canopy" },
+  { from:"2005-07-22", to:"2005-09-05", flag:"🇵🇪", country:"Peru", city:"Huaraz / HuayHuash trek / Pisco / Huacachina / Nazca / Cuzco / Machu Picchu" },
+  { from:"2005-09-06", to:"2005-09-27", flag:"🇦🇷", country:"Argentina", city:"Buenos Aires / Bariloche / Iguassu Falls" },
+  { from:"2005-09-28", to:"2005-10-18", flag:"🇧🇷", country:"Brazil", city:"Iguassu / Salvador / Fortaleza / Jericoacoara / Morro de São Paulo" },
+  { from:"2007-10-01", to:"2007-10-08", flag:"🇮🇹", country:"Italy", city:"Como" },
+  { from:"2007-10-08", to:"2007-10-12", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam" },
+  { from:"2008-06-04", to:"2008-06-12", flag:"🇬🇧", country:"United Kingdom", city:"London / Horsham" },
+  { from:"2008-10-02", to:"2008-10-31", flag:"🇮🇳", country:"India", city:"Andaman Islands" },
+  { from:"2009-09-24", to:"2009-10-10", flag:"🇪🇸", country:"Spain", city:"Tenerife + Barcelona" },
+  { from:"2009-12-01", to:"2009-12-08", flag:"🇦🇷", country:"Argentina", city:"Buenos Aires · Córdoba · Rosario" },
+  { from:"2009-12-08", to:"2009-12-13", flag:"🇦🇷", country:"Argentina", city:"Salta" },
+  { from:"2009-12-13", to:"2009-12-16", flag:"🇧🇴", country:"Bolivia", city:"Salar de Uyuni" },
+  { from:"2009-12-16", to:"2009-12-21", flag:"🇨🇱", country:"Chile", city:"San Pedro de Atacama" },
+  { from:"2009-12-21", to:"2009-12-24", flag:"🇨🇱", country:"Chile", city:"Pisco Elqui" },
+  { from:"2009-12-24", to:"2009-12-29", flag:"🇨🇱", country:"Chile", city:"Pucon – Villarica volcano" },
+  { from:"2009-12-29", to:"2010-01-05", flag:"🇦🇷", country:"Argentina", city:"en route to Bariloche" },
+  { from:"2010-01-05", to:"2010-01-10", flag:"🇦🇷", country:"Argentina", city:"Bariloche – NYE 2010" },
+  { from:"2010-01-10", to:"2010-01-12", flag:"🇦🇷", country:"Argentina", city:"Ushuaia – Fin del Mundo" },
+  { from:"2010-01-12", to:"2010-01-26", flag:"🇦🇶", country:"Antarctica", city:"Ocean Nova cruise – crossed polar circle" },
+  { from:"2010-01-26", to:"2010-02-04", flag:"🇦🇷", country:"Argentina", city:"Ushuaia / en route north" },
+  { from:"2010-02-04", to:"2010-02-05", flag:"🇨🇱", country:"Chile", city:"Punta Arenas" },
+  { from:"2010-02-05", to:"2010-02-13", flag:"🇨🇱", country:"Chile", city:"Torres del Paine – 8-day trek" },
+  { from:"2010-02-13", to:"2010-02-18", flag:"🇦🇷", country:"Argentina", city:"El Calafate / El Chalten" },
+  { from:"2010-02-18", to:"2010-03-06", flag:"🇨🇱", country:"Chile", city:"Carretera Austral – 12-day hitchhike" },
+  { from:"2010-03-06", to:"2010-03-10", flag:"🇦🇷", country:"Argentina", city:"El Bolson" },
+  { from:"2010-03-10", to:"2010-03-14", flag:"🇦🇷", country:"Argentina", city:"Buenos Aires" },
+  { from:"2010-03-14", to:"2010-03-17", flag:"🇦🇷", country:"Argentina", city:"Puerto Iguazu – Iguazu Falls" },
+  { from:"2010-03-17", to:"2010-03-31", flag:"🇧🇷", country:"Brazil", city:"Rio de Janeiro" },
+  { from:"2010-03-31", to:"2010-04-20", flag:"🇧🇷", country:"Brazil", city:"Salvador – Nega Maluca Guesthouse" },
+  { from:"2010-04-20", to:"2010-05-04", flag:"🇧🇷", country:"Brazil", city:"Ribeirao Preto / São Paulo" },
+  { from:"2010-05-04", to:"2010-05-09", flag:"🇧🇷", country:"Brazil", city:"Manaus – Amazon region" },
+  { from:"2010-05-09", to:"2010-05-24", flag:"🇧🇷", country:"Brazil", city:"Fortaleza / Natal – northeast Brazil" },
+  { from:"2010-05-25", to:"2010-06-06", flag:"🇪🇨", country:"Ecuador", city:"Guayaquil & Galapagos Islands" },
+  { from:"2010-07-01", to:"2010-07-07", flag:"🇮🇹", country:"Italy", city:"Venice" },
+  { from:"2010-07-08", to:"2010-07-12", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam + Utrecht" },
+  { from:"2010-07-12", to:"2010-07-20", flag:"🇬🇧", country:"United Kingdom", city:"London + Oxford + Horsham" },
+  { from:"2012-01-15", to:"2012-04-02", flag:"🇺🇸", country:"United States", city:"Palo Alto / San Francisco – UpWest Labs" },
+  { from:"2012-11-08", to:"2012-11-18", flag:"🇵🇹", country:"Portugal", city:"Lisbon + road trip" },
+  { from:"2013-07-20", to:"2013-07-27", flag:"🇭🇺", country:"Hungary", city:"SUN Festival + Budapest" },
+  { from:"2017-12-01", to:"2017-12-06", flag:"🇧🇪", country:"Belgium", city:"Brussels" },
+  { from:"2018-01-11", to:"2018-01-16", flag:"🇧🇪", country:"Belgium", city:"Brussels" },
+  { from:"2018-07-21", to:"2018-07-28", flag:"🇩🇰", country:"Denmark", city:"Copenhagen" },
+  { from:"2018-08-22", to:"2018-09-04", flag:"🇺🇸", country:"United States", city:"San Francisco / Burning Man" },
+  { from:"2018-09-05", to:"2018-09-10", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2018-12-31", to:"2019-01-04", flag:"🇧🇪", country:"Belgium", city:"Brussels" },
+  { from:"2019-06-01", to:"2019-06-10", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2019-07-14", to:"2019-07-18", flag:"🇪🇸", country:"Spain", city:"Barcelona" },
+  { from:"2019-07-18", to:"2019-08-10", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
+  { from:"2019-08-10", to:"2019-08-20", flag:"🇩🇰", country:"Denmark", city:"Copenhagen" },
+  { from:"2019-09-01", to:"2019-09-10", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
+  { from:"2019-11-05", to:"2019-11-12", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
+  { from:"2020-07-10", to:"2020-07-20", flag:"🇦🇹", country:"Austria", city:"Vienna" },
+  { from:"2020-09-01", to:"2020-09-10", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2020-12-08", to:"2020-12-22", flag:"🇸🇨", country:"Seychelles", city:"Mahé – Le Domaine de Bacova" },
+  { from:"2021-07-01", to:"2021-07-20", flag:"🇩🇪", country:"Germany", city:"Munich" },
+  { from:"2021-07-20", to:"2021-07-27", flag:"🇩🇰", country:"Denmark", city:"Copenhagen" },
+  { from:"2021-07-27", to:"2021-07-30", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
+  { from:"2021-08-01", to:"2021-08-10", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2021-08-10", to:"2021-08-17", flag:"🇭🇺", country:"Hungary", city:"Budapest" },
+  { from:"2022-01-15", to:"2022-02-20", flag:"🇦🇹", country:"Austria", city:"Vienna" },
+  { from:"2022-04-24", to:"2022-04-25", flag:"🇧🇪", country:"Belgium", city:"Brussels" },
+  { from:"2022-04-25", to:"2022-05-05", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam" },
+  { from:"2022-07-01", to:"2022-07-12", flag:"🇪🇸", country:"Spain", city:"Madrid" },
+  { from:"2022-07-12", to:"2022-07-21", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2022-07-21", to:"2022-07-30", flag:"🇸🇪", country:"Sweden", city:"Gothenburg" },
+  { from:"2022-09-01", to:"2022-12-20", flag:"🇦🇹", country:"Austria", city:"Vienna" },
+  { from:"2023-02-14", to:"2023-02-20", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
+  { from:"2023-04-25", to:"2023-05-05", flag:"🇿🇦", country:"South Africa", city:"AfrikaBurn – Tankwa Karoo" },
+  { from:"2023-07-01", to:"2023-07-12", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam" },
+  { from:"2023-07-12", to:"2023-07-20", flag:"🇮🇪", country:"Ireland", city:"Dublin" },
+  { from:"2023-07-20", to:"2023-07-30", flag:"🇸🇪", country:"Sweden", city:"Gothenburg" },
+  { from:"2023-09-20", to:"2023-09-30", flag:"🇦🇹", country:"Austria", city:"Vienna" },
+  { from:"2024-01-10", to:"2024-02-14", flag:"🇳🇿", country:"New Zealand", city:"Auckland & NZ road trip" },
+  { from:"2024-02-15", to:"2024-02-22", flag:"🇦🇺", country:"Australia", city:"Melbourne" },
+  { from:"2024-02-22", to:"2024-03-05", flag:"🇳🇿", country:"New Zealand", city:"New Zealand" },
+  { from:"2024-03-06", to:"2024-03-14", flag:"🇦🇹", country:"Austria", city:"Vienna" },
+  { from:"2024-03-14", to:"2024-05-18", flag:"🇳🇿", country:"New Zealand", city:"New Zealand" },
+  { from:"2024-05-19", to:"2024-05-20", flag:"🇧🇪", country:"Belgium", city:"Brussels" },
+  { from:"2024-05-20", to:"2024-07-10", flag:"🇬🇧", country:"United Kingdom", city:"London" },
+  { from:"2024-07-10", to:"2024-08-01", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2024-08-01", to:"2024-08-20", flag:"🇸🇪", country:"Sweden", city:"Stockholm" },
+  { from:"2024-08-20", to:"2024-09-05", flag:"🇦🇹", country:"Austria", city:"Vienna" },
+  { from:"2024-09-06", to:"2024-09-07", flag:"🇺🇸", country:"United States", city:"Lake Tahoe, Nevada" },
+  { from:"2024-09-07", to:"2024-10-12", flag:"🇨🇦", country:"Canada", city:"Toronto" },
+  { from:"2024-10-13", to:"2024-10-25", flag:"🇯🇵", country:"Japan", city:"Yokohama / Tokyo / Otsu" },
+  { from:"2024-10-25", to:"2024-12-31", flag:"🇳🇿", country:"New Zealand", city:"New Zealand" },
+  { from:"2025-01-01", to:"2025-02-11", flag:"🇳🇿", country:"New Zealand", city:"Nelson · Tauranga" },
+  { from:"2025-02-12", to:"2025-02-18", flag:"🇦🇺", country:"Australia", city:"Melbourne" },
+  { from:"2025-02-18", to:"2025-05-12", flag:"🇳🇿", country:"New Zealand", city:"New Zealand" },
+  { from:"2025-05-13", to:"2025-05-20", flag:"🇬🇧", country:"United Kingdom", city:"London" },
+  { from:"2025-06-06", to:"2025-06-06", flag:"🇬🇧", country:"United Kingdom", city:"London – Loom Club" },
+  { from:"2025-06-20", to:"2025-07-06", flag:"🇧🇬", country:"Bulgaria", city:"Bansko" },
+  { from:"2025-07-07", to:"2025-07-14", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2025-07-15", to:"2025-08-14", flag:"🇸🇪", country:"Sweden", city:"Stockholm" },
+  { from:"2025-08-15", to:"2025-09-22", flag:"🇺🇸", country:"United States", city:"San Francisco / Burning Man / Reno" },
+  { from:"2025-10-08", to:"2025-10-13", flag:"🇨🇦", country:"Canada", city:"Barrie / Toronto" },
+  { from:"2025-10-14", to:"2025-10-23", flag:"🇦🇹", country:"Austria", city:"Vienna" },
+  { from:"2025-10-26", to:"2025-10-27", flag:"🇳🇱", country:"Netherlands", city:"Dutch Decompression" },
+  { from:"2025-10-29", to:"2025-11-04", flag:"🇩🇰", country:"Denmark", city:"Copenhagen" },
+  { from:"2025-11-05", to:"2025-11-06", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam" },
+  { from:"2025-11-06", to:"2025-12-31", flag:"🇳🇿", country:"New Zealand", city:"New Zealand" },
+  { from:"2026-01-01", to:"2026-05-05", flag:"🇳🇿", country:"New Zealand", city:"Nelson Lakes · Kahurangi" },
+  { from:"2026-05-06", to:"2026-05-19", flag:"🇺🇸", country:"United States", city:"New York" },
+  { from:"2026-05-20", to:"2026-05-27", flag:"🇦🇹", country:"Austria", city:"Schönburn 2026" },
+  { from:"2026-05-28", to:"2026-06-05", flag:"🇳🇱", country:"Netherlands", city:"What The Farm VIII" },
+  { from:"2026-08-30", to:"2026-09-07", flag:"🇺🇸", country:"United States", city:"Black Rock City – Burning Man 2026" },
+];
+
+const HOME = { flag:"🇮🇱", country:"Israel", city:"Tel Aviv" };
+
+function getStayForDate(dateStr) {
+  const ts = new Date(dateStr).getTime();
+  for (const s of stays) {
+    if (ts >= new Date(s.from).getTime() && ts <= new Date(s.to).getTime()) return s;
+  }
+  return { ...HOME, from: dateStr, to: dateStr };
+}
+
+function countryHue(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return h % 360;
+}
+function countryStyle(name) {
+  if (name === 'Israel') return { bg:'#12152a', border:'#2e3250', text:'#4a5080' };
+  const h = countryHue(name);
+  return { bg:`hsl(${h},38%,19%)`, border:`hsl(${h},48%,32%)`, text:`hsl(${h},80%,72%)` };
+}
+
+let calYear, calMonth, calSelected = null;
+
+function renderCal() {
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent = MONTHS[calMonth] + ' ' + calYear;
+
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const container = document.getElementById('cal-days');
+  container.innerHTML = '';
+  const legendMap = {};
+
+  for (let i = 0; i < firstDay; i++) {
+    const e = document.createElement('div');
+    e.className = 'cal-cell empty';
+    container.appendChild(e);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const stay = getStayForDate(ds);
+    const st = countryStyle(stay.country);
+    legendMap[stay.country] = { st, flag: stay.flag };
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (ds === todayStr ? ' today' : '') + (ds === calSelected ? ' selected' : '');
+    cell.style.cssText = `background:${st.bg};border-color:${st.border};color:${st.text}`;
+    cell.textContent = d;
+    cell.title = `${stay.flag} ${stay.country}`;
+    cell.onclick = () => { calSelected = ds; renderCal(); showResult(ds); };
+    container.appendChild(cell);
+  }
+
+  // Legend
+  const legend = document.getElementById('cal-legend');
+  legend.innerHTML = '';
+  Object.entries(legendMap).forEach(([name, {st, flag}]) => {
+    const item = document.createElement('div');
+    item.className = 'cal-legend-item';
+    item.style.cssText = `background:${st.bg};border-color:${st.border}`;
+    item.innerHTML = `<span>${flag}</span><span style="color:${st.text}">${name}</span>`;
+    legend.appendChild(item);
+  });
+
+  if (calSelected) showResult(calSelected);
+  else showResult(calYear === today.getFullYear() && calMonth === today.getMonth() ? todayStr
+    : `${calYear}-${String(calMonth+1).padStart(2,'0')}-01`);
+}
+
+function showResult(ds) {
+  const stay = getStayForDate(ds);
+  const st = countryStyle(stay.country);
+  const d = new Date(ds + 'T12:00:00');
+  const label = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('cal-result').innerHTML =
+    '<div class="cal-result-flag">' + stay.flag + '</div>' +
+    '<div>' +
+      '<div class="cal-result-country" style="color:' + st.text + '">' + stay.country + '</div>' +
+      '<div class="cal-result-city">' + stay.city + '</div>' +
+      '<div class="cal-result-date">' + label + '</div>' +
+    '</div>';
+}
+
+function initCalendar() {
+  const now = new Date();
+  calYear = now.getFullYear(); calMonth = now.getMonth();
+  document.getElementById('cal-prev').onclick = function() { if (--calMonth < 0) { calMonth = 11; calYear--; } renderCal(); };
+  document.getElementById('cal-next').onclick = function() { if (++calMonth > 11) { calMonth = 0; calYear++; } renderCal(); };
+  document.getElementById('cal-date-jump').onchange = function() {
+    var d = new Date(this.value);
+    if (!isNaN(d.getTime())) { calYear = d.getFullYear(); calMonth = d.getMonth(); calSelected = this.value; renderCal(); }
+  };
+  renderCal();
+}
+initCalendar();
+
+// Filter function
+function filterCards(region, btn) {
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.country-card').forEach(function(card) {
+    card.style.display = (region === 'all' || card.dataset.region === region) ? '' : 'none';
+  });
+}
+</script>
+
+</body>
+</html>
