@@ -571,7 +571,7 @@
       <div class="stat-label">Countries</div>
     </div>
     <div class="stat">
-      <div class="stat-number">17</div>
+      <div class="stat-number">20</div>
       <div class="stat-label">Years</div>
     </div>
     <div class="stat">
@@ -655,49 +655,73 @@ const countries = [
   {
     flag: "🇦🇹", name: "Austria", city: "Vienna", region: "europe",
     lat: 48.2082, lng: 16.3738,
-    visits: ["Jul 2020", "Jan, Feb, Sep, Dec 2022", "Mar 2024 (Expedia)", "Aug 2024", "Aug 2025 (departure VIE→SFO)", "Oct 14–23, 2025 (Airbnb, 9 nights)"],
+    visits: ["~Mar 1–2, 2019 (Vienna – Vienna Burning Ball)", "Sep 15–16, 2019 (Vienna – FlixBus side trip from Zurich)", "Jun 29–Jul 4, 2020 (Vienna – arrived by FlixBus ~Jun 29; departed Ryanair YCBHXN FR7161 VIE→TLV Jul 4 13:00–17:20)", "Sep ~22–28, 2020 (Vienna – transit from Berlin; departed ÖBB D720 Wien Hbf→München Sep 28)", "Oct 30–Nov 3, 2020 (Vienna – arrived Wiener Linien Airport Lines return ticket Oct 30; departed ÖBB RJX 564 Wien→Innsbruck→Zürich Nov 3 11:30)", "Jan, Feb, Sep, Dec 2022", "Mar 2024 (Expedia)", "Aug 2024", "Aug 2025 (departure VIE→SFO)", "Oct 14–23, 2025 (Airbnb, 9 nights)"],
     note: "Frequent Ryanair TLV ↔ VIE hub"
+  },
+  {
+    flag: "🇫🇷", name: "France", city: "Chamonix / Paris", region: "europe",
+    lat: 45.9237, lng: 6.8694,
+    visits: ["~Mar 12–31, 2019 (Chamonix – Rentalcars.com #720198114 Mar 12; Chamonix Chalets Ltd payment Mar 12; returned ZRH→TLV Mar 31)"],
+    note: "Chamonix (Alps, near Mont Blanc) Mar 2019 · SWISS hub via Geneva/Zurich"
+  },
+  {
+    flag: "🇬🇷", name: "Greece", city: "Athens", region: "europe",
+    lat: 37.9838, lng: 23.7275,
+    visits: ["Oct 28, 2019 (Athens – Aegean Q9CDX5 A3 821 TXL→ATH, A3 924 ATH→TLV – one-day stopover en route from Berlin)"],
+    note: "Athens Eleftherios Venizelos Airport (ATH) – Aegean Airlines Oct 2019"
+  },
+  {
+    flag: "🇲🇹", name: "Malta", city: "Valletta / Luqa", region: "europe",
+    lat: 35.8997, lng: 14.5147,
+    visits: ["Nov 26–Dec 2019 (Malta – Air Malta LAXKJP KM491 ZRH→MLA Nov 26 17:40–20:00; extended stay)"],
+    note: "Air Malta KM491 from Zurich · Malta Luqa International Airport (MLA)"
+  },
+  {
+    flag: "🇨🇳", name: "China", city: "Shanghai / Dragon Burn area", region: "asia",
+    lat: 31.2304, lng: 121.4737,
+    visits: ["Apr 24–May 13, 2019 (Shanghai + Dragon Burn – Aeroflot KVPOGS: SU507 TLV→SVO Apr 24, SU208 SVO→PVG Apr 25; Dragon Burn regional burn (late Apr); Shanghai Airbnb 'The YongKang Hidden Penthouse' May 5–7; return SU209 PVG→SVO May 13, SU504 SVO→TLV May 13)"],
+    note: "Aeroflot via Moscow · Dragon Burn regional burn · Shanghai Pudong (PVG)"
   },
   {
     flag: "🇩🇪", name: "Germany", city: "Berlin / Munich / Frankfurt", region: "europe",
     lat: 52.5200, lng: 13.4050,
-    visits: ["Sep 2018 (Berlin – Kiwi.com, BER→VIE→TLV)", "Jun 2019 (TXL, Lufthansa)", "Sep 2020 (Ryanair TLV→BER)", "Aug 2021 (Ryanair)", "Jul 2022 (Madrid→Berlin)", "Jun 2024 (BA London→Berlin)", "Jul 7, 2025 (Sofia→Berlin, Ryanair)", "Oct 29, 2025 (Eurowings, Düsseldorf)"],
+    visits: ["Feb 28–29, 2016 (Berlin – 1 night; Plus Berlin hostel; booking.com #479726934)", "Jun 18–30, 2018 (Berlin – Turkish Airlines TFPSTH TLV→IST→BER Jun 18; Kiez Burn regional burn; Eurowings Z95CKF BER→BCN Jun 30)", "Sep 2018 (Berlin – Kiwi.com, BER→VIE→TLV)", "May 30–Jun 25, 2019 (Berlin – SWISS KJXDPI TLV→ZRH May 30; Lufthansa LH185 TXL→FRA→TLV Jun 25)", "Oct 23–28, 2019 (Berlin – Austrian OS858/OS239 TLV→VIE→TXL Oct 22–23; PREMIUM Hostel #3973544257; Aegean Q9CDX5 TXL→ATH Oct 28)", "Jun 21–~26, 2020 (Frankfurt/Berlin – Deutsche Bahn ICE 798 MHVD96 Frankfurt(Main)Süd→Berlin Hbf Jun 21 12:20–16:47; ~4 nights Berlin)", "Sep 9–~21, 2020 (Berlin SXF – Ryanair FR6473 DCIQHH TLV→SXF Sep 9; extended stay)", "Sep 28, 2020 (Munich – ÖBB D720 0130835302982930 Wien Hbf→München Hbf 15:42–21:36; HI Munich Park Youth Hostel)", "Sep 29–Oct ~6, 2020 (Markdorf/Bodensee – Airbnb 'Mitten in Markdorf', Baden-Württemberg; FlixBus onward Oct 1, Oct 6)", "Aug 2021 (Ryanair)", "Jul 2022 (Madrid→Berlin)", "Jun 2024 (BA London→Berlin)", "Jul 7, 2025 (Sofia→Berlin, Ryanair)", "Oct 29, 2025 (Eurowings, Düsseldorf)"],
     note: "Berlin · Munich (Jul 2021) · Frankfurt transit · Düsseldorf"
   },
   {
     flag: "🇨🇭", name: "Switzerland", city: "Zurich", region: "europe",
     lat: 47.3769, lng: 8.5417,
-    visits: ["May, Jul, Sep, Nov 2019 (SWISS TLV↔ZRH)", "Feb 2023 (SWISS TLV→ZRH)", "Oct 2025 (Eurowings ZRH departure)"],
+    visits: ["~Mar 2019 (Zurich – SWISS RPAT5C return LX256 ZRH→TLV Mar 31)", "May 30–Jun 25, 2019 (Zurich – SWISS KJXDPI TLV→ZRH May 30; Airbnb Salgesch Valais Jun 8–9)", "Jul 6–21, 2019 (Zurich hub – SWISS TLV→ZRH→MAD Jul 6 booking RX6QQU; then BCN→ZRH→CPH Jul 21)", "Sep 5–24, 2019 (Zurich – SWISS JQH8J7 TLV→ZRH Sep 5; El Al ZRH→TLV Sep 24)", "Nov 18–26, 2019 (Zurich – SWISS T5HL5N LX253 TLV→ZRH Nov 18; Air Malta KM491 ZRH→MLA Nov 26)", "Jun 26–~29, 2020 (Zurich – DB BUS42227 PSRLPB München ZOB→Zürich HB Jun 26 09:03–12:45)", "Oct 11–30, 2020 (Zurich – rooftop garden apartment booking.com CHF 177.55; SBB Swiss trains Oct 26; Wiener Linien Airport Lines Oct 30)", "Nov 3–Dec 7, 2020 (Zurich – ÖBB RJX 564 + EC 164 Wien Hbf→Innsbruck→Zürich HB Nov 3 11:30–19:20; Turkish TK ZRH→TLV Dec 7)", "Feb 2023 (SWISS TLV→ZRH)", "Oct 2025 (Eurowings ZRH departure)"],
     note: "SWISS Airlines hub"
   },
   {
     flag: "🇩🇰", name: "Denmark", city: "Copenhagen", region: "europe",
     lat: 55.6761, lng: 12.5683,
-    visits: ["Jul 21, 2018 (UIA PS163 KBP→CPH)", "Jul–Aug 2019 (SWISS ZRH↔CPH)", "Jul 2021 (Lufthansa MUC→CPH, then SWISS LX1267 CPH→ZRH)", "Oct 2025 (Eurowings DUS→CPH)", "Nov 4, 2025 (Digital Tech Summit)"],
+    visits: ["Jul 14–26, 2016 (Copenhagen – Pegasus TLV→SAW→CPH via Vayama 7THDYA; ~12 days; car rental; road trip)", "Jul 21–28, 2018 (Copenhagen – UIA PS780 TLV→KBP Jul 21, PS163 KBP→CPH Jul 21; Borderland 2018 regional burn Jul 24–27)", "Jul 21–31, 2019 (Copenhagen – SWISS LX1278 ZRH→CPH Jul 21 (delayed, with Christina Welter); Borderland 2019 ticket LVEW8; Quality Hotel Høje Taastrup Jul 27; SWISS LX1273 CPH→ZRH + LX256 ZRH→TLV Jul 31)", "Jul 2021 (Lufthansa MUC→CPH, then SWISS LX1267 CPH→ZRH)", "Oct 2025 (Eurowings DUS→CPH)", "Nov 4, 2025 (Digital Tech Summit)"],
     note: "SWISS · Lufthansa · Eurowings · UIA"
   },
   {
     flag: "🇬🇧", name: "United Kingdom", city: "London", region: "europe",
     lat: 51.5074, lng: -0.1278,
-    visits: ["Jun 4–12, 2008 (London + Horsham – friend's wedding Jun 7; with Yana)", "Jul 12–20, 2010 (London – Eurolines from Amsterdam; side trips to Oxford Jul 15 and Horsham Jul 17–18; left Jul 20)", "May 19, 2024 (FlixBus Brussels→London Victoria)", "Jun 2024 (BA RKRRI5, then London→Berlin)", "May 2025 (Gatwick→London Victoria, Trainline)", "Jun 2025 (BA XP4Z6P)"],
+    visits: ["Jun 4–12, 2008 (London + Horsham – friend's wedding Jun 7; with Yana)", "Jul 12–20, 2010 (London – Eurolines from Amsterdam; side trips to Oxford Jul 15 and Horsham Jul 17–18; left Jul 20)", "Nov 9–15, 2017 (London – UIA PS778 TLV→KBP Nov 9, PS111 KBP→LGW Nov 9; Smart Camden Inn Hostel (#1864784248); London Decompression Nov 11–12; BA2762 LGW→AMS Nov 15)", "May 19, 2024 (FlixBus Brussels→London Victoria)", "Jun 2024 (BA RKRRI5, then London→Berlin)", "May 2025 (Gatwick→London Victoria, Trainline)", "Jun 2025 (BA XP4Z6P)"],
     note: "London + Horsham (Jun 2008, Jul 2010) · Oxford (Jul 2010) · Eurolines AMS→LON · British Airways · FlixBus"
   },
   {
     flag: "🇧🇪", name: "Belgium", city: "Brussels", region: "europe",
     lat: 50.8503, lng: 4.3517,
-    visits: ["Dec 2017 (Brussels Airlines RKQ26Q – business)", "Dec 2018 / Jan 2019 (Brussels Airlines L3LKK9 – business)", "Apr 24, 2022 (Thalys Brussels-Midi → Amsterdam)", "May 19, 2024 (FlixBus Brussels-North → London Victoria)"],
+    visits: ["Jul 7, 2010 (Brussels Charleroi – Ryanair NHGUJE FR6054 Venice Treviso (TSF)→CRL 08:35–10:10; with Nogah Senecky; 1 night en route to Amsterdam)", "Jan 11–18, 2018 (Brussels Airlines RKQ26Q SN3294 TLV→BRU Jan 11, SN3291 BRU→TLV Jan 18 – business)", "Jun 8–10, 2018 (Brussels – Brussels Airlines SN3294 TLV→BRU Jun 8, SN3293 BRU→TLV Jun 10 – short business trip)", "Dec 2018 / Jan 2019 (Brussels Airlines L3LKK9 – business)", "Apr 24, 2022 (Thalys Brussels-Midi → Amsterdam)", "May 19, 2024 (FlixBus Brussels-North → London Victoria)"],
     note: "Brussels Airlines · Thalys · FlixBus"
   },
   {
     flag: "🇪🇸", name: "Spain", city: "Barcelona / Madrid", region: "europe",
     lat: 40.4168, lng: -3.7038,
-    visits: ["Jul 14, 2019 (Renfe Tarragona → Barcelona-Sants)", "Jul 2022 (Air Europa TLV→MAD, then Ryanair MAD→Berlin)"],
-    note: "Barcelona Jul 2019 · Madrid Jul 2022"
+    visits: ["Jun 30–Jul 10, 2018 (Barcelona – Eurowings Z95CKF BER→BCN Jun 30; car rental CTRILES39566; Turkish Airlines TFPSTH BCN→TLV Jul 10)", "Jul 6–21, 2019 (Madrid + Barcelona – SWISS RX6QQU TLV→ZRH→MAD Jul 6 (LX2030 delayed); Tarragona area; Renfe Tarragona→Barcelona-Sants Jul 14; BCN→ZRH Jul 21 (Gotogate KXG8DY/L9GZZF))", "Jul 2022 (Air Europa TLV→MAD, then Ryanair MAD→Berlin)"],
+    note: "Barcelona Jun 2018 · Madrid+Barcelona Jul 2019 · Madrid Jul 2022"
   },
   {
     flag: "🇭🇺", name: "Hungary", city: "Budapest", region: "europe",
     lat: 47.4979, lng: 19.0402,
-    visits: ["Jul 2013 (SUN Festival – OnTour package, 585 EUR; Wizzair flight from Budapest)", "Aug 2021 (Ryanair Berlin→Budapest)"],
+    visits: ["Jul 20–29, 2013 (Budapest – Wizz Air W6 2457 BUD→TLV Jul 29 15:45–20:00; SUN Festival; OnTour L9S6WD, 80 EUR Shay's share)", "Aug 2021 (Ryanair Berlin→Budapest)"],
     note: "Budapest · SUN Festival Jul 2013 (OnTour/Wizzair) · Ryanair FR196 Aug 2021"
   },
   {
@@ -709,7 +733,7 @@ const countries = [
   {
     flag: "🇳🇱", name: "Netherlands", city: "Amsterdam", region: "europe",
     lat: 52.3676, lng: 4.9041,
-    visits: ["Oct 2007 (Amsterdam – visited during Europe trip; ~2 days)", "Jul 8–12, 2010 (Amsterdam – 4 days; Utrecht capoeira class with Jorine Jul 9; Eurolines bus AMS→London Jul 12)", "Jul 2023 (Ryanair AMS→Dublin departure)", "Nov 5, 2025 (KLM flight to Amsterdam)"],
+    visits: ["Oct 2007 (Amsterdam – visited during Europe trip; ~2 days)", "Jul 8–12, 2010 (Amsterdam – 4 days; Utrecht capoeira class with Jorine Jul 9; Eurolines bus AMS→London Jul 12)", "Jul 26–Aug 2, 2016 (Amsterdam – SAS SK553 CPH→AMS Jul 26; Budget Hotel Manofa Aug 1–2; with Itai Indig)", "Nov 15–22, 2017 (Amsterdam – BA2762 LGW→AMS Nov 15; EasyJet ET2PQ39 AMS→TLV Nov 22)", "Jul 2023 (Ryanair AMS→Dublin departure)", "Nov 5, 2025 (KLM flight to Amsterdam)"],
     note: "Amsterdam (Oct 2007, Jul 2010) · Utrecht capoeira (Jul 2010) · Eurolines AMS→LON · Ryanair · KLM"
   },
   {
@@ -751,7 +775,7 @@ const countries = [
   {
     flag: "🇮🇹", name: "Italy", city: "Venice", region: "europe",
     lat: 45.4408, lng: 12.3155,
-    visits: ["Oct 2007 (Como – met friends, Oktoberfest-style trip; ~1 week)", "Jul 1–7, 2010 (Venice – eDreams ZQZVTV, TLV→VCE; Ryanair FR6054 VCE-Treviso→Brussels Charleroi NHGUJE on Jul 7)"],
+    visits: ["Oct 2007 (Como – met friends, Oktoberfest-style trip; ~1 week)", "Jul 2–7, 2010 (Venice – Alitalia AZ809 TLV→FCO + AZ1463 FCO→VCE Jul 2 eDreams ZQZVTV; with Nogah & Hadar; departed Ryanair NHGUJE FR6054 TSF→CRL Jul 7)"],
     note: "Como (Oct 2007) · Venice (VCE Jul 2010, with Nogah & Hadar) · eDreams ZQZVTV · Ryanair NHGUJE"
   },
   {
@@ -835,14 +859,14 @@ const countries = [
   {
     flag: "🇨🇦", name: "Canada", city: "Toronto / Barrie", region: "americas",
     lat: 43.6511, lng: -79.3470,
-    visits: ["Sep 6, 2024 (Lake Tahoe area – Pretty Lights concert, pre-Canada leg)", "Sep 2024 (car rental Toronto Airport YYZ)", "Oct 8–9, 2025 (Barrie, Ontario – Airbnb)", "Oct 12, 2025 (Legends of Horror, Toronto – TicketWeb)"],
+    visits: ["Sep 22–Oct 15, 2014 (Toronto → Vancouver – Air Canada AC 105 LJCE5R YYZ→YVR Sep 22 10:00–12:03; Canadian West Coast; returned via Seattle SEA→PHL→TLV Oct 15–16)", "Sep 6, 2024 (Lake Tahoe area – Pretty Lights concert, pre-Canada leg)", "Sep 2024 (car rental Toronto Airport YYZ)", "Oct 8–9, 2025 (Barrie, Ontario – Airbnb)", "Oct 12, 2025 (Legends of Horror, Toronto – TicketWeb)"],
     note: "Toronto YYZ · Barrie, Ontario"
   },
   {
     flag: "🇺🇸", name: "United States", city: "San Francisco / Nevada / New York", region: "americas",
     lat: 37.7749, lng: -122.4194,
-    visits: ["May–Jul 2005 (Seattle; San Diego – Ocean Beach International Hostel; New York City)", "Jan–Apr 2, 2012 (Palo Alto / San Francisco – UpWest Labs accelerator, ~3 months; returned via Toronto Apr 2)",
-      "Aug 2018 (San Francisco – Burning Man 2018, United CFJ6P1)", "Sep 6, 2024 (Pretty Lights – Lake Tahoe Outdoor Arena, Harveys, Stateline NV)", "Aug 15–24, 2025 (San Francisco – Bartlett Hotel)", "Aug 24–Sep 1, 2025 (Burning Man – Black Rock City, NV 89412)", "Sep 2–4, 2025 (Reno, Nevada – Airbnb)", "Sep 13, 2025 (OTT Live – Public Works, SF)", "Sep 22, 2025 (United M7ZB4N)", "May 2026 (Qantas AKL→JFK – upcoming, New York)"],
+    visits: ["May–Jul 2005 (Seattle; San Diego – Ocean Beach International Hostel; New York City)", "Jan–Apr 2, 2012 (Palo Alto / San Francisco – UpWest Labs accelerator, ~3 months; returned via Toronto Apr 2)", "May 12–28, 2013 (San Francisco – United K2KX00: UA91 TLV→EWR May 11, UA216 EWR→SFO May 12; Google I/O 2013 May 15–17; return UA1696+UA90 SFO→EWR→TLV May 28–29)",
+      "Aug 25–Sep 21, 2014 (San Francisco – HI-SF City Center Hostel #39474; Burning Man Black Rock City NV; car rental Advantage NPRL207CAF SFO Sep 7 18:00–Sep 12 16:00; SFMTA Sep 21; returned via SEA→PHL→TLV Oct 15–16)", "Aug 26–Sep 27, 2015 (San Francisco – KLM ZFTVS2 TLV→AMS→SFO; Burning Man 2015; Reno Sep 7; Symbiosis Gathering 2015; return Air France to TLV Sep 27)", "Aug 20–Oct 3, 2016 (San Francisco – arrived Aug 20; Reno Sep 5–7 Eldorado; Symbiosis Gathering 2016 Sep 22–26; departed Oct 3 via SWISS LX256 ZRH→TLV Oct 4)", "Dec 2, 2016 (Las Vegas – United UA943 SFO→LAS; Las Vegas Hostel booking.com #1905590631)", "Aug 14–Sep 10, 2017 (Portland OR + San Francisco + Burning Man 2017 – United JZX095 UA955 TLV→SFO→PDX Aug 14; Black Rock City NV Aug 27–Sep 4; car rental Reno Sep 7; return UA954 SFO→TLV Sep 10)", "Aug 2018 (San Francisco – Burning Man 2018, United CFJ6P1)", "Sep 6, 2024 (Pretty Lights – Lake Tahoe Outdoor Arena, Harveys, Stateline NV)", "Aug 15–24, 2025 (San Francisco – Bartlett Hotel)", "Aug 24–Sep 1, 2025 (Burning Man – Black Rock City, NV 89412)", "Sep 2–4, 2025 (Reno, Nevada – Airbnb)", "Sep 13, 2025 (OTT Live – Public Works, SF)", "Sep 22, 2025 (United M7ZB4N)", "May 2026 (Qantas AKL→JFK – upcoming, New York)"],
     note: "SF · Lake Tahoe · Black Rock City · Reno · New York JFK"
   }
 ];
@@ -888,33 +912,68 @@ const travelLog = [
   { date: "May 9–22, 2010", flag: "🇧🇷", country: "Brazil", city: "Fortaleza · Natal – northeast Brazil (TAM Natal→SP May 22)", future: false },
   { date: "May 25–Jun 5, 2010", flag: "🇪🇨", country: "Ecuador", city: "Guayaquil – Nuca Pacha Hostel + Galapagos Islands (Quasar expedition)", future: false },
   { date: "Jun 6, 2010", flag: "🇪🇨", country: "Ecuador", city: "Quito (UIO) – Iberia IB3752 flight home", future: false },
-  { date: "Jul 1–7, 2010", flag: "🇮🇹", country: "Italy", city: "Venice – eDreams ZQZVTV (TLV→VCE), with Nogah & Hadar", future: false },
+  { date: "Jul 2–7, 2010", flag: "🇮🇹", country: "Italy", city: "Venice – Alitalia AZ809/AZ1463 TLV→FCO→VCE Jul 2 (eDreams ZQZVTV); with Nogah & Hadar", future: false },
+  { date: "Jul 7, 2010", flag: "🇧🇪", country: "Belgium", city: "Brussels Charleroi – Ryanair NHGUJE FR6054 Venice Treviso→CRL 08:35–10:10; 1 night en route Amsterdam", future: false },
   { date: "Jul 8–12, 2010", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam – 4 days; Utrecht capoeira with Jorine Jul 9; Eurolines bus to London Jul 12", future: false },
   { date: "Jul 12–20, 2010", flag: "🇬🇧", country: "United Kingdom", city: "London – Eurolines from Amsterdam; Oxford Jul 15; Horsham (Alex Pagel) Jul 17–18", future: false },
   // — 2012 —
   { date: "Jan–Apr 2, 2012", flag: "🇺🇸", country: "United States", city: "Palo Alto / San Francisco – UpWest Labs accelerator (~3 months); returned via Toronto", future: false },
   { date: "Nov 8–18, 2012", flag: "🇵🇹", country: "Portugal", city: "Lisbon – Brussels Airlines SN3292/SN6401 via BRU; with Metula + Ronen, car rental road trip", future: false },
   // — 2013 —
-  { date: "Jul 2013", flag: "🇭🇺", country: "Hungary", city: "SUN Festival – OnTour package (585 EUR); Wizzair flight from Budapest", future: false },
+  { date: "May 12–28, 2013", flag: "🇺🇸", country: "United States", city: "San Francisco – United K2KX00: UA91 TLV→EWR→SFO May 11–12; Google I/O 2013 (May 15–17, Moscone Center); returned UA1696+UA90 SFO→EWR→TLV May 28–29", future: false },
+  { date: "Jul 20–29, 2013", flag: "🇭🇺", country: "Hungary", city: "Budapest – SUN Festival; Wizz Air W6 2457 BUD→TLV Jul 29 15:45–20:00 (OnTour L9S6WD)", future: false },
+  // — 2014 —
+  { date: "Aug 25–Sep 21, 2014", flag: "🇺🇸", country: "United States", city: "San Francisco – HI-SF City Center Hostel #39474; Burning Man 2014 Black Rock City NV (car rental Advantage NPRL207CAF SFO Sep 7–12); SFMTA Sep 21; returned SEA→PHL→TLV Oct 15–16", future: false },
+  { date: "Sep 22–Oct 15, 2014", flag: "🇨🇦", country: "Canada", city: "Toronto → Vancouver – Air Canada AC 105 LJCE5R YYZ→YVR Sep 22 10:00–12:03; Canadian West Coast; departed Seattle SEA Oct 15", future: false },
+  // — 2015 —
+  { date: "Aug 26–Sep 27, 2015", flag: "🇺🇸", country: "United States", city: "San Francisco – KLM ZFTVS2 TLV→AMS→SFO (delayed KL0605/KL0462); Burning Man 2015 – Black Rock City NV; Reno Sep 7; Symbiosis Gathering 2015 (10yr ReUnion); return Air France to TLV Sep 27", future: false },
+  // — 2016 —
+  { date: "Feb 28–29, 2016", flag: "🇩🇪", country: "Germany", city: "Berlin – 1 night; Plus Berlin hostel (booking.com #479726934)", future: false },
+  { date: "Jul 14–26, 2016", flag: "🇩🇰", country: "Denmark", city: "Copenhagen + road trip – Pegasus TLV→SAW→CPH (Vayama 7THDYA); car rental Copenhagen Jul 14; ~12 days", future: false },
+  { date: "Jul 26–Aug 2, 2016", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam – SAS SK553 CPH→AMS Jul 26 18:10; Budget Hotel Manofa Aug 1–2; Hotel Torenzicht (Itai Indig)", future: false },
+  { date: "Aug 20–Oct 3, 2016", flag: "🇺🇸", country: "United States", city: "San Francisco – arrived Aug 20; Reno Sep 5–7 (Eldorado Hotel & Casino); Symbiosis Gathering 2016 Sep 22–26 (Woodward Reservoir CA); departed Oct 3 via SWISS LX256 ZRH→TLV Oct 4", future: false },
+  { date: "Dec 2, 2016", flag: "🇺🇸", country: "United States", city: "Las Vegas – United UA943 SFO→LAS (confirmation CD1JXV); Las Vegas Hostel booking.com #1905590631", future: false },
   // — 2017 —
-  { date: "Dec 2017", flag: "🇧🇪", country: "Belgium", city: "Brussels – Brussels Airlines RKQ26Q (business)", future: false },
+  { date: "Aug 14–Sep 10, 2017", flag: "🇺🇸", country: "United States", city: "Portland OR + San Francisco + Burning Man 2017 – United JZX095: UA955 TLV→SFO Aug 14, UA1281 SFO→PDX Aug 14; Black Rock City NV Aug 27–Sep 4; car rental Reno Sep 7; return UA954 SFO→TLV Sep 10", future: false },
+  { date: "Nov 9–15, 2017", flag: "🇬🇧", country: "United Kingdom", city: "London – UIA PS778 TLV→KBP Nov 9 + PS111 KBP→LGW Nov 9; Smart Camden Inn Hostel (#1864784248); London Decompression Nov 11–12; BA2762 LGW→AMS Nov 15 15:45", future: false },
+  { date: "Nov 15–22, 2017", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam – BA2762 LGW→AMS Nov 15; EasyJet ET2PQ39 AMS→TLV Nov 22 (booking confirmation Nov 21–22)", future: false },
   // — 2018 —
-  { date: "Jan 2018", flag: "🇧🇪", country: "Belgium", city: "Brussels – Brussels Airlines (business follow-up)", future: false },
-  { date: "Jul 21, 2018", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – arrived via UIA PS163", future: false },
+  { date: "Jan 11–18, 2018", flag: "🇧🇪", country: "Belgium", city: "Brussels – Brussels Airlines RKQ26Q SN3294 TLV→BRU Jan 11, SN3291 BRU→TLV Jan 18 (business trip)", future: false },
+  { date: "Jun 8–10, 2018", flag: "🇧🇪", country: "Belgium", city: "Brussels – Brussels Airlines SN3294 TLV→BRU Jun 8, SN3293 BRU→TLV Jun 10 (short business trip)", future: false },
+  { date: "Jun 18–30, 2018", flag: "🇩🇪", country: "Germany", city: "Berlin – Turkish Airlines TFPSTH TLV→IST→BER Jun 18; Kiez Burn 2018 regional burn (art installer / Wonderer volunteer); Eurowings Z95CKF BER→BCN Jun 30", future: false },
+  { date: "Jun 30–Jul 10, 2018", flag: "🇪🇸", country: "Spain", city: "Barcelona – Eurowings Z95CKF BER→BCN Jun 30; car rental CTRILES39566; Turkish Airlines TFPSTH BCN→TLV Jul 10", future: false },
+  { date: "Jul 21–28, 2018", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – UIA PS780 TLV→KBP Jul 21, PS163 KBP→CPH Jul 21; Borderland 2018 regional burn Jul 24–27", future: false },
   { date: "Aug 2018", flag: "🇺🇸", country: "United States", city: "San Francisco – Burning Man 2018 (United CFJ6P1 TLV→SFO)", future: false },
   { date: "Sep 2018", flag: "🇩🇪", country: "Germany", city: "Berlin – Kiwi.com 7937947", future: false },
   { date: "Dec 2018", flag: "🇧🇪", country: "Belgium", city: "Brussels – Brussels Airlines L3LKK9 (business)", future: false },
   // — 2019 —
-  { date: "Jun 2019", flag: "🇩🇪", country: "Germany", city: "Berlin TXL · Frankfurt – Lufthansa LH185/LH694", future: false },
-  { date: "Jul 14, 2019", flag: "🇪🇸", country: "Spain", city: "Barcelona – Renfe Tarragona → Barcelona-Sants", future: false },
-  { date: "Jul–Aug 2019", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS LX253", future: false },
-  { date: "Aug 2019", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – SWISS LX1278", future: false },
-  { date: "Sep 2019", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS TLV↔ZRH", future: false },
-  { date: "Nov 2019", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS LX253", future: false },
+  { date: "~Mar 1–2, 2019", flag: "🇦🇹", country: "Austria", city: "Vienna – Vienna Burning Ball (outbound ~late Feb; SWISS RPAT5C return LX256 ZRH→TLV Mar 31)", future: false },
+  { date: "~Mar 12–31, 2019", flag: "🇫🇷", country: "France", city: "Chamonix – Rentalcars.com #720198114 Mar 12; Chamonix Chalets Ltd; returned ZRH→TLV Mar 31 via SWISS RPAT5C", future: false },
+  { date: "Apr 24–May 13, 2019", flag: "🇨🇳", country: "China", city: "Shanghai + Dragon Burn – Aeroflot KVPOGS: SU507 TLV→SVO Apr 24, SU208 SVO→PVG; Dragon Burn regional burn late Apr; Airbnb 'The YongKang Hidden Penthouse' Shanghai May 5–7; return SU209+SU504 May 13", future: false },
+  { date: "May 30–Jun 25, 2019", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS KJXDPI TLV→ZRH May 30; Airbnb Salgesch Valais Jun 8–9; side trip Berlin; Lufthansa LH185/LH694 TXL→FRA→TLV Jun 25", future: false },
+  { date: "Jun ~20–25, 2019", flag: "🇩🇪", country: "Germany", city: "Berlin TXL – Lufthansa LH185 TXL→FRA Jun 25, LH694 FRA→TLV Jun 25", future: false },
+  { date: "Jul 6–21, 2019", flag: "🇪🇸", country: "Spain", city: "Madrid + Barcelona – SWISS RX6QQU TLV→ZRH→MAD Jul 6 (LX2030 delayed); Tarragona area; Renfe Tarragona→Barcelona-Sants Jul 14; BCN→ZRH Jul 21 (Gotogate KXG8DY/L9GZZF)", future: false },
+  { date: "Jul 21–31, 2019", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – SWISS LX1278 ZRH→CPH Jul 21 (delayed, with Christina Welter); Borderland 2019 ticket LVEW8; Quality Hotel Høje Taastrup Jul 27; SWISS LX1273 CPH→ZRH + LX256 ZRH→TLV Jul 31", future: false },
+  { date: "Sep 5–24, 2019", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS JQH8J7 TLV→ZRH Sep 5; FlixBus side trip to Vienna Sep 15–16; El Al ZRH→TLV Sep 24", future: false },
+  { date: "Sep 15–16, 2019", flag: "🇦🇹", country: "Austria", city: "Vienna – FlixBus side trip from Zurich (two FlixBus bookings #1055091281 + #1055954892)", future: false },
+  { date: "Oct 22–28, 2019", flag: "🇩🇪", country: "Germany", city: "Berlin – Austrian OS858 TLV→VIE Oct 22, OS239 VIE→TXL Oct 23 (EasyGo 76868429 / RPNRQY + RFKPRU); PREMIUM Hostel #3973544257; Aegean Q9CDX5 TXL→ATH Oct 28", future: false },
+  { date: "Oct 28, 2019", flag: "🇬🇷", country: "Greece", city: "Athens – Aegean Q9CDX5 A3 821 TXL→ATH, A3 924 ATH→TLV (one-day stopover en route from Berlin)", future: false },
+  { date: "Nov 18–26, 2019", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS T5HL5N LX253 TLV→ZRH Nov 18; Air Malta KM491 ZRH→MLA Nov 26", future: false },
+  { date: "Nov 26–Dec 2019", flag: "🇲🇹", country: "Malta", city: "Valletta/Malta – Air Malta LAXKJP KM491 ZRH→MLA Nov 26 17:40–20:00; extended stay", future: false },
   // — 2020 —
-  { date: "Jul 2020", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair VIE", future: false },
-  { date: "Sep 2020", flag: "🇩🇪", country: "Germany", city: "Berlin SXF – Ryanair FR6473", future: false },
-  { date: "Dec 8–22, 2020", flag: "🇸🇨", country: "Seychelles", city: "Mahé – Le Domaine de Bacova villa (extended stay)", future: false },
+  { date: "Jun 21–~26, 2020", flag: "🇩🇪", country: "Germany", city: "Frankfurt + Berlin – Deutsche Bahn ICE 798 MHVD96 Frankfurt(Main)Süd→Berlin Hbf Jun 21 12:20–16:47", future: false },
+  { date: "Jun 26, 2020", flag: "🇨🇭", country: "Switzerland", city: "Zurich – DB BUS42227 PSRLPB München ZOB→Zürich HB 09:03–12:45", future: false },
+  { date: "Jun 26–~29, 2020", flag: "🇨🇭", country: "Switzerland", city: "Zurich", future: false },
+  { date: "Jun 29–Jul 4, 2020", flag: "🇦🇹", country: "Austria", city: "Vienna – departed Ryanair YCBHXN FR7161 VIE→TLV Jul 4 13:00–17:20", future: false },
+  { date: "Sep 9–~21, 2020", flag: "🇩🇪", country: "Germany", city: "Berlin SXF – Ryanair FR6473 DCIQHH TLV→SXF Sep 9; extended stay with BVG transit", future: false },
+  { date: "Sep ~22–28, 2020", flag: "🇦🇹", country: "Austria", city: "Vienna – transit from Berlin; departed ÖBB Wien Hbf→München Sep 28 15:42", future: false },
+  { date: "Sep 28, 2020", flag: "🇩🇪", country: "Germany", city: "Munich – ÖBB D720 Wien→München 15:42–21:36 (booking 0130835302982930); HI Munich Park Youth Hostel", future: false },
+  { date: "Sep 29–Oct ~6, 2020", flag: "🇩🇪", country: "Germany", city: "Markdorf/Bodensee – Airbnb 'Mitten in Markdorf' (Baden-Württemberg near Lake Constance)", future: false },
+  { date: "Oct 11–~30, 2020", flag: "🇨🇭", country: "Switzerland", city: "Zurich – rooftop garden apartment (booking.com CHF 177.55); SBB Swiss trains Oct 26", future: false },
+  { date: "Oct 30–Nov 3, 2020", flag: "🇦🇹", country: "Austria", city: "Vienna – Wiener Linien Airport Lines return ticket Oct 30; Strozzigasse", future: false },
+  { date: "Nov 3–Dec 7, 2020", flag: "🇨🇭", country: "Switzerland", city: "Zurich – ÖBB RJX 564 Wien→Innsbruck + EC 164 Innsbruck→Zürich HB Nov 3 11:30–19:20; Turkish TK ZRH→TLV Dec 7", future: false },
+  { date: "Dec 7–8, 2020", flag: "🇸🇨", country: "Seychelles", city: "Mahé – departed TLV Dec 7 eve (StudentUniverse, Israel exit report 07/12/2020 20:52)", future: false },
+  { date: "Dec 8–22, 2020", flag: "🇸🇨", country: "Seychelles", city: "Mahé – Le Domaine de Bacova villa S-201208-Erov-nic-572821 (extended stay; Israel entry report Dec 22)", future: false },
   // — 2021 —
   { date: "Jul 2021", flag: "🇩🇪", country: "Germany", city: "Munich – Lufthansa TLV→MUC", future: false },
   { date: "Jul 2021", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – Lufthansa MUC→CPH", future: false },
@@ -1312,26 +1371,58 @@ const stays = [
   { from:"2010-05-04", to:"2010-05-09", flag:"🇧🇷", country:"Brazil", city:"Manaus – Amazon region" },
   { from:"2010-05-09", to:"2010-05-24", flag:"🇧🇷", country:"Brazil", city:"Fortaleza / Natal – northeast Brazil" },
   { from:"2010-05-25", to:"2010-06-06", flag:"🇪🇨", country:"Ecuador", city:"Guayaquil & Galapagos Islands" },
-  { from:"2010-07-01", to:"2010-07-07", flag:"🇮🇹", country:"Italy", city:"Venice" },
+  { from:"2010-07-02", to:"2010-07-07", flag:"🇮🇹", country:"Italy", city:"Venice" },
+  { from:"2010-07-07", to:"2010-07-08", flag:"🇧🇪", country:"Belgium", city:"Brussels Charleroi – Ryanair FR6054 from Venice" },
   { from:"2010-07-08", to:"2010-07-12", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam + Utrecht" },
   { from:"2010-07-12", to:"2010-07-20", flag:"🇬🇧", country:"United Kingdom", city:"London + Oxford + Horsham" },
   { from:"2012-01-15", to:"2012-04-02", flag:"🇺🇸", country:"United States", city:"Palo Alto / San Francisco – UpWest Labs" },
   { from:"2012-11-08", to:"2012-11-18", flag:"🇵🇹", country:"Portugal", city:"Lisbon + road trip" },
-  { from:"2013-07-20", to:"2013-07-27", flag:"🇭🇺", country:"Hungary", city:"SUN Festival + Budapest" },
-  { from:"2017-12-01", to:"2017-12-06", flag:"🇧🇪", country:"Belgium", city:"Brussels" },
-  { from:"2018-01-11", to:"2018-01-16", flag:"🇧🇪", country:"Belgium", city:"Brussels" },
-  { from:"2018-07-21", to:"2018-07-28", flag:"🇩🇰", country:"Denmark", city:"Copenhagen" },
+  { from:"2013-05-12", to:"2013-05-28", flag:"🇺🇸", country:"United States", city:"San Francisco – Google I/O 2013" },
+  { from:"2013-07-20", to:"2013-07-29", flag:”🇭🇺”, country:"Hungary", city:"SUN Festival + Budapest" },
+  { from:"2014-08-25", to:"2014-09-21", flag:"🇺🇸", country:"United States", city:"Burning Man 2014 / San Francisco" },
+  { from:"2014-09-22", to:"2014-10-15", flag:"🇨🇦", country:"Canada", city:"Toronto / Vancouver" },
+  { from:"2014-10-15", to:"2014-10-16", flag:"🇺🇸", country:"United States", city:"Seattle – departure" },
+  { from:"2015-08-26", to:"2015-09-27", flag:"🇺🇸", country:"United States", city:"Burning Man 2015 / San Francisco / Reno / Symbiosis" },
+  { from:"2016-02-28", to:"2016-02-29", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2016-07-14", to:"2016-07-26", flag:"🇩🇰", country:"Denmark", city:"Copenhagen + road trip" },
+  { from:"2016-07-26", to:"2016-08-02", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam" },
+  { from:"2016-08-20", to:"2016-10-03", flag:"🇺🇸", country:"United States", city:"San Francisco / Reno / Symbiosis 2016" },
+  { from:"2016-12-02", to:"2016-12-07", flag:"🇺🇸", country:"United States", city:"Las Vegas" },
+  { from:"2017-08-14", to:"2017-09-10", flag:"🇺🇸", country:"United States", city:"Portland OR / San Francisco / Burning Man 2017" },
+  { from:"2017-11-09", to:"2017-11-15", flag:"🇬🇧", country:"United Kingdom", city:"London – London Decompression" },
+  { from:"2017-11-15", to:"2017-11-22", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam" },
+  { from:"2018-01-11", to:"2018-01-18", flag:"🇧🇪", country:"Belgium", city:"Brussels – business (Brussels Airlines RKQ26Q)" },
+  { from:"2018-06-08", to:"2018-06-10", flag:"🇧🇪", country:"Belgium", city:"Brussels – business (Brussels Airlines SN3294/SN3293)" },
+  { from:"2018-06-18", to:"2018-06-30", flag:"🇩🇪", country:"Germany", city:"Berlin – Kiez Burn 2018" },
+  { from:"2018-06-30", to:"2018-07-10", flag:"🇪🇸", country:"Spain", city:"Barcelona" },
+  { from:"2018-07-21", to:"2018-07-28", flag:"🇩🇰", country:"Denmark", city:"Copenhagen – Borderland 2018" },
   { from:"2018-08-22", to:"2018-09-04", flag:"🇺🇸", country:"United States", city:"San Francisco / Burning Man" },
   { from:"2018-09-05", to:"2018-09-10", flag:"🇩🇪", country:"Germany", city:"Berlin" },
   { from:"2018-12-31", to:"2019-01-04", flag:"🇧🇪", country:"Belgium", city:"Brussels" },
-  { from:"2019-06-01", to:"2019-06-10", flag:"🇩🇪", country:"Germany", city:"Berlin" },
-  { from:"2019-07-14", to:"2019-07-18", flag:"🇪🇸", country:"Spain", city:"Barcelona" },
-  { from:"2019-07-18", to:"2019-08-10", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
-  { from:"2019-08-10", to:"2019-08-20", flag:"🇩🇰", country:"Denmark", city:"Copenhagen" },
-  { from:"2019-09-01", to:"2019-09-10", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
-  { from:"2019-11-05", to:"2019-11-12", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
-  { from:"2020-07-10", to:"2020-07-20", flag:"🇦🇹", country:"Austria", city:"Vienna" },
-  { from:"2020-09-01", to:"2020-09-10", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2019-03-01", to:"2019-03-05", flag:"🇦🇹", country:"Austria", city:"Vienna – Vienna Burning Ball" },
+  { from:"2019-03-05", to:"2019-03-12", flag:"🇨🇭", country:"Switzerland", city:"Zurich area" },
+  { from:"2019-03-12", to:"2019-03-31", flag:"🇫🇷", country:"France", city:"Chamonix – Rentalcars + Chamonix Chalets" },
+  { from:"2019-04-24", to:"2019-05-13", flag:"🇨🇳", country:"China", city:"Dragon Burn + Shanghai" },
+  { from:"2019-05-30", to:"2019-06-20", flag:"🇨🇭", country:"Switzerland", city:"Zurich / Valais (Salgesch)" },
+  { from:"2019-06-20", to:"2019-06-25", flag:"🇩🇪", country:"Germany", city:"Berlin TXL" },
+  { from:"2019-07-06", to:"2019-07-21", flag:"🇪🇸", country:"Spain", city:"Madrid + Barcelona + Tarragona" },
+  { from:"2019-07-21", to:"2019-07-31", flag:"🇩🇰", country:"Denmark", city:"Copenhagen – Borderland 2019" },
+  { from:"2019-09-05", to:"2019-09-24", flag:"🇨🇭", country:"Switzerland", city:"Zurich (incl. Vienna side trip Sep 15–16)" },
+  { from:"2019-09-15", to:"2019-09-16", flag:"🇦🇹", country:"Austria", city:"Vienna – FlixBus day trip" },
+  { from:"2019-10-22", to:"2019-10-28", flag:"🇩🇪", country:"Germany", city:"Berlin – PREMIUM Hostel" },
+  { from:"2019-10-28", to:"2019-10-28", flag:"🇬🇷", country:"Greece", city:"Athens – transit" },
+  { from:"2019-11-18", to:"2019-11-26", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
+  { from:"2019-11-26", to:"2019-12-15", flag:"🇲🇹", country:"Malta", city:"Malta – Air Malta KM491" },
+  { from:"2020-06-21", to:"2020-06-26", flag:"🇩🇪", country:"Germany", city:"Berlin (+ Frankfurt transit)" },
+  { from:"2020-06-26", to:"2020-06-29", flag:"🇨🇭", country:"Switzerland", city:"Zurich" },
+  { from:"2020-06-29", to:"2020-07-04", flag:"🇦🇹", country:"Austria", city:"Vienna – Ryanair VIE→TLV Jul 4" },
+  { from:"2020-09-09", to:"2020-09-22", flag:"🇩🇪", country:"Germany", city:"Berlin SXF – Ryanair FR6473" },
+  { from:"2020-09-22", to:"2020-09-28", flag:"🇦🇹", country:"Austria", city:"Vienna – transit from Berlin" },
+  { from:"2020-09-28", to:"2020-09-29", flag:"🇩🇪", country:"Germany", city:"Munich – HI Youth Hostel" },
+  { from:"2020-09-29", to:"2020-10-06", flag:"🇩🇪", country:"Germany", city:"Markdorf/Bodensee – Airbnb 'Mitten in Markdorf'" },
+  { from:"2020-10-11", to:"2020-10-30", flag:"🇨🇭", country:"Switzerland", city:"Zurich – rooftop garden apartment" },
+  { from:"2020-10-30", to:"2020-11-03", flag:"🇦🇹", country:"Austria", city:"Vienna – Wiener Linien Airport Lines" },
+  { from:"2020-11-03", to:"2020-12-07", flag:"🇨🇭", country:"Switzerland", city:"Zurich – ÖBB from Vienna" },
   { from:"2020-12-08", to:"2020-12-22", flag:"🇸🇨", country:"Seychelles", city:"Mahé – Le Domaine de Bacova" },
   { from:"2021-07-01", to:"2021-07-20", flag:"🇩🇪", country:"Germany", city:"Munich" },
   { from:"2021-07-20", to:"2021-07-27", flag:"🇩🇰", country:"Denmark", city:"Copenhagen" },
@@ -1490,11 +1581,4 @@ initCalendar();
 function filterCards(region, btn) {
   document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
-  document.querySelectorAll('.country-card').forEach(function(card) {
-    card.style.display = (region === 'all' || card.dataset.region === region) ? '' : 'none';
-  });
-}
-</script>
-
-</body>
-</html>
+  document.querySel
