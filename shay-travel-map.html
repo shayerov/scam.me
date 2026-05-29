@@ -901,4 +901,10 @@ initCalendar();
 function filterCards(region, btn) {
   document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
-  document.querySel
+  document.querySelectorAll('.country-card').forEach(function(card) {
+    card.style.display = (region === 'all' || card.dataset.region === region) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

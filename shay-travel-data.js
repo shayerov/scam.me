@@ -580,7 +580,7 @@ const stays = [
   { from:"2012-01-15", to:"2012-04-02", flag:"🇺🇸", country:"United States", city:"Palo Alto / San Francisco – UpWest Labs" },
   { from:"2012-11-08", to:"2012-11-18", flag:"🇵🇹", country:"Portugal", city:"Lisbon + road trip" },
   { from:"2013-05-12", to:"2013-05-28", flag:"🇺🇸", country:"United States", city:"San Francisco – Google I/O 2013" },
-  { from:"2013-07-20", to:"2013-07-29", flag:”🇭🇺”, country:"Hungary", city:"SUN Festival + Budapest" },
+  { from:"2013-07-20", to:"2013-07-29", flag:"🇭🇺", country:"Hungary", city:"SUN Festival + Budapest" },
   { from:"2014-07-15", to:"2014-07-29", flag:"🇭🇺", country:"Hungary", city:"Budapest – with Golan (Corvin Plaza)" },
   { from:"2014-07-29", to:"2014-08-17", flag:"🇵🇹", country:"Portugal", city:"Lisbon + Boom Festival 2014 (Idanha-a-Nova)" },
   { from:"2014-08-25", to:"2014-09-21", flag:"🇺🇸", country:"United States", city:"Burning Man 2014 / San Francisco" },
