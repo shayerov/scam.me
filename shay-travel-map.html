@@ -78,7 +78,7 @@
       background: #0f1117;
     }
 
-    .leaflet-tile-pane { filter: invert(92%) hue-rotate(180deg) brightness(0.9) contrast(0.95); }
+    .leaflet-tile-pane { filter: none; }
 
     .countries-section {
       padding: 32px;
@@ -643,9 +643,10 @@ const map = L.map('map', {
   scrollWheelZoom: true
 });
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors',
-  maxZoom: 18
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
 }).addTo(map);
 
 // Custom icon factory
