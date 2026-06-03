@@ -231,8 +231,14 @@ const countries = [
   {
     flag: "🇨🇦", name: "Canada", city: "Toronto / Barrie", region: "americas",
     lat: 43.6511, lng: -79.3470,
-    visits: ["Sep 22–Oct 15, 2014 (Toronto → Vancouver – Air Canada AC 105 LJCE5R YYZ→YVR Sep 22 10:00–12:03; Canadian West Coast; returned via Seattle SEA→PHL→TLV Oct 15–16)", "Sep 6, 2024 (Lake Tahoe area – Pretty Lights concert, pre-Canada leg)", "Sep 2024 (car rental Toronto Airport YYZ)", "Sep 16–Oct 13, 2025 (Toronto Sep 16–23 – United BX9W53 SFO→YYZ Sep 16; Vancouver Sep 23–Oct 13 – WestJet OYHCDR YYZ→YVR Sep 23; Nomad Cruise 13 sails Sep 29; Barrie Oct 8–9; Legends of Horror Oct 12)", "May 6–Jun 8, 2026 (Toronto – Qantas FGYGAI QF3 AKL→JFK→YYZ May 6; Air Transat M7HXL4 TS122 YYZ→LGW Jun 8)"],
+    visits: ["Mar 28–29, 2018 (Toronto – Air Canada AC85 TLV→YYZ Mar 28; AC1810 YYZ→CUN Mar 29)", "Apr 13, 2018 (Toronto transit – AC84 YYZ→TLV Apr 13 16:40)", "Sep 22–Oct 15, 2014 (Toronto → Vancouver – Air Canada AC 105 LJCE5R YYZ→YVR Sep 22 10:00–12:03; Canadian West Coast; returned via Seattle SEA→PHL→TLV Oct 15–16)", "Sep 6, 2024 (Lake Tahoe area – Pretty Lights concert, pre-Canada leg)", "Sep 2024 (car rental Toronto Airport YYZ)", "Sep 16–Oct 13, 2025 (Toronto Sep 16–23 – United BX9W53 SFO→YYZ Sep 16; Vancouver Sep 23–Oct 13 – WestJet OYHCDR YYZ→YVR Sep 23; Nomad Cruise 13 sails Sep 29; Barrie Oct 8–9; Legends of Horror Oct 12)", "May 6–Jun 8, 2026 (Toronto – Qantas FGYGAI QF3 AKL→JFK→YYZ May 6; Air Transat M7HXL4 TS122 YYZ→LGW Jun 8)"],
     note: "Toronto YYZ · Barrie, Ontario"
+  },
+  {
+    flag: "🇲🇽", name: "Mexico", city: "Cancun", region: "americas",
+    lat: 21.1619, lng: -86.8515,
+    visits: ["Mar 29–Apr 12, 2018 (Cancun – Air Canada AC1810 YYZ→CUN Mar 29; AC1813 rouge CUN→YYZ Apr 12)"],
+    note: "Air Canada · Cancun International Airport (CUN)"
   },
   {
     flag: "🇺🇸", name: "United States", city: "San Francisco / Nevada / New York", region: "americas",
@@ -621,6 +627,9 @@ const stays = [
   { from:"2017-11-09", to:"2017-11-15", flag:"🇬🇧", country:"United Kingdom", city:"London – London Decompression" },
   { from:"2017-11-15", to:"2017-11-22", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam – Dutch Decompression 2017; BA 2762 LHR→AMS Nov 15 15:45→18:05" },
   { from:"2018-01-11", to:"2018-01-18", flag:"🇧🇪", country:"Belgium", city:"Brussels – business (Brussels Airlines RKQ26Q)" },
+  { from:"2018-03-28", to:"2018-03-29", flag:"🇨🇦", country:"Canada", city:"Toronto – Air Canada AC85 TLV→YYZ Mar 28 11:45→16:25; AC1810 YYZ→CUN Mar 29" },
+  { from:"2018-03-29", to:"2018-04-13", flag:"🇲🇽", country:"Mexico", city:"Cancun – Air Canada AC1810 YYZ→CUN Mar 29; AC1813 (rouge) CUN→YYZ Apr 12 20:35" },
+  { from:"2018-04-13", to:"2018-04-13", flag:"🇨🇦", country:"Canada", city:"Toronto – transit; Air Canada AC84 YYZ→TLV Apr 13 16:40→Apr 14 10:00" },
   { from:"2018-06-08", to:"2018-06-10", flag:"🇧🇪", country:"Belgium", city:"Brussels – business (Brussels Airlines SN3294/SN3293)" },
   { from:"2018-06-18", to:"2018-06-30", flag:"🇩🇪", country:"Germany", city:"Berlin – Kiez Burn 2018" },
   { from:"2018-06-30", to:"2018-07-10", flag:"🇪🇸", country:"Spain", city:"Barcelona – Eurowings Z95CKF EW8526 BER→BCN Jun 30" },
