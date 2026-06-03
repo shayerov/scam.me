@@ -20,7 +20,7 @@ const countries = [
   {
     flag: "🇦🇹", name: "Austria", city: "Vienna", region: "europe",
     lat: 48.2082, lng: 16.3738,
-    visits: ["Sep 18–24, 2018 (Vienna – Kiwi.com 7937947 easyJet U24733 BER SXF→VIE Sep 18 18:55; Wizzair W62811 VIE→TLV Sep 24 06:05→10:30; with Nadja Schreiber)", "~Mar 1–2, 2019 (Vienna – Vienna Burning Ball)", "Sep 15–16, 2019 (Vienna – FlixBus side trip from Zurich)", "Jun 29–Jul 4, 2020 (Vienna – arrived by FlixBus ~Jun 29; departed Ryanair YCBHXN FR7161 VIE→TLV Jul 4 13:00–17:20)", "Sep ~22–28, 2020 (Vienna – transit from Berlin; departed ÖBB D720 Wien Hbf→München Sep 28)", "Oct 30–Nov 3, 2020 (Vienna – arrived Wiener Linien Airport Lines return ticket Oct 30; departed ÖBB RJX 564 Wien→Innsbruck→Zürich Nov 3 11:30)", "Aug 31–Sep 26, 2021 (Vienna – Omio Budapest→Vienna Aug 31; DB Bahn UUKX7C Sep 14 Berlin trip; Aegean RGUWTJ A3863+A3928 VIE→TLV Sep 26 via Athens)", "Jan 15–26, 2022 (Ryanair CEMR3X FR7161 VIE→TLV Jan 26, delayed 2h+)", "Feb 7–27, 2022 (Ryanair ACU1QQ TLV→VIE Feb 7; VIE→TLV Feb 27)", "Aug 5–23, 2022 (Austrian RSYGVF GOT→VIE Aug 5 19:55)", "Sep 7, 2022–Jan 5, 2023 (Austrian 2ICQOE SFO→FRA→VIE Sep 7; El Al WMCDYI LY362 VIE→TLV Jan 5 2023)", "Feb 23–Mar 5, 2023 (Vienna – ÖBB ZRH→VIE Feb 23; Austrian OS857 VIE→TLV Mar 5)", "Sep 21–29, 2023 (Vienna – FlixBus BER→VIE Sep 21; El Al MW5YK7 VIE→TLV Sep 29)", "Oct 28–Nov 1, 2023 (Vienna – Austrian PQXTNC TGD→VIE Oct 28; Wizzair NE4VTV VIE→LCA Nov 1)", "Aug 2024", "Aug 2025 (departure VIE→SFO)", "Oct 14–23, 2025 (Airbnb, 9 nights)"],
+    visits: ["Sep 18–24, 2018 (Vienna – Kiwi.com 7937947 easyJet U24733 BER SXF→VIE Sep 18 18:55; Wizzair W62811 VIE→TLV Sep 24 06:05→10:30; with Nadja Schreiber)", "~Mar 1–2, 2019 (Vienna – Vienna Burning Ball)", "Sep 15–16, 2019 (Vienna – FlixBus side trip from Zurich)", "Jun 29–Jul 4, 2020 (Vienna – arrived by FlixBus ~Jun 29; departed Ryanair YCBHXN FR7161 VIE→TLV Jul 4 13:00–17:20)", "Sep ~22–28, 2020 (Vienna – transit from Berlin; departed ÖBB D720 Wien Hbf→München Sep 28)", "Oct 30–Nov 3, 2020 (Vienna – arrived Wiener Linien Airport Lines return ticket Oct 30; departed ÖBB RJX 564 Wien→Innsbruck→Zürich Nov 3 11:30)", "Aug 31–Sep 26, 2021 (Vienna – Omio Budapest→Vienna Aug 31; DB Bahn UUKX7C Sep 14 Berlin trip; Aegean RGUWTJ A3863+A3928 VIE→TLV Sep 26 via Athens)", "Jan 15–26, 2022 (Ryanair CEMR3X FR7161 VIE→TLV Jan 26, delayed 2h+)", "Feb 7–27, 2022 (Ryanair ACU1QQ TLV→VIE Feb 7; VIE→TLV Feb 27)", "Aug 5–23, 2022 (Austrian RSYGVF GOT→VIE Aug 5 19:55)", "Sep 7, 2022–Jan 5, 2023 (Austrian 2ICQOE SFO→FRA→VIE Sep 7; El Al WMCDYI LY362 VIE→TLV Jan 5 2023)", "Feb 23–Mar 5, 2023 (Vienna – ÖBB ZRH→VIE Feb 23; Austrian OS857 VIE→TLV Mar 5)", "Sep 21–29, 2023 (Vienna – FlixBus BER→VIE Sep 21; El Al MW5YK7 VIE→TLV Sep 29)", "Oct 28–Nov 1, 2023 (Vienna – Austrian PQXTNC TGD→VIE Oct 28; Wizzair NE4VTV VIE→LCA Nov 1)", "Aug 2024", "Jul 27–Aug 15, 2025 (Vienna – drove from Stockholm Jul 27; Thrive F-535358 OS207 VIE→FRA + UA59 FRA→SFO Aug 15)", "Oct 14–23, 2025 (Airbnb, 9 nights)", "Aug 5–9, 2026 (Schönburn 2026, Böllerbauer – ticket 79AT9)"],
     note: "Frequent Ryanair TLV ↔ VIE hub"
   },
   {
@@ -236,7 +236,7 @@ const countries = [
   {
     flag: "🇨🇦", name: "Canada", city: "Toronto / Barrie", region: "americas",
     lat: 43.6511, lng: -79.3470,
-    visits: ["Sep 22–Oct 15, 2014 (Toronto → Vancouver – Air Canada AC 105 LJCE5R YYZ→YVR Sep 22 10:00–12:03; Canadian West Coast; returned via Seattle SEA→PHL→TLV Oct 15–16)", "Sep 6, 2024 (Lake Tahoe area – Pretty Lights concert, pre-Canada leg)", "Sep 2024 (car rental Toronto Airport YYZ)", "Oct 8–9, 2025 (Barrie, Ontario – Airbnb)", "Oct 12, 2025 (Legends of Horror, Toronto – TicketWeb)"],
+    visits: ["Sep 22–Oct 15, 2014 (Toronto → Vancouver – Air Canada AC 105 LJCE5R YYZ→YVR Sep 22 10:00–12:03; Canadian West Coast; returned via Seattle SEA→PHL→TLV Oct 15–16)", "Sep 6, 2024 (Lake Tahoe area – Pretty Lights concert, pre-Canada leg)", "Sep 2024 (car rental Toronto Airport YYZ)", "Oct 1–13, 2025 (Toronto – arrived United M7ZB4N UA2097+UA5293 SFO→ORD→YYZ Oct 1; Barrie Oct 8–9; Legends of Horror Oct 12)", "May 6–Jun 8, 2026 (Toronto – Qantas FGYGAI QF3 AKL→JFK→YYZ May 6; Air Transat M7HXL4 TS122 YYZ→LGW Jun 8)"],
     note: "Toronto YYZ · Barrie, Ontario"
   },
   {
@@ -416,12 +416,14 @@ const travelLog = [
   { date: "Jun 20, 2025", flag: "🇬🇧", country: "United Kingdom", city: "London – British Airways XP4Z6P", future: false },
   { date: "Jun 20–Jul 6, 2025", flag: "🇧🇬", country: "Bulgaria", city: "Bansko – Airbnb, 16 nights", future: false },
   { date: "Jul 7, 2025", flag: "🇩🇪", country: "Germany", city: "Berlin – Ryanair FR1149 from Sofia", future: false },
-  { date: "Jul 15, 2025", flag: "🇸🇪", country: "Sweden", city: "Stockholm – SAS ZCM7U3", future: false },
+  { date: "Jul 16, 2025", flag: "🇸🇪", country: "Sweden", city: "Stockholm – SAS ZCM7U3", future: false },
+  { date: "Jul 27, 2025", flag: "🇦🇹", country: "Austria", city: "Vienna – drove from Stockholm; Thrive F-535358 VIE→FRA→SFO Aug 15", future: false },
   { date: "Aug 15–24, 2025", flag: "🇺🇸", country: "United States", city: "San Francisco – Bartlett Hotel", future: false },
   { date: "Aug 24–Sep 1, 2025", flag: "🇺🇸", country: "United States", city: "Black Rock City NV – Burning Man 2025", future: false },
   { date: "Sep 2–4, 2025", flag: "🇺🇸", country: "United States", city: "Reno, Nevada – Airbnb", future: false },
   { date: "Sep 13, 2025", flag: "🇺🇸", country: "United States", city: "San Francisco – OTT Live at Public Works", future: false },
-  { date: "Sep 22, 2025", flag: "🇺🇸", country: "United States", city: "United M7ZB4N", future: false },
+  { date: "Sep 30, 2025", flag: "🇺🇸", country: "United States", city: "United M7ZB4N UA2097 SFO→ORD→YYZ Toronto", future: false },
+  { date: "Oct 1, 2025", flag: "🇨🇦", country: "Canada", city: "Toronto – United M7ZB4N UA2097+UA5293 SFO→ORD→YYZ", future: false },
   { date: "Oct 8–9, 2025", flag: "🇨🇦", country: "Canada", city: "Barrie, Ontario – Airbnb", future: false },
   { date: "Oct 12, 2025", flag: "🇨🇦", country: "Canada", city: "Toronto – Legends of Horror (TicketWeb)", future: false },
   { date: "Oct 14–23, 2025", flag: "🇦🇹", country: "Austria", city: "Vienna – Airbnb, 9 nights", future: false },
@@ -430,13 +432,12 @@ const travelLog = [
   { date: "Oct 29, 2025", flag: "🇩🇪", country: "Germany", city: "Düsseldorf – Eurowings", future: false },
   { date: "Oct 29, 2025", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – Eurowings", future: false },
   { date: "Nov 4, 2025", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – Digital Tech Summit 2025", future: false },
-  { date: "Nov 5, 2025", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam – KLM flight check-in", future: false },
-  { date: "Nov 2025", flag: "🇳🇿", country: "New Zealand", city: "Back in NZ via Qatar Airways", future: false },
+  { date: "Nov 6, 2025", flag: "🇳🇱", country: "Netherlands", city: "Amsterdam – KLM flight check-in", future: false },
+  { date: "Nov 14–16, 2025", flag: "🇳🇿", country: "New Zealand", city: "Auckland – Qatar 9NPLNP AMS→DOH→AKL, departs Nov 14 21:50, arrives Nov 16", future: false },
   // — 2026 (upcoming) —
   { date: "Jan–Apr 2026", flag: "🇳🇿", country: "New Zealand", city: "Nelson Lakes · Kahurangi · Parklands Marina", future: false },
-  { date: "May 6, 2026", flag: "🇺🇸", country: "United States", city: "New York JFK – Qantas AKL→JFK", future: true },
-  { date: "May 2026", flag: "🇦🇹", country: "Austria", city: "Schönburn 2026 – Austrian Burn", future: true },
-  { date: "May 2026", flag: "🇳🇱", country: "Netherlands", city: "What The Farm VIII (WTF VIII)", future: true },
+  { date: "May 6, 2026", flag: "🇨🇦", country: "Canada", city: "Toronto – Qantas FGYGAI QF3 AKL→JFK→YYZ", future: false },
+  { date: "Aug 5–9, 2026", flag: "🇦🇹", country: "Austria", city: "Schönburn 2026 – Austrian Burn (ticket 79AT9)", future: true },
   { date: "Aug 30–Sep 7, 2026", flag: "🇺🇸", country: "United States", city: "Black Rock City NV – Burning Man 2026", future: true },
 ];
 
@@ -710,19 +711,19 @@ const stays = [
   { from:"2025-05-13", to:"2025-05-20", flag:"🇬🇧", country:"United Kingdom", city:"London" },
   { from:"2025-06-06", to:"2025-06-06", flag:"🇬🇧", country:"United Kingdom", city:"London – Loom Club" },
   { from:"2025-06-20", to:"2025-07-06", flag:"🇧🇬", country:"Bulgaria", city:"Bansko" },
-  { from:"2025-07-07", to:"2025-07-14", flag:"🇩🇪", country:"Germany", city:"Berlin" },
-  { from:"2025-07-15", to:"2025-08-14", flag:"🇸🇪", country:"Sweden", city:"Stockholm" },
-  { from:"2025-08-15", to:"2025-09-22", flag:"🇺🇸", country:"United States", city:"San Francisco / Burning Man / Reno" },
-  { from:"2025-10-08", to:"2025-10-13", flag:"🇨🇦", country:"Canada", city:"Barrie / Toronto" },
+  { from:"2025-07-07", to:"2025-07-16", flag:"🇩🇪", country:"Germany", city:"Berlin" },
+  { from:"2025-07-16", to:"2025-07-27", flag:"🇸🇪", country:"Sweden", city:"Stockholm" },
+  { from:"2025-07-27", to:"2025-08-15", flag:"🇦🇹", country:"Austria", city:"Vienna" },
+  { from:"2025-08-15", to:"2025-09-30", flag:"🇺🇸", country:"United States", city:"San Francisco / Burning Man / Reno" },
+  { from:"2025-10-01", to:"2025-10-13", flag:"🇨🇦", country:"Canada", city:"Toronto / Barrie" },
   { from:"2025-10-14", to:"2025-10-23", flag:"🇦🇹", country:"Austria", city:"Vienna" },
   { from:"2025-10-26", to:"2025-10-27", flag:"🇳🇱", country:"Netherlands", city:"Dutch Decompression" },
   { from:"2025-10-29", to:"2025-11-04", flag:"🇩🇰", country:"Denmark", city:"Copenhagen" },
-  { from:"2025-11-05", to:"2025-11-06", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam" },
-  { from:"2025-11-06", to:"2025-12-31", flag:"🇳🇿", country:"New Zealand", city:"New Zealand" },
+  { from:"2025-11-06", to:"2025-11-14", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam" },
+  { from:"2025-11-16", to:"2025-12-31", flag:"🇳🇿", country:"New Zealand", city:"New Zealand" },
   { from:"2026-01-01", to:"2026-05-05", flag:"🇳🇿", country:"New Zealand", city:"Nelson Lakes · Kahurangi" },
-  { from:"2026-05-06", to:"2026-05-19", flag:"🇺🇸", country:"United States", city:"New York" },
-  { from:"2026-05-20", to:"2026-05-27", flag:"🇦🇹", country:"Austria", city:"Schönburn 2026" },
-  { from:"2026-05-28", to:"2026-06-05", flag:"🇳🇱", country:"Netherlands", city:"What The Farm VIII" },
+  { from:"2026-05-06", to:"2026-06-08", flag:"🇨🇦", country:"Canada", city:"Toronto" },
+  { from:"2026-08-05", to:"2026-08-09", flag:"🇦🇹", country:"Austria", city:"Schönburn 2026" },
   { from:"2026-08-30", to:"2026-09-07", flag:"🇺🇸", country:"United States", city:"Black Rock City – Burning Man 2026" },
 ];
 
