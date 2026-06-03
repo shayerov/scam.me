@@ -133,10 +133,16 @@ const countries = [
     note: "Le Domaine de Bacova · Mahé · Diving with Blue Safari"
   },
   {
-    flag: "🇿🇦", name: "South Africa", city: "Cape Town / Tankwa Karoo", region: "africa",
-    lat: -33.9249, lng: 18.4241,
-    visits: ["Jan 19–Feb 5, 2023 (Johannesburg – El Al SW38NB LY51 TLV→JNB Jan 19 10:00→18:40; LY52 JNB→TLV Feb 5 11:30→20:15)"],
-    note: "Johannesburg · OR Tambo International (JNB) · El Al LY51/LY52"
+    flag: "🇿🇦", name: "South Africa", city: "Johannesburg · Hoedspruit (Kruger area)", region: "africa",
+    lat: -26.2041, lng: 28.0473,
+    visits: ["Jan 19–Feb 5, 2023 (Johannesburg Jan 19–20 – El Al SW38NB LY51 TLV→JNB Jan 19; Hoedspruit / Kruger area Jan 20–Feb 4 – drove from JNB; Johannesburg Feb 4–5 – drove back; LY52 JNB→TLV Feb 5 11:30→20:15)"],
+    note: "Johannesburg OR Tambo (JNB) · Hoedspruit / Kruger Park area · El Al LY51/LY52"
+  },
+  {
+    flag: "🇪🇬", name: "Egypt", city: "Dahab, Sinai", region: "africa",
+    lat: 28.4899, lng: 34.5166,
+    visits: ["Apr 28–May 2, 2009 (Dahab, Sinai – scuba diving safari, Red Sea)"],
+    note: "Scuba diving · Dahab, Sinai Peninsula · Red Sea"
   },
   {
     flag: "🇨🇷", name: "Costa Rica", city: "San José / Arenal / rainforest", region: "americas",
@@ -264,6 +270,7 @@ const travelLog = [
   { date: "Jun 4–12, 2008", flag: "🇬🇧", country: "United Kingdom", city: "London + Horsham – friend's wedding Jun 7, with Yana", future: false },
   { date: "Oct 2008", flag: "🇮🇳", country: "India", city: "Andaman Islands – ~4 weeks, scuba diving, island hopping", future: false },
   // — 2009 —
+  { date: "Apr 28–May 2, 2009", flag: "🇪🇬", country: "Egypt", city: "Dahab, Sinai – scuba diving safari, Red Sea", future: false },
   { date: "Sep 24–Oct 10, 2009", flag: "🇪🇸", country: "Spain", city: "Tenerife – group trip with friends, Yom Kippur in Spain, capoeira, snorkeling", future: false },
   { date: "Oct 2009", flag: "🇪🇸", country: "Spain", city: "Barcelona – Dalí museum (Figueres), La Sagrada Família, free walking tour", future: false },
   { date: "Dec 1, 2009", flag: "🇦🇷", country: "Argentina", city: "Buenos Aires – Hostel Clan & YMCA; 2 days, then Córdoba · Rosario with Israeli travel companion", future: false },
@@ -375,7 +382,7 @@ const travelLog = [
   { date: "Aug 5–23, 2022", flag: "🇦🇹", country: "Austria", city: "Vienna – Austrian RSYGVF GOT→VIE Aug 5", future: false },
   { date: "Aug 23–Sep 6, 2022", flag: "🇺🇸", country: "United States", city: "San Francisco – Austrian 2ICQOE VIE→MUC→SFO Aug 23 (Expedia #72363530006411); returned SFO→FRA→VIE Sep 6", future: false },
   { date: "Sep 7, 2022–Jan 5, 2023", flag: "🇦🇹", country: "Austria", city: "Vienna – Austrian 2ICQOE SFO→FRA→VIE Sep 7; El Al WMCDYI LY362 VIE→TLV Jan 5 2023", future: false },
-  { date: "Jan 19–Feb 5, 2023", flag: "🇿🇦", country: "South Africa", city: "Johannesburg – El Al SW38NB LY51 TLV→JNB Jan 19 10:00; LY52 JNB→TLV Feb 5 11:30", future: false },
+  { date: "Jan 19–Feb 5, 2023", flag: "🇿🇦", country: "South Africa", city: "Johannesburg Jan 19–20 + Hoedspruit (Kruger area) Jan 20–Feb 4 + JNB Feb 4–5 – El Al SW38NB LY51 TLV→JNB Jan 19; LY52 JNB→TLV Feb 5", future: false },
   // — 2023 —
   { date: "Feb 14–23, 2023", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS QX8G5U LX253 TLV→ZRH Feb 14 17:45 gate B05 seat 37A; ÖBB ZRH→VIE Feb 23", future: false },
   { date: "Feb 23–Mar 5, 2023", flag: "🇦🇹", country: "Austria", city: "Vienna – ÖBB booking 0634 2692 5610 7558 ZRH→VIE Feb 23; Wiener Linien transit; Austrian OS857 VIE→TLV Mar 5", future: false },
@@ -577,6 +584,7 @@ const stays = [
   { from:"2007-10-08", to:"2007-10-12", flag:"🇳🇱", country:"Netherlands", city:"Amsterdam" },
   { from:"2008-06-04", to:"2008-06-12", flag:"🇬🇧", country:"United Kingdom", city:"London / Horsham" },
   { from:"2008-10-02", to:"2008-10-31", flag:"🇮🇳", country:"India", city:"Andaman Islands" },
+  { from:"2009-04-28", to:"2009-05-02", flag:"🇪🇬", country:"Egypt", city:"Dahab, Sinai – scuba diving safari, Red Sea" },
   { from:"2009-09-24", to:"2009-10-10", flag:"🇪🇸", country:"Spain", city:"Tenerife + Barcelona" },
   { from:"2009-12-01", to:"2009-12-08", flag:"🇦🇷", country:"Argentina", city:"Buenos Aires · Córdoba · Rosario" },
   { from:"2009-12-08", to:"2009-12-13", flag:"🇦🇷", country:"Argentina", city:"Salta" },
