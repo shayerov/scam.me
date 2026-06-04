@@ -556,6 +556,24 @@
       border-radius: 20px;
       border: 1px solid transparent;
     }
+  /* Collapsible country cards */
+  .country-card { cursor: default; }
+  .card-header { display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; padding:2px 0; }
+  .card-header:hover .country-name { color:#7c9ef0; }
+  .card-chevron { margin-left:auto; font-size:1.1rem; color:#4a5080; transition:transform 0.2s; flex-shrink:0; }
+  .country-card.expanded .card-chevron { transform:rotate(90deg); }
+  .card-body { display:none; margin-top:12px; padding-top:12px; border-top:1px solid #2e3250; }
+  .country-card.expanded .card-body { display:block; }
+  .flag-img { border-radius:2px; vertical-align:middle; display:inline-block; }
+  .fly-btn { margin-top:10px; background:rgba(124,158,240,.12); border:1px solid rgba(124,158,240,.25); color:#7c9ef0; padding:4px 12px; border-radius:8px; font-size:.76rem; cursor:pointer; transition:all .2s; }
+  .fly-btn:hover { background:rgba(124,158,240,.28); }
+  /* Now-in banner */
+  .now-in-banner { margin-top:8px; font-size:1rem; color:#c5cae9; }
+  .now-in-banner strong { color:#7c9ef0; }
+  /* Simplified timeline */
+  .tl-month { font-size:.76rem; font-weight:700; color:#c5cae9; }
+  .tl-home .tl-node { background:#4a5080; }
+  .tl-home .tl-flag-name { color:#6b7499; }
   </style>
 </head>
 <body>
@@ -564,6 +582,7 @@
   <div class="header-left">
     <h1>✈️ Shay's Travel Map</h1>
     <p>Built from flight, train &amp; booking confirmations</p>
+    <p class="now-in-banner" id="now-in">📍 Loading…</p>
   </div>
   <div class="stats">
     <div class="stat">
@@ -639,33 +658,51 @@
 const map = L.map('map', {
   center: [30, 20],
   zoom: 2.3,
+  minZoom: 2,
   zoomControl: true,
-  scrollWheelZoom: true
+  scrollWheelZoom: true,
+  worldCopyJump: false,
+  maxBoundsViscosity: 1.0
 });
+map.setMaxBounds(L.latLngBounds(L.latLng(-90,-180), L.latLng(90,180)));
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
   subdomains: 'abcd',
-  maxZoom: 19
+  maxZoom: 19,
+  noWrap: true
 }).addTo(map);
+
+// Flag image helpers (flagcdn.com)
+function flagIso(emoji) {
+  return [...emoji].map(cp => String.fromCharCode(cp.codePointAt(0) - 0x1F1E6 + 65)).join('').toLowerCase();
+}
+function flagSrc(emoji) { return `https://flagcdn.com/w40/${flagIso(emoji)}.png`; }
+function flagImgTag(emoji, size) {
+  size = size || 20;
+  return `<img src="${flagSrc(emoji)}" width="${size}" height="${Math.round(size*0.67)}" class="flag-img" onerror="this.style.display='none'">`;
+}
 
 // Custom icon factory
 function createIcon(flag) {
   return L.divIcon({
     className: '',
     html: `<div style="
-      background: linear-gradient(135deg, #7c9ef0, #a78bfa);
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      width: 32px; height: 32px;
-      border: 2.5px solid #fff;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.5);
-      display: flex; align-items: center; justify-content: center;">
-      <span style="transform: rotate(45deg); font-size: 14px; line-height:1;">${flag}</span>
+      background:linear-gradient(135deg,#7c9ef0,#a78bfa);
+      border-radius:50% 50% 50% 0;
+      transform:rotate(-45deg);
+      width:36px;height:36px;
+      border:2.5px solid #fff;
+      box-shadow:0 3px 10px rgba(0,0,0,.5);
+      display:flex;align-items:center;justify-content:center;">
+      <span style="transform:rotate(45deg);display:flex;align-items:center;justify-content:center;">
+        <img src="${flagSrc(flag)}" width="22" height="15" style="border-radius:2px;display:block;"
+             onerror="this.outerHTML='<span style=\'font-size:12px\'>${flag}</span>'">
+      </span>
     </div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -34]
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -38]
   });
 }
 
@@ -708,20 +745,22 @@ countries.forEach((c, i) => {
   const visitsHtml = c.visits.map(v =>
     `<div class="visit-item"><div class="visit-dot"></div><span>${v}</span></div>`
   ).join('');
+  const noteHtml = c.note ? `<div style="margin-top:8px;font-size:.74rem;color:#4a5080;font-style:italic">${c.note}</div>` : '';
 
   card.innerHTML = `
-    <div class="card-top">
-      <span class="country-flag">${c.flag}</span>
+    <div class="card-header" onclick="toggleCard(this.closest('.country-card'),${i})">
+      <span class="country-flag">${flagImgTag(c.flag, 28)}</span>
+      <span class="country-name">${c.name}</span>
       <span class="visit-count">${c.visits.length} visit${c.visits.length > 1 ? 's' : ''}</span>
+      <span class="card-chevron">›</span>
     </div>
-    <div class="country-name">${c.name}</div>
-    <div class="city-name">📍 <span>${c.city}</span></div>
-    <div class="visits-list">${visitsHtml}</div>
+    <div class="card-body">
+      <div class="city-name" style="margin-bottom:8px">📍 <span>${c.city}</span></div>
+      <div class="visits-list">${visitsHtml}</div>
+      ${noteHtml}
+      <button class="fly-btn" onclick="event.stopPropagation();map.flyTo([${c.lat},${c.lng}],5,{duration:1.2})">🗺 Show on map</button>
+    </div>
   `;
-
-  card.addEventListener('click', () => {
-    map.flyTo([c.lat, c.lng], 5, { duration: 1.2 });
-  });
 
   grid.appendChild(card);
 });
@@ -775,11 +814,51 @@ events.forEach(ev => {
   eventsGrid.appendChild(card);
 });
 
-// Build travel log timeline
-const tlContainer = document.getElementById('timeline');
-tlContainer.classList.add('tl-log');
-let lastYear = '';
-travelLog.forEach(entry => {
+// Simplified timeline from stays[] with Israel gaps
+(function buildTimeline() {
+  const tlContainer = document.getElementById('timeline');
+  tlContainer.classList.add('tl-log');
+  const sorted = [...stays].sort((a,b) => new Date(a.from)-new Date(b.from));
+  const all = []; let prevEnd = null;
+  sorted.forEach(s => {
+    if (prevEnd) {
+      const gStart = new Date(prevEnd); gStart.setDate(gStart.getDate()+1);
+      const nStart = new Date(s.from);
+      if ((nStart-gStart)/86400000 >= 4)
+        all.push({...HOME, from:gStart.toISOString().slice(0,10), to:s.from});
+    }
+    all.push(s); prevEnd = s.to;
+  });
+  // Merge consecutive same-country
+  const grouped = [];
+  all.forEach(p => {
+    const last = grouped[grouped.length-1];
+    if (last && last.country===p.country && last.flag===p.flag) last.to=p.to;
+    else grouped.push({...p});
+  });
+  const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const today = new Date(); let lastYr='';
+  grouped.forEach(entry => {
+    const fd=new Date(entry.from+'T12:00:00'), yr=fd.getFullYear().toString(), mo=MONTHS[fd.getMonth()];
+    const isFuture=new Date(entry.from)>today, isHome=entry.country===HOME.country;
+    if (yr!==lastYr) {
+      lastYr=yr;
+      const div=document.createElement('div');
+      div.style.cssText='grid-column:1/-1;text-align:center;font-size:.7rem;font-weight:700;letter-spacing:3px;color:#3d4166;text-transform:uppercase;padding:16px 0 8px;';
+      div.textContent='── '+yr+' ──'; tlContainer.appendChild(div);
+    }
+    const el=document.createElement('div');
+    el.className='tl-entry'+(isHome?' tl-home':'');
+    el.innerHTML='<div class="tl-date-col"><div class="tl-month">'+mo+'</div></div>'+
+      '<div class="tl-spine"><div class="tl-node'+(isFuture?' future':'')+'"></div></div>'+
+      '<div class="tl-body"><div class="tl-flag-name">'+
+        flagImgTag(entry.flag,16)+' '+entry.country+
+        (isFuture?' <span style="font-size:.65rem;color:#4a5080">(upcoming)</span>':'')+
+      '</div></div>';
+    tlContainer.appendChild(el);
+  });
+  // dummy forEach close to satisfy the replace below — ignored
+  var _dummy = []; _dummy.forEach(entry => {
   const year = entry.date.match(/\d{4}/)?.[0] || '';
   if (year && year !== lastYear) {
     lastYear = year;
@@ -791,15 +870,8 @@ travelLog.forEach(entry => {
   const el = document.createElement('div');
   el.className = 'tl-entry';
   el.innerHTML = `
-    <div class="tl-date-col"><div class="tl-date-main">${entry.date}</div></div>
-    <div class="tl-spine"><div class="tl-node${entry.future ? ' future' : ''}"></div></div>
-    <div class="tl-body">
-      <div class="tl-flag-name">${entry.flag} ${entry.country}${entry.future ? ' <span style="font-size:0.65rem;color:#4a5080;font-weight:400">(upcoming)</span>' : ''}</div>
-      <div class="tl-city">${entry.city}</div>
-    </div>
-  `;
-  tlContainer.appendChild(el);
-});
+  });
+})();
 
 function getStayForDate(dateStr) {
   const ts = new Date(dateStr).getTime();
@@ -897,6 +969,21 @@ function initCalendar() {
   renderCal();
 }
 initCalendar();
+
+// Current location banner
+(function() {
+  var ds = new Date().toISOString().slice(0,10);
+  var nowIn = getStayForDate(ds);
+  var el = document.getElementById('now-in');
+  if (el) el.innerHTML = 'Shay is now in: ' + flagImgTag(nowIn.flag, 22) +
+    ' <strong>' + nowIn.country + '</strong>' +
+    (nowIn.city ? '<span style="color:#8b93b8;font-size:.85rem"> · ' + nowIn.city.split('–')[0].split('(')[0].trim() + '</span>' : '');
+})();
+
+// Toggle country card
+function toggleCard(card) {
+  card.classList.toggle('expanded');
+}
 
 // Filter function
 function filterCards(region, btn) {
