@@ -67,8 +67,14 @@ const countries = [
   {
     flag: "🇬🇧", name: "United Kingdom", city: "London", region: "europe",
     lat: 51.5074, lng: -0.1278,
-    visits: ["Jun 4–12, 2008 (London + Horsham – friend's wedding Jun 7; with Yana)", "Jul 12–20, 2010 (London – Eurolines from Amsterdam; side trips to Oxford Jul 15 and Horsham Jul 17–18; left Jul 20)", "Nov 9–15, 2017 (London – UIA PS778 TLV→KBP Nov 9, PS111 KBP→LGW Nov 9; Smart Camden Inn Hostel (#1864784248); London Decompression Nov 11–12; BA2762 LGW→AMS Nov 15)", "Aug 24–Sep 13, 2023 (London – BA SD6A5Y BA991 BER→LHR Aug 24; BA286 LHR→BER Sep 13 delayed)", "May 19, 2024 (FlixBus Brussels→London Victoria)", "Jun 18, 2024 (BA RKRRI5 BA0988 LHR→BER Brandon departure)", "May 2025 (Gatwick→London Victoria, Trainline)", "Jun 2025 (BA XP4Z6P)"],
+    visits: ["Jun 4–12, 2008 (London + Horsham – friend's wedding Jun 7; with Yana)", "Jul 12–20, 2010 (London – Eurolines from Amsterdam; side trips to Oxford Jul 15 and Horsham Jul 17–18; left Jul 20)", "Nov 9–15, 2017 (London – UIA PS778 TLV→KBP Nov 9, PS111 KBP→LGW Nov 9; Smart Camden Inn Hostel (#1864784248); London Decompression Nov 11–12; BA2762 LGW→AMS Nov 15)", "Aug 24–Sep 13, 2023 (London – BA SD6A5Y BA991 BER→LHR Aug 24; BA286 LHR→BER Sep 13 delayed)", "May 19, 2024 (FlixBus Brussels→London Victoria)", "Jun 18, 2024 (BA RKRRI5 BA0988 LHR→BER Brandon departure)", "May 2025 (Gatwick→London Victoria, Trainline)", "Jun 2025 (BA XP4Z6P)", "Jun 9, 2026 (London Gatwick – Air Transat M7HXL4 TS122 YYZ→LGW Jun 8 22:45)"],
     note: "London + Horsham (Jun 2008, Jul 2010) · Oxford (Jul 2010) · Eurolines AMS→LON · British Airways · FlixBus"
+  },
+  {
+    flag: "🇵🇱", name: "Poland", city: "Warsaw", region: "europe",
+    lat: 52.2297, lng: 21.0122,
+    visits: ["Aug 18–20, 2026 (Warsaw – LOT X3AP4H LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00 – transit)"],
+    note: "Warsaw Chopin Airport (WAW) – LOT Polish Airlines transit"
   },
   {
     flag: "🇧🇪", name: "Belgium", city: "Brussels", region: "europe",
@@ -448,7 +454,10 @@ const travelLog = [
   // — 2026 (upcoming) —
   { date: "Jan–Apr 2026", flag: "🇳🇿", country: "New Zealand", city: "Nelson Lakes · Kahurangi · Parklands Marina", future: false },
   { date: "May 6, 2026", flag: "🇨🇦", country: "Canada", city: "Toronto – Qantas FGYGAI QF3 AKL→JFK→YYZ", future: false },
+  { date: "Jun 9, 2026", flag: "🇬🇧", country: "United Kingdom", city: "London Gatwick – Air Transat M7HXL4 TS122 YYZ→LGW Jun 8 22:45", future: true },
   { date: "Aug 5–9, 2026", flag: "🇦🇹", country: "Austria", city: "Schönburn 2026 – Austrian Burn (ticket 79AT9)", future: true },
+  { date: "Aug 18–20, 2026", flag: "🇵🇱", country: "Poland", city: "Warsaw – LOT X3AP4H LO226 VIE→WAW Aug 18; LO35 WAW→SFO Aug 20 (transit)", future: true },
+  { date: "Aug 20–30, 2026", flag: "🇺🇸", country: "United States", city: "San Francisco – LOT X3AP4H LO35 WAW→SFO Aug 20; pre-Burning Man", future: true },
   { date: "Aug 30–Sep 7, 2026", flag: "🇺🇸", country: "United States", city: "Black Rock City NV – Burning Man 2026", future: true },
 ];
 
@@ -737,7 +746,10 @@ const stays = [
   { from:"2025-11-16", to:"2025-12-31", flag:"🇳🇿", country:"New Zealand", city:"New Zealand – Qatar 9NPLNP AMS→DOH→AKL departs Nov 14, arrives Nov 16" },
   { from:"2026-01-01", to:"2026-05-05", flag:"🇳🇿", country:"New Zealand", city:"Nelson Lakes · Kahurangi" },
   { from:"2026-05-06", to:"2026-06-08", flag:"🇨🇦", country:"Canada", city:"Toronto – Qantas FGYGAI QF3 AKL→JFK→YYZ May 6; Air Transat M7HXL4 TS122 YYZ→LGW Jun 8 22:45" },
-  { from:"2026-08-05", to:"2026-08-09", flag:"🇦🇹", country:"Austria", city:"Schönburn 2026" },
+  { from:"2026-06-09", to:"2026-08-04", flag:"🇬🇧", country:"United Kingdom", city:"London Gatwick – Air Transat M7HXL4 TS122 YYZ→LGW Jun 8 22:45" },
+  { from:"2026-08-05", to:"2026-08-18", flag:"🇦🇹", country:"Austria", city:"Schönburn 2026 (Aug 5–9); Vienna – LOT X3AP4H LO226 VIE→WAW Aug 18 19:30" },
+  { from:"2026-08-18", to:"2026-08-20", flag:"🇵🇱", country:"Poland", city:"Warsaw – LOT X3AP4H LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00" },
+  { from:"2026-08-20", to:"2026-08-30", flag:"🇺🇸", country:"United States", city:"San Francisco – LOT X3AP4H LO35 WAW→SFO Aug 20 14:00 local" },
   { from:"2026-08-30", to:"2026-09-07", flag:"🇺🇸", country:"United States", city:"Black Rock City – Burning Man 2026" },
 ];
 

@@ -566,7 +566,7 @@
   .flag-img { border-radius:2px;vertical-align:middle; }
   .fly-btn { margin-top:10px;background:rgba(124,158,240,.12);border:1px solid rgba(124,158,240,.25);color:#7c9ef0;padding:4px 12px;border-radius:8px;font-size:.76rem;cursor:pointer; }
   .fly-btn:hover { background:rgba(124,158,240,.28); }
-  .now-in-banner { margin-top:16px;font-size:3rem;color:#c5cae9;text-align:center;width:100%;display:block;line-height:1.2; }
+  .now-in-banner { font-size:42px;color:#c5cae9;text-align:center;width:100%;display:block;line-height:1.3;padding:12px 0 8px;background:#0d0f1e; }
   .now-in-banner strong { color:#7c9ef0; }
   .tl-month { font-size:.76rem;font-weight:700;color:#c5cae9; }
   .tl-home .tl-node { background:#4a5080; }
@@ -592,7 +592,6 @@
 <header>
   <div class="header-left">
     <h1>✈️ Shay's Travel Map</h1>
-    <p class="now-in-banner" id="now-in"></p>
   </div>
   <div class="stats">
     <div class="stat"><div class="stat-number" id="stat-countries">—</div><div class="stat-label">Countries</div></div>
@@ -600,6 +599,7 @@
     <div class="stat"><div class="stat-number" id="stat-continents">—</div><div class="stat-label">Continents</div></div>
   </div>
 </header>
+<p class="now-in-banner" id="now-in"></p>
 
 <nav class="tab-nav">
   <button class="tab-btn active" onclick="showTab('map',this)">🗺 Map</button>
@@ -1012,13 +1012,49 @@ function sortCards(mode, btn) {
 // Toggle card open/close
 function toggleCard(card) { card.classList.toggle('expanded'); }
 
-// Current location
-(function(){
-  var ds=new Date().toISOString().slice(0,10);
-  var n=getStayForDate(ds);
-  var el=document.getElementById('now-in');
-  if(el) el.innerHTML='Shay is now in: '+flagImg(n.flag,20)+' <strong>'+n.country+'</strong>';
-})();
+// Current location + live local time
+var COUNTRY_TZ = {
+  "Israel":"Asia/Jerusalem","United Kingdom":"Europe/London","France":"Europe/Paris",
+  "Germany":"Europe/Berlin","Austria":"Europe/Vienna","Switzerland":"Europe/Zurich",
+  "Netherlands":"Europe/Amsterdam","Belgium":"Europe/Brussels","Spain":"Europe/Madrid",
+  "Portugal":"Europe/Lisbon","Italy":"Europe/Rome","Greece":"Europe/Athens",
+  "Czech Republic":"Europe/Prague","Hungary":"Europe/Budapest","Poland":"Europe/Warsaw",
+  "Romania":"Europe/Bucharest","Bulgaria":"Europe/Sofia","Croatia":"Europe/Zagreb",
+  "Norway":"Europe/Oslo","Sweden":"Europe/Stockholm","Denmark":"Europe/Copenhagen",
+  "Finland":"Europe/Helsinki","Iceland":"Atlantic/Reykjavik","Ireland":"Europe/Dublin",
+  "United States":"America/Los_Angeles","Canada":"America/Toronto","Mexico":"America/Cancun",
+  "Brazil":"America/Sao_Paulo","Argentina":"America/Argentina/Buenos_Aires",
+  "Australia":"Australia/Sydney","New Zealand":"Pacific/Auckland",
+  "Japan":"Asia/Tokyo","South Korea":"Asia/Seoul","China":"Asia/Shanghai",
+  "India":"Asia/Kolkata","Thailand":"Asia/Bangkok","Vietnam":"Asia/Ho_Chi_Minh",
+  "Singapore":"Asia/Singapore","Indonesia":"Asia/Jakarta","Philippines":"Asia/Manila",
+  "South Africa":"Africa/Johannesburg","Egypt":"Africa/Cairo","Morocco":"Africa/Casablanca",
+  "Kenya":"Africa/Nairobi","Ethiopia":"Africa/Addis_Ababa",
+  "United Arab Emirates":"Asia/Dubai","Turkey":"Europe/Istanbul",
+  "Russia":"Europe/Moscow","Ukraine":"Europe/Kyiv","Montenegro":"Europe/Podgorica",
+  "Montenegro":"Europe/Podgorica","Serbia":"Europe/Belgrade","Kosovo":"Europe/Belgrade",
+  "North Macedonia":"Europe/Skopje","Albania":"Europe/Tirane","Bosnia and Herzegovina":"Europe/Sarajevo"
+};
+
+function updateNowIn() {
+  var ds = new Date().toISOString().slice(0,10);
+  var n = getStayForDate(ds);
+  var el = document.getElementById('now-in');
+  if (!el) return;
+  var tz = COUNTRY_TZ[n.country] || 'UTC';
+  var timeStr = new Intl.DateTimeFormat('en-GB', {
+    timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+  }).format(new Date());
+  var tzLabel = new Intl.DateTimeFormat('en-GB', {
+    timeZone: tz, timeZoneName: 'short'
+  }).formatToParts(new Date()).find(function(p){ return p.type==='timeZoneName'; });
+  el.innerHTML =
+    'Shay is now in: ' + flagImg(n.flag, 22) + ' <strong>' + n.country + '</strong>' +
+    '<br><span style="font-size:28px;color:#7c9ef0;letter-spacing:2px">' + timeStr +
+    ' <span style="font-size:18px;color:#4a5080">' + (tzLabel ? tzLabel.value : tz) + '</span></span>';
+}
+updateNowIn();
+setInterval(updateNowIn, 1000);
 
 // Filter function
 function filterCards(region, btn) {
