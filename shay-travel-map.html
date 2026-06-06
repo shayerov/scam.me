@@ -571,6 +571,20 @@
   .tl-month { font-size:.76rem;font-weight:700;color:#c5cae9; }
   .tl-home .tl-node { background:#4a5080; }
   .tl-home .tl-flag-name { color:#6b7499; }
+
+  /* ── Tabs ── */
+  .tab-nav { display:flex; gap:0; background:#12152a; border-bottom:1px solid #2e3250; padding:0 24px; flex-wrap:wrap; }
+  .tab-btn { background:transparent; border:none; border-bottom:3px solid transparent; color:#6b7499; padding:14px 20px; font-size:.9rem; font-weight:600; cursor:pointer; transition:all .2s; white-space:nowrap; }
+  .tab-btn:hover { color:#c5cae9; }
+  .tab-btn.active { color:#7c9ef0; border-bottom-color:#7c9ef0; }
+  .tab-pane { display:none; }
+  .tab-pane.active { display:block; }
+
+  /* ── Sort bar ── */
+  .sort-bar { display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  .sort-label { font-size:.78rem; color:#6b7499; }
+  .sort-btn { padding:5px 13px; border-radius:20px; border:1px solid #2e3250; background:transparent; color:#8b93b8; cursor:pointer; font-size:.8rem; transition:all .2s; }
+  .sort-btn:hover, .sort-btn.active { background:#a78bfa; border-color:#a78bfa; color:#fff; }
   </style>
 </head>
 <body>
@@ -582,42 +596,53 @@
     <p class="now-in-banner" id="now-in"></p>
   </div>
   <div class="stats">
-    <div class="stat">
-      <div class="stat-number">31</div>
-      <div class="stat-label">Countries</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">20</div>
-      <div class="stat-label">Years</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number">7</div>
-      <div class="stat-label">Continents</div>
-    </div>
+    <div class="stat"><div class="stat-number" id="stat-countries">—</div><div class="stat-label">Countries</div></div>
+    <div class="stat"><div class="stat-number" id="stat-years">—</div><div class="stat-label">Years</div></div>
+    <div class="stat"><div class="stat-number" id="stat-continents">—</div><div class="stat-label">Continents</div></div>
   </div>
 </header>
 
-<div id="map"></div>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('map',this)">🗺 Map</button>
+  <button class="tab-btn" onclick="showTab('countries',this)">🌍 Countries</button>
+  <button class="tab-btn" onclick="showTab('timeline',this)">📅 Timeline</button>
+  <button class="tab-btn" onclick="showTab('events',this)">🎪 Events</button>
+</nav>
 
-<div class="countries-section">
-  <div class="section-title">All Countries Visited</div>
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterCards('all', this)">All</button>
-    <button class="filter-btn" onclick="filterCards('europe', this)">Europe</button>
-    <button class="filter-btn" onclick="filterCards('oceania', this)">Oceania</button>
-    <button class="filter-btn" onclick="filterCards('americas', this)">Americas</button>
-    <button class="filter-btn" onclick="filterCards('middleeast', this)">Middle East</button>
-    <button class="filter-btn" onclick="filterCards('asia', this)">Asia</button>
-    <button class="filter-btn" onclick="filterCards('africa', this)">Africa</button>
+<div class="tab-pane active" id="tab-map">
+  <div id="map"></div>
+</div>
+
+<div class="tab-pane" id="tab-countries">
+  <div class="countries-section">
+    <div class="section-title">All Countries Visited</div>
+    <div class="sort-bar">
+      <span class="sort-label">Sort:</span>
+      <button class="sort-btn active" onclick="sortCards('abc',this)">A–Z</button>
+      <button class="sort-btn" onclick="sortCards('visits',this)">Most Visited</button>
+      <button class="sort-btn" onclick="sortCards('recent',this)">Most Recent</button>
+    </div>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterCards('all', this)">All</button>
+      <button class="filter-btn" onclick="filterCards('europe', this)">Europe</button>
+      <button class="filter-btn" onclick="filterCards('oceania', this)">Oceania</button>
+      <button class="filter-btn" onclick="filterCards('americas', this)">Americas</button>
+      <button class="filter-btn" onclick="filterCards('middleeast', this)">Middle East</button>
+      <button class="filter-btn" onclick="filterCards('asia', this)">Asia</button>
+      <button class="filter-btn" onclick="filterCards('africa', this)">Africa</button>
+    </div>
+    <div class="countries-grid" id="countries-grid"></div>
   </div>
-  <div class="countries-grid" id="countries-grid"></div>
 </div>
 
-<div class="events-section">
-  <div class="section-title">Events &amp; Venues</div>
-  <div class="events-grid" id="events-grid"></div>
+<div class="tab-pane" id="tab-events">
+  <div class="events-section">
+    <div class="section-title">Events &amp; Venues</div>
+    <div class="events-grid" id="events-grid"></div>
+  </div>
 </div>
 
+<div class="tab-pane" id="tab-timeline">
 <div class="calendar-section">
   <div class="section-title">📅 Where Was Shay?</div>
   <div class="cal-wrapper">
@@ -643,6 +668,7 @@
   <div class="section-title">Trip Timeline</div>
   <div class="timeline" id="timeline"></div>
 </div>
+</div><!-- /tab-timeline -->
 
 <footer>
   Data sourced from flight confirmations, train bookings &amp; accommodation emails in shay.erov@gmail.com
@@ -661,7 +687,17 @@ const map = L.map('map', {
   worldCopyJump: false,
   maxBoundsViscosity: 1.0
 });
-map.setMaxBounds(L.latLngBounds(L.latLng(-90,-180), L.latLng(90,180)));
+map.setMaxBounds(L.latLngBounds(L.latLng(-85.06,-180), L.latLng(85.06,180)));
+
+// Prevent black sides: set minZoom so world fills container width
+function fitMapZoom() {
+  var w = document.getElementById('map').clientWidth || window.innerWidth;
+  var minZ = Math.ceil(Math.log2(w / 256));
+  map.setMinZoom(Math.max(1, minZ));
+  if (map.getZoom() < map.getMinZoom()) map.setZoom(map.getMinZoom());
+}
+window.addEventListener('resize', fitMapZoom);
+fitMapZoom();
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
@@ -721,6 +757,8 @@ countries.forEach((c, i) => {
   card.className = 'country-card';
   card.id = `card-${i}`;
   card.dataset.region = c.region;
+  card.dataset.name = c.name;
+  card.dataset.visits = c.visits.length;
 
   const visitsHtml = c.visits.map(v =>
     `<div class="visit-item"><div class="visit-dot"></div><span>${v}</span></div>`
@@ -933,6 +971,44 @@ function initCalendar() {
   renderCal();
 }
 initCalendar();
+
+// Show tab
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name==='map') { setTimeout(function(){ map.invalidateSize(); fitMapZoom(); }, 50); }
+}
+
+// Sort countries
+var countryLastStay = {};
+stays.forEach(function(s){ if(!countryLastStay[s.country]||s.to>countryLastStay[s.country]) countryLastStay[s.country]=s.to; });
+
+function sortCards(mode, btn) {
+  document.querySelectorAll('.sort-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  var grid = document.getElementById('countries-grid');
+  var cards = Array.from(grid.querySelectorAll('.country-card'));
+  cards.sort(function(a,b){
+    if(mode==='abc') return a.dataset.name.localeCompare(b.dataset.name);
+    if(mode==='visits') return parseInt(b.dataset.visits)-parseInt(a.dataset.visits);
+    if(mode==='recent') return (countryLastStay[b.dataset.name]||'').localeCompare(countryLastStay[a.dataset.name]||'');
+    return 0;
+  });
+  cards.forEach(function(card){ grid.appendChild(card); });
+}
+
+// Dynamic stats
+(function(){
+  var numC = countries.length;
+  var continents = new Set(countries.map(function(c){ return c.region; })).size;
+  var years = stays.map(function(s){ return parseInt(s.from); });
+  var minY = Math.min.apply(null, years), maxY = new Date().getFullYear();
+  var el = document.getElementById('stat-countries'); if(el) el.textContent=numC;
+  el = document.getElementById('stat-years'); if(el) el.textContent=(maxY-minY+1);
+  el = document.getElementById('stat-continents'); if(el) el.textContent=continents;
+})();
 
 // Toggle card open/close
 function toggleCard(card) { card.classList.toggle('expanded'); }

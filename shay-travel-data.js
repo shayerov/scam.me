@@ -8,7 +8,11 @@ const countries = [
   {
     flag: "🇳🇿", name: "New Zealand", city: "Auckland", region: "oceania",
     lat: -36.8509, lng: 174.7645,
-    visits: ["Dec 29, 2023 – present (Etihad RADO5A EY594 TLV→AUH + EY862 AUH→PVG + Air NZ NZ288 PVG→AKL Dec 29; Auckland Airbnb Dec 31; Kiwiburn, Kahurangi NP, Nelson Lakes, Milford, Coromandel...)"],
+    visits: [
+      "Dec 29, 2023–May 6, 2024 (Auckland & NZ road trip – Etihad RADO5A EY594 TLV→AUH + EY862 AUH→PVG + Air NZ NZ288 PVG→AKL Dec 29; Kiwiburn, Kahurangi NP, Nelson Lakes, Milford, Coromandel; departed Qatar KXUTUF AKL→FRA May 6)",
+      "Nov 19, 2024–May 12, 2025 (Auckland & Nelson·Tauranga – Air NZ TFV6UH NZ90 NRT→AKL Nov 19; departed China Eastern MU780 AKL→PVG May 12)",
+      "Nov 16, 2025–May 5, 2026 (Nelson Lakes · Kahurangi – Qatar 9NPLNP AMS→DOH→AKL Nov 16; departed Qantas FGYGAI QF3 AKL→JFK May 6)"
+    ],
     note: "Extensive road trip & camping"
   },
 
