@@ -611,6 +611,11 @@
 </nav>
 
 <div class="tab-pane active" id="tab-map">
+  <div class="filter-bar" id="map-filter-bar" style="padding:16px 16px 0">
+    <button class="filter-btn active" onclick="filterMapLayers('all', this)">All</button>
+    <button class="filter-btn" onclick="filterMapLayers('countries', this)">Countries</button>
+    <button class="filter-btn" onclick="filterMapLayers('events', this)">Events</button>
+  </div>
   <div id="map"></div>
 </div>
 
@@ -728,6 +733,26 @@ function createIcon(flag) {
   });
 }
 
+// Layer groups for map filter (All / Countries / Events)
+var countryLayer = L.layerGroup().addTo(map);
+var eventLayer = L.layerGroup().addTo(map);
+
+function filterMapLayers(type, btn) {
+  document.querySelectorAll('#map-filter-bar .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+
+  if (type === 'countries') {
+    if (!map.hasLayer(countryLayer)) map.addLayer(countryLayer);
+    if (map.hasLayer(eventLayer)) map.removeLayer(eventLayer);
+  } else if (type === 'events') {
+    if (map.hasLayer(countryLayer)) map.removeLayer(countryLayer);
+    if (!map.hasLayer(eventLayer)) map.addLayer(eventLayer);
+  } else {
+    if (!map.hasLayer(countryLayer)) map.addLayer(countryLayer);
+    if (!map.hasLayer(eventLayer)) map.addLayer(eventLayer);
+  }
+}
+
 // Add markers
 countries.forEach((c, i) => {
   const marker = L.marker([c.lat, c.lng], { icon: createIcon(c.flag) });
@@ -752,7 +777,7 @@ countries.forEach((c, i) => {
     }
   });
 
-  marker.addTo(map);
+  marker.addTo(countryLayer);
 });
 
 // Build country cards
@@ -818,7 +843,7 @@ events.forEach(ev => {
       <div class="popup-dates"><div>${ev.address}</div><div>${ev.date}</div></div>
     </div>
   `, { maxWidth: 260 });
-  marker.addTo(map);
+  marker.addTo(eventLayer);
 });
 
 // Build events grid with type filter
@@ -1085,7 +1110,7 @@ var COUNTRY_TZ = {
   var tz = COUNTRY_TZ[country] || null;
 
   var nameLine = 'Shay is now in <strong>' + country + (country === 'Israel' ? ' (home)' : '') + '</strong>';
-  var flagLine = '<span class="now-in-flag">' + flag + '</span>';
+  var flagLine = '<span class="now-in-flag">' + flagImg(flag, 40) + '</span>';
   var timeLine = tz ? '<span class="now-in-time" id="local-clock"></span>' : '';
   nowEl.innerHTML = nameLine + flagLine + timeLine;
 
