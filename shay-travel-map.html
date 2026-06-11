@@ -566,8 +566,10 @@
   .flag-img { border-radius:2px;vertical-align:middle; }
   .fly-btn { margin-top:10px;background:rgba(124,158,240,.12);border:1px solid rgba(124,158,240,.25);color:#7c9ef0;padding:4px 12px;border-radius:8px;font-size:.76rem;cursor:pointer; }
   .fly-btn:hover { background:rgba(124,158,240,.28); }
-  .now-in-banner { font-size:42px;color:#c5cae9;text-align:center;width:100%;display:block;line-height:1.3;padding:12px 0 8px;background:#0d0f1e; }
+  .now-in-banner { font-size:30px;color:#c5cae9;font-weight:600;text-align:center;width:100%;display:block;line-height:1.3;padding:16px 0 6px;background:#0d0f1e; }
   .now-in-banner strong { color:#7c9ef0; }
+  .now-in-flag { display:block;font-size:32px;line-height:1.4;padding:2px 0;background:#0d0f1e; }
+  .now-in-time { display:block;font-size:15px;font-weight:400;color:#8b93b8;letter-spacing:.5px;padding-bottom:14px;background:#0d0f1e; }
   .tl-month { font-size:.76rem;font-weight:700;color:#c5cae9; }
   .tl-home .tl-node { background:#4a5080; }
   .tl-home .tl-flag-name { color:#6b7499; }
@@ -629,6 +631,7 @@
       <button class="filter-btn" onclick="filterCards('middleeast', this)">Middle East</button>
       <button class="filter-btn" onclick="filterCards('asia', this)">Asia</button>
       <button class="filter-btn" onclick="filterCards('africa', this)">Africa</button>
+      <button class="filter-btn" onclick="filterCards('antarctica', this)">Antarctica</button>
     </div>
     <div class="countries-grid" id="countries-grid"></div>
   </div>
@@ -637,6 +640,10 @@
 <div class="tab-pane" id="tab-events">
   <div class="events-section">
     <div class="section-title">Events &amp; Venues</div>
+    <div class="sort-bar" id="event-filter-bar">
+      <span class="sort-label">Type:</span>
+      <button class="sort-btn active" onclick="filterEvents('all',this)">All</button>
+    </div>
     <div class="events-grid" id="events-grid"></div>
   </div>
 </div>
@@ -688,11 +695,11 @@ const map = L.map('map', {
 });
 map.setMaxBounds(L.latLngBounds(L.latLng(-85.06,-180), L.latLng(85.06,180)));
 
-// Prevent black sides: set minZoom so world fills container width
+// Allow zooming out a bit further than "world fills container width"
 function fitMapZoom() {
   var w = document.getElementById('map').clientWidth || window.innerWidth;
   var minZ = Math.ceil(Math.log2(w / 256));
-  map.setMinZoom(Math.max(1, minZ));
+  map.setMinZoom(Math.max(1, minZ - 2));
   if (map.getZoom() < map.getMinZoom()) map.setZoom(map.getMinZoom());
 }
 window.addEventListener('resize', fitMapZoom);
@@ -814,21 +821,44 @@ events.forEach(ev => {
   marker.addTo(map);
 });
 
-// Build events grid
-const eventsGrid = document.getElementById('events-grid');
-events.forEach(ev => {
-  const card = document.createElement('div');
+// Build events grid with type filter
+var eventsGrid = document.getElementById('events-grid');
+var filterBar   = document.getElementById('event-filter-bar');
+var eventTypes  = new Set();
+
+events.forEach(function(ev) {
+  var type = ev.type || 'Other';
+  eventTypes.add(type);
+
+  var card = document.createElement('div');
   card.className = 'event-card';
-  card.innerHTML = `
-    <div class="event-name">${ev.emoji} ${ev.name}</div>
-    <div class="event-venue">📍 ${ev.venue}</div>
-    <div class="event-date">${ev.address} · ${ev.date}</div>
-  `;
-  card.addEventListener('click', () => {
+  card.dataset.type = type;
+  card.innerHTML =
+    '<div class="event-name">' + ev.emoji + ' ' + ev.name + '</div>' +
+    '<div class="event-venue">📍 ' + ev.venue + '</div>' +
+    '<div class="event-date">' + ev.address + ' · ' + ev.date + '</div>';
+  card.addEventListener('click', function() {
     map.flyTo([ev.lat, ev.lng], 12, { duration: 1.2 });
   });
   eventsGrid.appendChild(card);
 });
+
+// Build filter buttons from types found in data
+Array.from(eventTypes).sort().forEach(function(type) {
+  var btn = document.createElement('button');
+  btn.className = 'sort-btn';
+  btn.textContent = type;
+  btn.onclick = function() { filterEvents(type, this); };
+  filterBar.appendChild(btn);
+});
+
+function filterEvents(type, btn) {
+  document.querySelectorAll('#event-filter-bar .sort-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('#events-grid .event-card').forEach(function(card) {
+    card.style.display = (type === 'all' || card.dataset.type === type) ? '' : 'none';
+  });
+}
 
 // Simplified timeline from stays[] with Israel home gaps
 (function(){
@@ -998,6 +1028,14 @@ function sortCards(mode, btn) {
   cards.forEach(function(card){ grid.appendChild(card); });
 }
 
+function filterCards(region, btn) {
+  document.querySelectorAll('.filter-bar .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('#countries-grid .country-card').forEach(function(card){
+    card.style.display = (region === 'all' || card.dataset.region === region) ? '' : 'none';
+  });
+}
+
 // Dynamic stats
 (function(){
   var numC = countries.length;
@@ -1012,6 +1050,7 @@ function sortCards(mode, btn) {
 // Toggle card open/close
 function toggleCard(card) { card.classList.toggle('expanded'); }
 
+
 // Current location + live local time
 var COUNTRY_TZ = {
   "Israel":"Asia/Jerusalem","United Kingdom":"Europe/London","France":"Europe/Paris",
@@ -1019,51 +1058,50 @@ var COUNTRY_TZ = {
   "Netherlands":"Europe/Amsterdam","Belgium":"Europe/Brussels","Spain":"Europe/Madrid",
   "Portugal":"Europe/Lisbon","Italy":"Europe/Rome","Greece":"Europe/Athens",
   "Czech Republic":"Europe/Prague","Hungary":"Europe/Budapest","Poland":"Europe/Warsaw",
-  "Romania":"Europe/Bucharest","Bulgaria":"Europe/Sofia","Croatia":"Europe/Zagreb",
-  "Norway":"Europe/Oslo","Sweden":"Europe/Stockholm","Denmark":"Europe/Copenhagen",
-  "Finland":"Europe/Helsinki","Iceland":"Atlantic/Reykjavik","Ireland":"Europe/Dublin",
-  "United States":"America/Los_Angeles","Canada":"America/Toronto","Mexico":"America/Cancun",
-  "Brazil":"America/Sao_Paulo","Argentina":"America/Argentina/Buenos_Aires",
-  "Australia":"Australia/Sydney","New Zealand":"Pacific/Auckland",
-  "Japan":"Asia/Tokyo","South Korea":"Asia/Seoul","China":"Asia/Shanghai",
-  "India":"Asia/Kolkata","Thailand":"Asia/Bangkok","Vietnam":"Asia/Ho_Chi_Minh",
-  "Singapore":"Asia/Singapore","Indonesia":"Asia/Jakarta","Philippines":"Asia/Manila",
-  "South Africa":"Africa/Johannesburg","Egypt":"Africa/Cairo","Morocco":"Africa/Casablanca",
-  "Kenya":"Africa/Nairobi","Ethiopia":"Africa/Addis_Ababa",
-  "United Arab Emirates":"Asia/Dubai","Turkey":"Europe/Istanbul",
-  "Russia":"Europe/Moscow","Ukraine":"Europe/Kyiv","Montenegro":"Europe/Podgorica",
-  "Montenegro":"Europe/Podgorica","Serbia":"Europe/Belgrade","Kosovo":"Europe/Belgrade",
-  "North Macedonia":"Europe/Skopje","Albania":"Europe/Tirane","Bosnia and Herzegovina":"Europe/Sarajevo"
+  "Denmark":"Europe/Copenhagen","Sweden":"Europe/Stockholm","Norway":"Europe/Oslo",
+  "Finland":"Europe/Helsinki","Estonia":"Europe/Tallinn","Latvia":"Europe/Riga",
+  "Lithuania":"Europe/Vilnius","Romania":"Europe/Bucharest","Bulgaria":"Europe/Sofia",
+  "Croatia":"Europe/Zagreb","Serbia":"Europe/Belgrade","Slovenia":"Europe/Ljubljana",
+  "Slovakia":"Europe/Bratislava","Ukraine":"Europe/Kiev",
+  "Turkey":"Europe/Istanbul","Malta":"Europe/Malta",
+  "United States":"America/New_York","Canada":"America/Toronto",
+  "Mexico":"America/Mexico_City","Colombia":"America/Bogota",
+  "Brazil":"America/Sao_Paulo","Peru":"America/Lima","Bolivia":"America/La_Paz",
+  "Ecuador":"America/Guayaquil","Argentina":"America/Argentina/Buenos_Aires",
+  "Uruguay":"America/Montevideo","Chile":"America/Santiago",
+  "Thailand":"Asia/Bangkok","China":"Asia/Shanghai","Japan":"Asia/Tokyo",
+  "New Zealand":"Pacific/Auckland","Australia":"Australia/Sydney",
+  "South Africa":"Africa/Johannesburg"
 };
 
-function updateNowIn() {
-  var ds = new Date().toISOString().slice(0,10);
-  var n = getStayForDate(ds);
-  var el = document.getElementById('now-in');
-  if (!el) return;
-  var tz = COUNTRY_TZ[n.country] || 'UTC';
-  var timeStr = new Intl.DateTimeFormat('en-GB', {
-    timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-  }).format(new Date());
-  var tzLabel = new Intl.DateTimeFormat('en-GB', {
-    timeZone: tz, timeZoneName: 'short'
-  }).formatToParts(new Date()).find(function(p){ return p.type==='timeZoneName'; });
-  el.innerHTML =
-    'Shay is now in: ' + flagImg(n.flag, 22) + ' <strong>' + n.country + '</strong>' +
-    '<br><span style="font-size:28px;color:#7c9ef0;letter-spacing:2px">' + timeStr +
-    ' <span style="font-size:18px;color:#4a5080">' + (tzLabel ? tzLabel.value : tz) + '</span></span>';
-}
-updateNowIn();
-setInterval(updateNowIn, 1000);
+(function() {
+  var todayStr = new Date().toISOString().slice(0, 10);
+  var nowStay = getStayForDate(todayStr);
+  var nowEl = document.getElementById('now-in');
+  if (!nowEl || !nowStay) return;
 
-// Filter function
-function filterCards(region, btn) {
-  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-  document.querySelectorAll('.country-card').forEach(function(card) {
-    card.style.display = (region === 'all' || card.dataset.region === region) ? '' : 'none';
-  });
-}
+  var country = nowStay.country;
+  var flag = nowStay.flag || '';
+  var tz = COUNTRY_TZ[country] || null;
+
+  var nameLine = 'Shay is now in <strong>' + country + (country === 'Israel' ? ' (home)' : '') + '</strong>';
+  var flagLine = '<span class="now-in-flag">' + flag + '</span>';
+  var timeLine = tz ? '<span class="now-in-time" id="local-clock"></span>' : '';
+  nowEl.innerHTML = nameLine + flagLine + timeLine;
+
+  if (tz) {
+    function tickClock() {
+      var clockEl = document.getElementById('local-clock');
+      if (!clockEl) return;
+      try {
+        var t = new Date().toLocaleTimeString('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit' });
+        clockEl.textContent = 'Local time ' + t;
+      } catch(e) { clockEl.textContent = ''; }
+    }
+    tickClock();
+    setInterval(tickClock, 30000);
+  }
+})();
 </script>
 </body>
 </html>
