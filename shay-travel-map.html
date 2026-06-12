@@ -1105,6 +1105,15 @@ var COUNTRY_TZ = {
   var nowEl = document.getElementById('now-in');
   if (!nowEl || !nowStay) return;
 
+  // If today is past the last known stay (no data covers "now"), fall back to
+  // the last known location instead of assuming home.
+  var lastStay = stays[stays.length - 1];
+  if (lastStay && new Date(todayStr).getTime() > new Date(lastStay.to).getTime()) {
+    var ts = new Date(todayStr).getTime();
+    var coversToday = stays.some(function(s){ return ts >= new Date(s.from).getTime() && ts <= new Date(s.to).getTime(); });
+    if (!coversToday) nowStay = lastStay;
+  }
+
   var country = nowStay.country;
   var flag = nowStay.flag || '';
   var tz = COUNTRY_TZ[country] || null;

@@ -517,6 +517,7 @@ const events = [
   // ── Burns – 2019 ──
   { name: "Vienna Burning Ball 2019", venue: "Vienna", address: "Vienna, Austria", date: "~Mar 1–2, 2019", emoji: "🔥", type: "Burn", lat: 48.2082, lng: 16.3738 },
   { name: "ZBB / Burning Bar 2019", venue: "Berlin area", address: "Berlin, Germany", date: "Mar 5–12, 2019", emoji: "🔥", type: "Burn", lat: 52.5200, lng: 13.4050 },
+  { name: "Dragon Burn 2019", venue: "Dragon Burn", address: "near Shanghai, China", date: "~Late Apr 2019", emoji: "🔥", type: "Burn", lat: 31.2304, lng: 121.4737 },
   { name: "What The Farm 2019", venue: "Ferme d'Antioche", address: "Vauxaillon, Aisne, France", date: "May 31–Jun 2, 2019", emoji: "🔥", type: "Burn", lat: 49.5592, lng: 3.5308 },
   { name: "KiezBurn 2019", venue: "KiezBurn – Berlin regional burn", address: "Berlin area, Germany", date: "~Jun 2019", emoji: "🔥", type: "Burn", lat: 52.5200, lng: 13.4050 },
   { name: "Nowhere 2019", venue: "Nowhere", address: "near Castejón de Monegros, Zaragoza, Spain", date: "~Jul 2–7, 2019", emoji: "🔥", type: "Burn", lat: 41.5936, lng: -0.1536 },
