@@ -905,10 +905,30 @@ function filterEvents(type, btn) {
     if(last&&last.country===p.country&&last.flag===p.flag) last.to=p.to;
     else grouped.push(Object.assign({},p));
   });
+
+  // Split entries that span multiple calendar years into one segment per
+  // year, so every year's section reflects only the months within it.
+  var segments=[];
+  grouped.forEach(function(entry){
+    var fromD=new Date(entry.from+'T12:00:00'), toD=new Date(entry.to+'T12:00:00');
+    var startYr=fromD.getFullYear(), endYr=toD.getFullYear();
+    for(var yr=startYr; yr<=endYr; yr++){
+      var segFrom=(yr===startYr)?entry.from:(yr+'-01-01');
+      var segTo=(yr===endYr)?entry.to:(yr+'-12-31');
+      segments.push(Object.assign({},entry,{from:segFrom,to:segTo,year:yr}));
+    }
+  });
+
+  // Most recent first.
+  segments.sort(function(a,b){return new Date(b.from)-new Date(a.from);});
+
   var MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var today=new Date(),lastYr='';
-  grouped.forEach(function(entry){
-    var fd=new Date(entry.from+'T12:00:00'),yr=fd.getFullYear().toString(),mo=MO[fd.getMonth()];
+  segments.forEach(function(entry){
+    var fd=new Date(entry.from+'T12:00:00'), td=new Date(entry.to+'T12:00:00');
+    var yr=entry.year.toString();
+    var startMo=MO[fd.getMonth()], endMo=MO[td.getMonth()];
+    var moLabel=(startMo===endMo)?startMo:(startMo+' → '+endMo);
     var isFuture=new Date(entry.from)>today,isHome=entry.country===HOME.country;
     if(yr!==lastYr){
       lastYr=yr;
@@ -919,7 +939,7 @@ function filterEvents(type, btn) {
     var el=document.createElement('div');
     el.className='tl-entry'+(isHome?' tl-home':'');
     el.innerHTML=
-      '<div class="tl-date-col"><div class="tl-month">'+mo+'</div></div>'+
+      '<div class="tl-date-col"><div class="tl-month">'+moLabel+'</div></div>'+
       '<div class="tl-spine"><div class="tl-node'+(isFuture?' future':'')+'"></div></div>'+
       '<div class="tl-body"><div class="tl-flag-name">'+
         flagImg(entry.flag,16)+' '+entry.country+
@@ -934,6 +954,19 @@ function getStayForDate(dateStr) {
   for (const s of stays) {
     if (ts >= new Date(s.from).getTime() && ts <= new Date(s.to).getTime()) return s;
   }
+
+  // Beyond the last known stay: show the last known location for dates up to
+  // (and including) today, and "Unknown" for any date after today.
+  const lastStay = stays[stays.length - 1];
+  if (lastStay && ts > new Date(lastStay.to).getTime()) {
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    if (ts <= new Date(todayStr).getTime()) {
+      return { ...lastStay, from: dateStr, to: dateStr, lastKnown: true };
+    }
+    return { flag: '❓', country: 'Unknown', city: 'No travel data yet', from: dateStr, to: dateStr, unknown: true };
+  }
+
   return { ...HOME, from: dateStr, to: dateStr };
 }
 
@@ -944,6 +977,7 @@ function countryHue(name) {
 }
 function countryStyle(name) {
   if (name === 'Israel') return { bg:'#12152a', border:'#2e3250', text:'#4a5080' };
+  if (name === 'Unknown') return { bg:'#0d0f1e', border:'#1d2138', text:'#3a3f5c' };
   const h = countryHue(name);
   return { bg:`hsl(${h},38%,19%)`, border:`hsl(${h},48%,32%)`, text:`hsl(${h},80%,72%)` };
 }
@@ -1104,15 +1138,6 @@ var COUNTRY_TZ = {
   var nowStay = getStayForDate(todayStr);
   var nowEl = document.getElementById('now-in');
   if (!nowEl || !nowStay) return;
-
-  // If today is past the last known stay (no data covers "now"), fall back to
-  // the last known location instead of assuming home.
-  var lastStay = stays[stays.length - 1];
-  if (lastStay && new Date(todayStr).getTime() > new Date(lastStay.to).getTime()) {
-    var ts = new Date(todayStr).getTime();
-    var coversToday = stays.some(function(s){ return ts >= new Date(s.from).getTime() && ts <= new Date(s.to).getTime(); });
-    if (!coversToday) nowStay = lastStay;
-  }
 
   var country = nowStay.country;
   var flag = nowStay.flag || '';
