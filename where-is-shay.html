@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Where is Shay?</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: #0d0f1e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #e8eaf0;
+    }
+
+    .card {
+      text-align: center;
+      padding: 60px 80px;
+      background: #12152a;
+      border: 1px solid #1e2240;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .label {
+      font-size: 1rem;
+      color: #6b7499;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .flag {
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .flag img {
+      width: 100px;
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .location {
+      font-size: 2.6rem;
+      font-weight: 600;
+      color: #e8eaf0;
+      letter-spacing: -0.01em;
+    }
+
+    .sublocation {
+      font-size: 1rem;
+      color: #4a5080;
+      margin-top: 10px;
+    }
+
+    .date {
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: #2e3250;
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="label">Shay is in</div>
+    <div class="flag" id="flag"></div>
+    <div class="location" id="location"></div>
+    <div class="sublocation" id="sublocation"></div>
+    <div class="date" id="date"></div>
+  </div>
+
+  <script src="shay-travel-data.js"></script>
+  <script>
+    // Convert flag emoji to ISO 3166-1 alpha-2 country code (lowercase)
+    // Flag emojis are pairs of Regional Indicator Symbols (U+1F1E6–U+1F1FF)
+    function flagToCode(emoji) {
+      return [...emoji].map(c => String.fromCharCode(c.codePointAt(0) - 0x1F1E6 + 65)).join('').toLowerCase();
+    }
+
+    function setFlag(emoji) {
+      const code = flagToCode(emoji);
+      document.getElementById('flag').innerHTML =
+        `<img src="https://flagcdn.com/w160/${code}.png" alt="${emoji}">`;
+    }
+
+    // Exact same logic as getStayForDate() in the full site
+    function getStayForDate(dateStr) {
+      const ts = new Date(dateStr).getTime();
+      for (const s of stays) {
+        if (ts >= new Date(s.from).getTime() && ts <= new Date(s.to).getTime()) return s;
+      }
+      for (const s of expectedStays) {
+        if (ts >= new Date(s.from).getTime() && ts <= new Date(s.to).getTime()) return { ...s, expected: true };
+      }
+      const lastStay = stays[stays.length - 1];
+      if (lastStay && ts > new Date(lastStay.to).getTime()) {
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        if (ts <= new Date(todayStr).getTime()) {
+          return { ...lastStay, from: dateStr, to: dateStr, lastKnown: true };
+        }
+      }
+      return { ...HOME, from: dateStr, to: dateStr };
+    }
+
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    const current = getStayForDate(todayStr);
+
+    const locationEl = document.getElementById('location');
+    const subEl      = document.getElementById('sublocation');
+    const dateEl     = document.getElementById('date');
+
+    setFlag(current.flag);
+    locationEl.textContent = current.country;
+
+    // Show the city/area (first segment before " – ")
+    const cityPart = (current.city || '').split(/\s[–-]\s/)[0].trim();
+    if (cityPart && cityPart !== current.country) {
+      subEl.textContent = cityPart;
+    }
+
+    // Show date range (omit if lastKnown — date is synthetic)
+    if (!current.lastKnown && current.from !== current.to) {
+      const f = new Date(current.from + 'T00:00:00');
+      const t = new Date(current.to   + 'T00:00:00');
+      const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const fStr = mo[f.getMonth()] + ' ' + f.getDate();
+      const tStr = mo[t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear();
+      dateEl.textContent = fStr + ' – ' + tStr;
+    }
+  </script>
+</body>
+</html>
