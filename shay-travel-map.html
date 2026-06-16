@@ -209,7 +209,7 @@
 
     .visit-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 6px;
       font-size: 0.78rem;
       color: #6b7499;
@@ -221,6 +221,36 @@
       border-radius: 50%;
       background: #a78bfa;
       flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .visit-date {
+      color: #b9c0e6;
+      font-weight: 500;
+    }
+
+    .visit-days {
+      color: #4a5080;
+      font-weight: 400;
+      font-size: 0.72rem;
+    }
+
+    .visit-transport {
+      color: #6b7499;
+      font-size: 0.72rem;
+      margin-top: 1px;
+    }
+
+    .card-section-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #4a5080;
+      margin: 10px 0 4px;
+    }
+
+    .card-section-label:first-of-type {
+      margin-top: 0;
     }
 
     /* Custom map marker */
@@ -573,6 +603,10 @@
   .tl-month { font-size:.76rem;font-weight:700;color:#c5cae9; }
   .tl-home .tl-node { background:#4a5080; }
   .tl-home .tl-flag-name { color:#6b7499; }
+  .tl-expected .tl-flag-name { opacity:.7; }
+  .tl-node.expected { background:transparent;border-style:dashed;border-color:#6b7499; }
+  .cal-cell.expected { border-style:dashed !important; opacity:.75; }
+  .cal-legend-item.expected { border-style:dashed; opacity:.75; }
 
   /* ── Tabs ── */
   .tab-nav { display:flex; gap:0; background:#12152a; border-bottom:1px solid #2e3250; padding:0 24px; flex-wrap:wrap; }
@@ -587,6 +621,15 @@
   .sort-label { font-size:.78rem; color:#6b7499; }
   .sort-btn { padding:5px 13px; border-radius:20px; border:1px solid #2e3250; background:transparent; color:#8b93b8; cursor:pointer; font-size:.8rem; transition:all .2s; }
   .sort-btn:hover, .sort-btn.active { background:#a78bfa; border-color:#a78bfa; color:#fff; }
+
+  /* ── Years-back filter ── */
+  .years-filter { display:flex; align-items:center; gap:8px; }
+  .years-filter label { font-size:.78rem; color:#8b93b8; }
+  .years-filter select {
+    background:#12152a; border:1px solid #2e3250; color:#e8eaf0;
+    padding:6px 10px; border-radius:8px; font-size:.82rem; cursor:pointer;
+  }
+  .years-filter select:focus { outline:none; border-color:#7c9ef0; }
   </style>
 </head>
 <body>
@@ -594,6 +637,17 @@
 <header>
   <div class="header-left">
     <h1>✈️ Shay's Travel Map</h1>
+  </div>
+  <div class="years-filter">
+    <label for="years-back-select">Show last</label>
+    <select id="years-back-select">
+      <option value="0">All time</option>
+      <option value="1">1 year</option>
+      <option value="2">2 years</option>
+      <option value="3">3 years</option>
+      <option value="5">5 years</option>
+      <option value="10">10 years</option>
+    </select>
   </div>
   <div class="stats">
     <div class="stat"><div class="stat-number" id="stat-countries">—</div><div class="stat-label">Countries</div></div>
@@ -626,6 +680,7 @@
       <span class="sort-label">Sort:</span>
       <button class="sort-btn active" onclick="sortCards('abc',this)">A–Z</button>
       <button class="sort-btn" onclick="sortCards('visits',this)">Most Visited</button>
+      <button class="sort-btn" onclick="sortCards('days',this)">Most Days</button>
       <button class="sort-btn" onclick="sortCards('recent',this)">Most Recent</button>
     </div>
     <div class="filter-bar">
@@ -722,6 +777,59 @@ function flagIso(e){return[...e].map(c=>String.fromCharCode(c.codePointAt(0)-0x1
 function flagSrc(e){return'https://flagcdn.com/w40/'+flagIso(e)+'.png';}
 function flagImg(e,s){s=s||20;return'<img src="'+flagSrc(e)+'" width="'+s+'" height="'+Math.round(s*.67)+'" style="border-radius:2px;display:inline-block;vertical-align:middle;" onerror="this.style.display=\'none\'">';}
 
+// Strip booking refs / confirmation numbers / PNRs / e-ticket numbers from
+// any text before it's rendered. The data file may retain these for Shay's
+// own records, but they must never be shown on the site.
+function stripBookingCodes(text) {
+  if (!text) return text;
+  var out = String(text)
+    // "PNR: ABC123", "(Booking ref XYZ789)", "Confirmation #123456",
+    // "Record locator: ABC123", "E-ticket 1234567890"
+    .replace(/\(?\s*(?:PNR|Booking\s*ref(?:erence)?|Confirmation(?:\s*(?:number|code|no\.?|#))?|Conf(?:irmation)?\.?\s*#?|Record\s*locator|Locator|E-?ticket(?:\s*(?:number|no\.?))?)\s*:?\s*#?\s*[A-Z0-9-]{4,}\)?/gi, '')
+    // standalone "#123456" style order/booking numbers
+    .replace(/#\d{4,}/g, '');
+  // tidy up artifacts left behind (empty parens, dangling separators, double spaces)
+  out = out
+    .replace(/\(\s*\)/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([;,)])/g, '$1')
+    .replace(/([(;,])\s*([;,)])/g, '$1$2')
+    .replace(/[;,]\s*$/, '')
+    .trim();
+  return out;
+}
+
+// ── Years-back filter ──
+var yearsBack = 0;       // 0 = all time
+var mapTypeFilter = 'all';
+var regionFilter = 'all';
+
+function getYearsCutoff() {
+  if (!yearsBack) return null;
+  var d = new Date();
+  d.setFullYear(d.getFullYear() - yearsBack);
+  return d;
+}
+
+// True if dateStr (ISO "YYYY-MM-DD") is within the cutoff window (or no cutoff).
+function isRecentEnough(dateStr, cutoff) {
+  if (!cutoff || !dateStr) return true;
+  return new Date(dateStr) >= cutoff;
+}
+
+// For free-text dates like "Aug 24–Sep 1, 2025" or "Jan 2026": find the
+// latest year mentioned. Future years always pass (upcoming plans aren't
+// affected by a "how far back" filter).
+function eventPassesYearsFilter(dateStr, cutoff) {
+  if (!cutoff) return true;
+  var years = (dateStr.match(/\d{4}/g) || []).map(Number);
+  if (!years.length) return true;
+  var maxYear = Math.max.apply(null, years);
+  var thisYear = new Date().getFullYear();
+  if (maxYear > thisYear) return true;
+  return maxYear >= cutoff.getFullYear();
+}
+
 // Custom icon factory
 function createIcon(flag) {
   return L.divIcon({
@@ -740,30 +848,93 @@ var eventLayer = L.layerGroup().addTo(map);
 function filterMapLayers(type, btn) {
   document.querySelectorAll('#map-filter-bar .filter-btn').forEach(function(b){ b.classList.remove('active'); });
   if (btn) btn.classList.add('active');
-
-  if (type === 'countries') {
-    if (!map.hasLayer(countryLayer)) map.addLayer(countryLayer);
-    if (map.hasLayer(eventLayer)) map.removeLayer(eventLayer);
-  } else if (type === 'events') {
-    if (map.hasLayer(countryLayer)) map.removeLayer(countryLayer);
-    if (!map.hasLayer(eventLayer)) map.addLayer(eventLayer);
-  } else {
-    if (!map.hasLayer(countryLayer)) map.addLayer(countryLayer);
-    if (!map.hasLayer(eventLayer)) map.addLayer(eventLayer);
-  }
+  mapTypeFilter = type;
+  applyMapFilters();
 }
 
-// Add markers
-countries.forEach((c, i) => {
-  const marker = L.marker([c.lat, c.lng], { icon: createIcon(c.flag) });
+// Re-applies both the map-type filter (All/Countries/Events) and the
+// years-back filter to the individual markers in each layer group.
+function applyMapFilters() {
+  var cutoff = getYearsCutoff();
+  var showCountries = (mapTypeFilter === 'all' || mapTypeFilter === 'countries');
+  var showEvents = (mapTypeFilter === 'all' || mapTypeFilter === 'events');
 
-  const datesHtml = c.visits.map(v => `<div>${v}</div>`).join('');
+  countryMarkers.forEach(function(item) {
+    var shouldShow = showCountries && isRecentEnough(countryLastStay[item.name], cutoff);
+    if (shouldShow) { if (!countryLayer.hasLayer(item.marker)) countryLayer.addLayer(item.marker); }
+    else { if (countryLayer.hasLayer(item.marker)) countryLayer.removeLayer(item.marker); }
+  });
+
+  eventMarkers.forEach(function(item) {
+    var shouldShow = showEvents && eventPassesYearsFilter(item.date, cutoff);
+    if (shouldShow) { if (!eventLayer.hasLayer(item.marker)) eventLayer.addLayer(item.marker); }
+    else { if (eventLayer.hasLayer(item.marker)) eventLayer.removeLayer(item.marker); }
+  });
+
+  if (!map.hasLayer(countryLayer)) map.addLayer(countryLayer);
+  if (!map.hasLayer(eventLayer)) map.addLayer(eventLayer);
+}
+
+// Approximate geographic centroid for each visited country, used to place
+// the flag pin in the middle of the country rather than at the specific
+// city/region visited (c.lat/c.lng, still used for "Show on map" flyTo).
+// Antarctica is intentionally omitted - its true centroid sits at the pole
+// and would render off the edge of the map, so it keeps its peninsula coords.
+const COUNTRY_CENTROID = {
+  "Israel": [31.4, 35.0],
+  "New Zealand": [-41.5, 172.8],
+  "Austria": [47.6, 14.1],
+  "France": [46.6, 2.6],
+  "Greece": [39.1, 22.9],
+  "Malta": [35.9, 14.4],
+  "China": [35.0, 103.8],
+  "Germany": [51.2, 10.4],
+  "Switzerland": [46.8, 8.2],
+  "Denmark": [56.0, 9.5],
+  "United Kingdom": [54.0, -2.9],
+  "Belgium": [50.6, 4.6],
+  "Spain": [40.2, -3.7],
+  "Hungary": [47.2, 19.4],
+  "Slovakia": [48.7, 19.5],
+  "Ireland": [53.4, -8.2],
+  "Netherlands": [52.3, 5.8],
+  "Sweden": [62.2, 15.6],
+  "Bulgaria": [42.7, 25.3],
+  "Montenegro": [42.7, 19.3],
+  "Cyprus": [35.1, 33.3],
+  "Japan": [36.5, 138.0],
+  "Seychelles": [-4.7, 55.5],
+  "South Africa": [-29.0, 24.0],
+  "Egypt": [26.8, 30.8],
+  "Costa Rica": [9.9, -84.0],
+  "Italy": [42.8, 12.6],
+  "Argentina": [-35.4, -65.0],
+  "Bolivia": [-16.7, -64.7],
+  "Chile": [-35.6, -71.6],
+  "Peru": [-9.2, -75.0],
+  "Brazil": [-10.3, -53.2],
+  "India": [22.4, 78.7],
+  "Portugal": [39.6, -8.2],
+  "Ecuador": [-1.5, -78.4],
+  "Canada": [61.0, -98.0],
+  "Mexico": [23.6, -102.5],
+  "United States": [39.8, -98.6]
+};
+
+// Add markers
+var countryMarkers = [];
+var eventMarkers = [];
+countries.forEach((c, i) => {
+  const pin = COUNTRY_CENTROID[c.name] || [c.lat, c.lng];
+  const marker = L.marker(pin, { icon: createIcon(c.flag) });
+
+  const datesHtml = c.visits.map(v => `<div>${stripBookingCodes(v)}</div>`).join('');
 
   marker.bindPopup(`
     <div class="popup-content">
       <div class="popup-flag">${c.flag}</div>
       <div class="popup-country">${c.name}</div>
-      <div class="popup-city">📍 ${c.city}</div>
+      <div class="popup-city">📍 ${stripBookingCodes(c.city)}</div>
       <div class="popup-dates">${datesHtml}</div>
     </div>
   `, { maxWidth: 260 });
@@ -778,6 +949,138 @@ countries.forEach((c, i) => {
   });
 
   marker.addTo(countryLayer);
+  countryMarkers.push({ marker: marker, name: c.name });
+});
+
+// Visit & day counts per country, derived from stays[] (the actual travel
+// log) rather than the free-text `visits` notes, which can bundle several
+// sub-events under one entry or split a single trip across several entries.
+// Stays where from === to are same-day airport transits/layovers under 24h,
+// so they don't count as a visit and don't add to the day total. Consecutive
+// stays in the same country with no gap (multi-leg trips) are merged into a
+// single visit.
+const daysByCountry = {};
+const visitsByCountry = {};
+// Merged trips per country (consecutive same-country legs with no gap are one
+// trip), used to render the per-country "Visits" list with date ranges.
+const tripsByCountry = {};
+{
+  let prevCountry = null, prevTo = null, currentTrip = null;
+  stays.filter(s => s.to !== s.from).forEach(s => {
+    const days = Math.round((new Date(s.to) - new Date(s.from)) / 86400000) + 1;
+    daysByCountry[s.country] = (daysByCountry[s.country] || 0) + days;
+    const isContinuation = (s.country === prevCountry && s.from === prevTo);
+    if (isContinuation && currentTrip) {
+      currentTrip.to = s.to;
+      currentTrip.legs.push(s);
+    } else {
+      visitsByCountry[s.country] = (visitsByCountry[s.country] || 0) + 1;
+      currentTrip = { from: s.from, to: s.to, legs: [s] };
+      (tripsByCountry[s.country] = tripsByCountry[s.country] || []).push(currentTrip);
+    }
+    prevCountry = s.country; prevTo = s.to;
+  });
+}
+
+// Format a date range for display, e.g. "Jun 29 – Jul 4, 2020" or
+// "Aug 25 – Sep 1, 2014" or "Dec 29, 2023 – May 6, 2024".
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtDate(d) {
+  const dt = new Date(d + 'T00:00:00');
+  return MONTH_NAMES[dt.getMonth()] + ' ' + dt.getDate() + ', ' + dt.getFullYear();
+}
+function fmtRange(from, to) {
+  const f = new Date(from + 'T00:00:00'), t = new Date(to + 'T00:00:00');
+  if (f.getFullYear() === t.getFullYear() && f.getMonth() === t.getMonth()) {
+    return MONTH_NAMES[f.getMonth()] + ' ' + f.getDate() + '–' + t.getDate() + ', ' + f.getFullYear();
+  }
+  if (f.getFullYear() === t.getFullYear()) {
+    return MONTH_NAMES[f.getMonth()] + ' ' + f.getDate() + ' – ' + MONTH_NAMES[t.getMonth()] + ' ' + t.getDate() + ', ' + f.getFullYear();
+  }
+  return fmtDate(from) + ' – ' + fmtDate(to);
+}
+
+// Pull out only the transport-related fragments (flight numbers/airlines,
+// trains, buses, ferries, drives) from a stay's free-text description,
+// dropping accommodation/reservation details (Airbnb, hostels, hotels) and
+// event names - those are covered separately by the Events list.
+const TRANSPORT_RE = /\b([A-Z]{1,3}\s?\d{2,4}|→|FlixBus|Ryanair|Wizz ?[Aa]ir|easyJet|Austrian|Aegean|Qatar|Etihad|Air ?NZ|Air New Zealand|SWISS|El ?Al|China Eastern|Qantas|Lufthansa|Air ?Malta|ÖBB|DB ?Bahn|DB train|Eurostar|Eurowings|Eurolines|Omio|Greyhound|Iberia|TACA|TAM|LAN|Avianca|AeroGal|Transavia|Brussels Airlines|Turkish Airlines|Israir|Pegasus|Air France|Air Canada|British Airways|West ?Jet|SAS|KLM|train|ferry|drove|flew|flight)\b/i;
+function extractTransport(text) {
+  if (!text) return '';
+  const parts = text.split(/[–;]/).map(s => s.trim()).filter(Boolean);
+  // Skip the first part (the place name) and keep only transport-looking segments.
+  const segs = parts.filter((p, idx) => idx > 0 && TRANSPORT_RE.test(p));
+  return stripBookingCodes(segs.join('; '));
+}
+
+// Transport in/out for a merged trip: from the first leg's description (covers
+// arrival, and departure too if it's a single-leg trip) plus, for multi-leg
+// trips, the last leg's description (covers the final departure).
+function tripTransport(trip) {
+  const segs = [];
+  const first = extractTransport(trip.legs[0].city);
+  if (first) segs.push(first);
+  if (trip.legs.length > 1) {
+    const last = extractTransport(trip.legs[trip.legs.length - 1].city);
+    if (last && last !== first) segs.push(last);
+  }
+  return segs.join('; ');
+}
+
+// Match an event's free-text address to a country name, accounting for the
+// common abbreviations/aliases used in addresses.
+const COUNTRY_ALIASES = {
+  "United States": ["United States", "USA"],
+  "United Kingdom": ["United Kingdom", "UK", "England", "Scotland", "Wales"],
+  "New Zealand": ["New Zealand", "NZ"]
+};
+function eventInCountry(ev, countryName) {
+  const aliases = COUNTRY_ALIASES[countryName] || [countryName];
+  return aliases.some(a => new RegExp('\\b' + a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(ev.address));
+}
+
+// Most recent stay (by 'to' date) per country - used by the years-back filter
+const countryLastStay = {};
+stays.forEach(function(s){ if(!countryLastStay[s.country]||s.to>countryLastStay[s.country]) countryLastStay[s.country]=s.to; });
+
+// Faded markers for upcoming/booked-but-not-yet-visited countries, derived
+// from expectedStays. Shown with reduced opacity + a dashed flag pin so it's
+// obvious these are estimates from flight bookings, not confirmed visits.
+const FUTURE_COUNTRY_CENTROID = {
+  "Lithuania": [55.3, 23.9],
+  "Poland": [52.1, 19.4]
+};
+
+function createFutureIcon(flag) {
+  return L.divIcon({
+    className: '',
+    html: '<div style="opacity:.55;background:transparent;border:2.5px dashed #a0a6cc;border-radius:50% 50% 50% 0;transform:rotate(-45deg);width:36px;height:36px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3);"><span style="transform:rotate(45deg);display:flex;">'+flagImg(flag,22)+'</span></div>',
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -38]
+  });
+}
+
+const futureCountries = {};
+expectedStays.forEach(s => {
+  if (countryLastStay[s.country]) return; // already visited - not a new "future" country
+  if (!futureCountries[s.country]) futureCountries[s.country] = { flag: s.flag, country: s.country, ranges: [] };
+  futureCountries[s.country].ranges.push(s.from + ' – ' + s.to);
+});
+Object.values(futureCountries).forEach(fc => {
+  const pin = FUTURE_COUNTRY_CENTROID[fc.country];
+  if (!pin) return;
+  const marker = L.marker(pin, { icon: createFutureIcon(fc.flag), opacity: 0.6 });
+  marker.bindPopup(`
+    <div class="popup-content">
+      <div class="popup-flag">${fc.flag}</div>
+      <div class="popup-country">${fc.country}</div>
+      <div class="popup-city">🔮 Upcoming (estimated)</div>
+      <div class="popup-dates">${fc.ranges.map(r => `<div>${r}</div>`).join('')}</div>
+    </div>
+  `, { maxWidth: 260 });
+  marker.addTo(countryLayer);
+  countryMarkers.push({ marker: marker, name: fc.country });
 });
 
 // Build country cards
@@ -789,23 +1092,47 @@ countries.forEach((c, i) => {
   card.id = `card-${i}`;
   card.dataset.region = c.region;
   card.dataset.name = c.name;
-  card.dataset.visits = c.visits.length;
+  const visitCount = visitsByCountry[c.name] || 0;
+  const dayCount = daysByCountry[c.name] || 0;
+  card.dataset.visits = visitCount;
+  card.dataset.days = dayCount;
+  card.dataset.lastvisit = countryLastStay[c.name] || '';
 
-  const visitsHtml = c.visits.map(v =>
-    `<div class="visit-item"><div class="visit-dot"></div><span>${v}</span></div>`
+  // Visits: one entry per merged trip, showing just the date range plus
+  // transport in/out (no accommodation/reservation details).
+  const trips = tripsByCountry[c.name] || [];
+  const visitsHtml = trips.map(trip => {
+    const transport = tripTransport(trip);
+    const tripDays = Math.round((new Date(trip.to) - new Date(trip.from)) / 86400000) + 1;
+    const daysLabel = tripDays + ' day' + (tripDays === 1 ? '' : 's');
+    return '<div class="visit-item"><div class="visit-dot"></div><div>'+
+      '<div class="visit-date">'+fmtRange(trip.from, trip.to)+' <span class="visit-days">'+daysLabel+'</span></div>'+
+      (transport ? '<div class="visit-transport">'+transport+'</div>' : '')+
+      '</div></div>';
+  }).join('');
+
+  // Events: all burns/concerts/etc. that took place in this country, dates only.
+  const countryEvents = events.filter(ev => eventInCountry(ev, c.name));
+  const eventsHtml = countryEvents.map(ev =>
+    `<div class="visit-item"><div class="visit-dot"></div><span>${ev.emoji} ${stripBookingCodes(ev.name)} — ${ev.date}</span></div>`
   ).join('');
 
-  const noteHtml = c.note ? '<div style="margin-top:8px;font-size:.74rem;color:#4a5080;font-style:italic">'+c.note+'</div>' : '';
+  const noteHtml = c.note ? '<div style="margin-top:8px;font-size:.74rem;color:#4a5080;font-style:italic">'+stripBookingCodes(c.note)+'</div>' : '';
+  // Israel is home base - "visits/days away" doesn't apply the same way.
+  const visitCountLabel = (c.name === HOME.country)
+    ? 'Home base'
+    : (visitCount+' visit'+(visitCount===1?'':'s')+' · '+dayCount+' day'+(dayCount===1?'':'s'));
   card.innerHTML =
     '<div class="card-header" onclick="toggleCard(this.closest(\'.country-card\'))">'+
       '<span class="country-flag">'+flagImg(c.flag,28)+'</span>'+
       '<span class="country-name">'+c.name+'</span>'+
-      '<span class="visit-count">'+c.visits.length+' visit'+(c.visits.length>1?'s':'')+'</span>'+
+      '<span class="visit-count">'+visitCountLabel+'</span>'+
       '<span class="card-chevron">›</span>'+
     '</div>'+
     '<div class="card-body">'+
-      '<div class="city-name" style="margin-bottom:8px">📍 <span>'+c.city+'</span></div>'+
-      '<div class="visits-list">'+visitsHtml+'</div>'+
+      '<div class="city-name" style="margin-bottom:8px">📍 <span>'+stripBookingCodes(c.city)+'</span></div>'+
+      (visitsHtml ? '<div class="card-section-label">Visits</div><div class="visits-list">'+visitsHtml+'</div>' : '')+
+      (eventsHtml ? '<div class="card-section-label">Events</div><div class="visits-list">'+eventsHtml+'</div>' : '')+
       noteHtml+
       '<button class="fly-btn" onclick="event.stopPropagation();map.flyTo(['+c.lat+','+c.lng+'],5,{duration:1.2})">🗺 Show on map</button>'+
     '</div>';
@@ -839,11 +1166,12 @@ events.forEach(ev => {
     <div class="popup-content">
       <div class="popup-flag">${ev.emoji}</div>
       <div class="popup-country" style="color:#f59e0b;">${ev.name}</div>
-      <div class="popup-city">📍 ${ev.venue}</div>
-      <div class="popup-dates"><div>${ev.address}</div><div>${ev.date}</div></div>
+      <div class="popup-city">📍 ${stripBookingCodes(ev.venue)}</div>
+      <div class="popup-dates"><div>${stripBookingCodes(ev.address)}</div><div>${ev.date}</div></div>
     </div>
   `, { maxWidth: 260 });
   marker.addTo(eventLayer);
+  eventMarkers.push({ marker: marker, date: ev.date });
 });
 
 // Build events grid with type filter
@@ -860,8 +1188,8 @@ events.forEach(function(ev) {
   card.dataset.type = type;
   card.innerHTML =
     '<div class="event-name">' + ev.emoji + ' ' + ev.name + '</div>' +
-    '<div class="event-venue">📍 ' + ev.venue + '</div>' +
-    '<div class="event-date">' + ev.address + ' · ' + ev.date + '</div>';
+    '<div class="event-venue">📍 ' + stripBookingCodes(ev.venue) + '</div>' +
+    '<div class="event-date">' + stripBookingCodes(ev.address) + ' · ' + ev.date + '</div>';
   card.addEventListener('click', function() {
     map.flyTo([ev.lat, ev.lng], 12, { duration: 1.2 });
   });
@@ -906,18 +1234,31 @@ function filterEvents(type, btn) {
     else grouped.push(Object.assign({},p));
   });
 
+  // Group "expected" stays (from upcoming flight bookings) the same way,
+  // keeping them tagged so they render with distinct styling.
+  var expGrouped=[];
+  [...expectedStays].sort(function(a,b){return new Date(a.from)-new Date(b.from);}).forEach(function(p){
+    var last=expGrouped[expGrouped.length-1];
+    if(last&&last.country===p.country&&last.flag===p.flag) last.to=p.to;
+    else expGrouped.push(Object.assign({},p,{expected:true}));
+  });
+
   // Split entries that span multiple calendar years into one segment per
   // year, so every year's section reflects only the months within it.
-  var segments=[];
-  grouped.forEach(function(entry){
-    var fromD=new Date(entry.from+'T12:00:00'), toD=new Date(entry.to+'T12:00:00');
-    var startYr=fromD.getFullYear(), endYr=toD.getFullYear();
-    for(var yr=startYr; yr<=endYr; yr++){
-      var segFrom=(yr===startYr)?entry.from:(yr+'-01-01');
-      var segTo=(yr===endYr)?entry.to:(yr+'-12-31');
-      segments.push(Object.assign({},entry,{from:segFrom,to:segTo,year:yr}));
-    }
-  });
+  function toSegments(list){
+    var segs=[];
+    list.forEach(function(entry){
+      var fromD=new Date(entry.from+'T12:00:00'), toD=new Date(entry.to+'T12:00:00');
+      var startYr=fromD.getFullYear(), endYr=toD.getFullYear();
+      for(var yr=startYr; yr<=endYr; yr++){
+        var segFrom=(yr===startYr)?entry.from:(yr+'-01-01');
+        var segTo=(yr===endYr)?entry.to:(yr+'-12-31');
+        segs.push(Object.assign({},entry,{from:segFrom,to:segTo,year:yr}));
+      }
+    });
+    return segs;
+  }
+  var segments=toSegments(grouped).concat(toSegments(expGrouped));
 
   // Most recent first.
   segments.sort(function(a,b){return new Date(b.from)-new Date(a.from);});
@@ -934,25 +1275,54 @@ function filterEvents(type, btn) {
       lastYr=yr;
       var div=document.createElement('div');
       div.style.cssText='grid-column:1/-1;text-align:center;font-size:.7rem;font-weight:700;letter-spacing:3px;color:#3d4166;text-transform:uppercase;padding:16px 0 8px;';
-      div.textContent='── '+yr+' ──'; tlC.appendChild(div);
+      div.textContent='── '+yr+' ──';
+      div.dataset.divider='1';
+      tlC.appendChild(div);
     }
+    var tag = entry.expected
+      ? ' <span style="font-size:.65rem;color:#6b7499">(expected)</span>'
+      : (isFuture ? ' <span style="font-size:.65rem;color:#4a5080">(upcoming)</span>' : '');
     var el=document.createElement('div');
-    el.className='tl-entry'+(isHome?' tl-home':'');
+    el.className='tl-entry'+(isHome?' tl-home':'')+(entry.expected?' tl-expected':'');
+    el.dataset.to=entry.to;
+    el.dataset.future=(isFuture||entry.expected)?'1':'0';
     el.innerHTML=
       '<div class="tl-date-col"><div class="tl-month">'+moLabel+'</div></div>'+
-      '<div class="tl-spine"><div class="tl-node'+(isFuture?' future':'')+'"></div></div>'+
+      '<div class="tl-spine"><div class="tl-node'+((isFuture||entry.expected)?' future':'')+(entry.expected?' expected':'')+'"></div></div>'+
       '<div class="tl-body"><div class="tl-flag-name">'+
-        flagImg(entry.flag,16)+' '+entry.country+
-        (isFuture?' <span style="font-size:.65rem;color:#4a5080">(upcoming)</span>':'')+
+        flagImg(entry.flag,16)+' '+entry.country+ tag +
       '</div></div>';
     tlC.appendChild(el);
   });
+
+  // Hide/show entries and year dividers per the years-back filter.
+  window.applyTimelineFilter = function() {
+    var cutoff = getYearsCutoff();
+    var lastDivider = null, dividerHasVisible = false;
+    Array.from(tlC.children).forEach(function(el){
+      if (el.dataset.divider) {
+        if (lastDivider) lastDivider.style.display = dividerHasVisible ? '' : 'none';
+        lastDivider = el; dividerHasVisible = false;
+      } else {
+        var visible = el.dataset.future === '1' || isRecentEnough(el.dataset.to, cutoff);
+        el.style.display = visible ? '' : 'none';
+        if (visible) dividerHasVisible = true;
+      }
+    });
+    if (lastDivider) lastDivider.style.display = dividerHasVisible ? '' : 'none';
+  };
 })();
 
 function getStayForDate(dateStr) {
   const ts = new Date(dateStr).getTime();
   for (const s of stays) {
     if (ts >= new Date(s.from).getTime() && ts <= new Date(s.to).getTime()) return s;
+  }
+
+  // "Expected" stays from upcoming flight bookings - shown on the timeline
+  // and calendar only (not on the map).
+  for (const s of expectedStays) {
+    if (ts >= new Date(s.from).getTime() && ts <= new Date(s.to).getTime()) return { ...s, expected: true };
   }
 
   // Beyond the last known stay: show the last known location for dates up to
@@ -1006,13 +1376,14 @@ function renderCal() {
     const ds = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const stay = getStayForDate(ds);
     const st = countryStyle(stay.country);
-    legendMap[stay.country] = { st, flag: stay.flag };
+    const legendKey = stay.country + (stay.expected ? ' (expected)' : '');
+    legendMap[legendKey] = { st, flag: stay.flag, expected: !!stay.expected };
 
     const cell = document.createElement('div');
-    cell.className = 'cal-cell' + (ds === todayStr ? ' today' : '') + (ds === calSelected ? ' selected' : '');
+    cell.className = 'cal-cell' + (ds === todayStr ? ' today' : '') + (ds === calSelected ? ' selected' : '') + (stay.expected ? ' expected' : '');
     cell.style.cssText = `background:${st.bg};border-color:${st.border};color:${st.text}`;
     cell.textContent = d;
-    cell.title = `${stay.flag} ${stay.country}`;
+    cell.title = `${stay.flag} ${stay.country}` + (stay.expected ? ' (expected)' : '');
     cell.onclick = () => { calSelected = ds; renderCal(); showResult(ds); };
     container.appendChild(cell);
   }
@@ -1020,9 +1391,9 @@ function renderCal() {
   // Legend
   const legend = document.getElementById('cal-legend');
   legend.innerHTML = '';
-  Object.entries(legendMap).forEach(([name, {st, flag}]) => {
+  Object.entries(legendMap).forEach(([name, {st, flag, expected}]) => {
     const item = document.createElement('div');
-    item.className = 'cal-legend-item';
+    item.className = 'cal-legend-item' + (expected ? ' expected' : '');
     item.style.cssText = `background:${st.bg};border-color:${st.border}`;
     item.innerHTML = `<span>${flag}</span><span style="color:${st.text}">${name}</span>`;
     legend.appendChild(item);
@@ -1038,11 +1409,12 @@ function showResult(ds) {
   const st = countryStyle(stay.country);
   const d = new Date(ds + 'T12:00:00');
   const label = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const expectedTag = stay.expected ? ' <span style="font-size:.7rem;font-weight:600;color:#6b7499">(expected)</span>' : '';
   document.getElementById('cal-result').innerHTML =
     '<div class="cal-result-flag">' + stay.flag + '</div>' +
     '<div>' +
-      '<div class="cal-result-country" style="color:' + st.text + '">' + stay.country + '</div>' +
-      '<div class="cal-result-city">' + stay.city + '</div>' +
+      '<div class="cal-result-country" style="color:' + st.text + '">' + stay.country + expectedTag + '</div>' +
+      '<div class="cal-result-city">' + stripBookingCodes(stay.city) + '</div>' +
       '<div class="cal-result-date">' + label + '</div>' +
     '</div>';
 }
@@ -1070,9 +1442,6 @@ function showTab(name, btn) {
 }
 
 // Sort countries
-var countryLastStay = {};
-stays.forEach(function(s){ if(!countryLastStay[s.country]||s.to>countryLastStay[s.country]) countryLastStay[s.country]=s.to; });
-
 function sortCards(mode, btn) {
   document.querySelectorAll('.sort-btn').forEach(function(b){ b.classList.remove('active'); });
   if(btn) btn.classList.add('active');
@@ -1081,6 +1450,7 @@ function sortCards(mode, btn) {
   cards.sort(function(a,b){
     if(mode==='abc') return a.dataset.name.localeCompare(b.dataset.name);
     if(mode==='visits') return parseInt(b.dataset.visits)-parseInt(a.dataset.visits);
+    if(mode==='days') return parseInt(b.dataset.days)-parseInt(a.dataset.days);
     if(mode==='recent') return (countryLastStay[b.dataset.name]||'').localeCompare(countryLastStay[a.dataset.name]||'');
     return 0;
   });
@@ -1090,24 +1460,71 @@ function sortCards(mode, btn) {
 function filterCards(region, btn) {
   document.querySelectorAll('.filter-bar .filter-btn').forEach(function(b){ b.classList.remove('active'); });
   if(btn) btn.classList.add('active');
-  document.querySelectorAll('#countries-grid .country-card').forEach(function(card){
-    card.style.display = (region === 'all' || card.dataset.region === region) ? '' : 'none';
-  });
+  regionFilter = region;
+  applyCountryCardFilters();
 }
 
-// Dynamic stats
-(function(){
-  var numC = countries.length;
-  var continents = new Set(countries.map(function(c){ return c.region; })).size;
-  var years = stays.map(function(s){ return parseInt(s.from); });
-  var minY = Math.min.apply(null, years), maxY = new Date().getFullYear();
-  var el = document.getElementById('stat-countries'); if(el) el.textContent=numC;
-  el = document.getElementById('stat-years'); if(el) el.textContent=(maxY-minY+1);
-  el = document.getElementById('stat-continents'); if(el) el.textContent=continents;
-})();
+// Re-applies both the region filter and the years-back filter to country cards.
+function applyCountryCardFilters() {
+  var cutoff = getYearsCutoff();
+  document.querySelectorAll('#countries-grid .country-card').forEach(function(card){
+    var regionOK = (regionFilter === 'all' || card.dataset.region === regionFilter);
+    var yearsOK = isRecentEnough(card.dataset.lastvisit, cutoff);
+    card.style.display = (regionOK && yearsOK) ? '' : 'none';
+  });
+  updateCountryStat();
+  updateDynamicStats();
+}
+
+// Reflects the number of currently-visible country cards in the header stat.
+function updateCountryStat() {
+  var el = document.getElementById('stat-countries');
+  if (!el) return;
+  var visible = Array.from(document.querySelectorAll('#countries-grid .country-card'))
+    .filter(function(c){ return c.style.display !== 'none'; }).length;
+  el.textContent = visible;
+}
+
+// Dynamic stats - recalculated whenever the years-back filter changes
+function updateDynamicStats() {
+  var cutoff = getYearsCutoff();
+
+  // Continents: distinct regions among countries currently visible
+  var visibleRegions = new Set();
+  document.querySelectorAll('#countries-grid .country-card').forEach(function(card){
+    if (card.style.display !== 'none') visibleRegions.add(card.dataset.region);
+  });
+  var elC = document.getElementById('stat-continents');
+  if (elC) elC.textContent = visibleRegions.size;
+
+  // Years: span of years covered by stays within the selected window
+  var relevantYears = stays
+    .filter(function(s){ return isRecentEnough(s.to, cutoff); })
+    .map(function(s){ return parseInt(s.from); });
+  var elY = document.getElementById('stat-years');
+  if (elY) {
+    elY.textContent = relevantYears.length
+      ? (new Date().getFullYear() - Math.min.apply(null, relevantYears) + 1)
+      : 0;
+  }
+}
+
+// Populate all three header stats (countries/years/continents) on initial
+// load - previously only updateDynamicStats() ran here, leaving
+// #stat-countries stuck on its placeholder until the first filter change.
+applyCountryCardFilters();
 
 // Toggle card open/close
 function toggleCard(card) { card.classList.toggle('expanded'); }
+
+// Wire up the "Show last N years" filter (header) - applies to the map,
+// the country cards/stat, and the timeline.
+document.getElementById('years-back-select').addEventListener('change', function(){
+  yearsBack = parseInt(this.value, 10) || 0;
+  applyMapFilters();
+  applyCountryCardFilters();
+  if (window.applyTimelineFilter) window.applyTimelineFilter();
+});
 
 
 // Current location + live local time
