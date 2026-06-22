@@ -630,6 +630,51 @@
     padding:6px 10px; border-radius:8px; font-size:.82rem; cursor:pointer;
   }
   .years-filter select:focus { outline:none; border-color:#7c9ef0; }
+  /* ── Timeline slider bar ── */
+  #tl-bar {
+    background: #0d0f1e;
+    border-top: 1px solid #2e3250;
+    padding: 10px 16px 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  #tl-play-btn {
+    background: linear-gradient(135deg,#7c9ef0,#a78bfa);
+    border: none; border-radius: 50%;
+    width: 38px; height: 38px; font-size: 15px;
+    cursor: pointer; color: #fff; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(124,158,240,0.4);
+    transition: transform .15s;
+  }
+  #tl-play-btn:hover { transform: scale(1.1); }
+  #tl-slider {
+    flex: 1; min-width: 120px;
+    accent-color: #7c9ef0;
+    cursor: pointer; height: 5px;
+  }
+  #tl-info { text-align: right; min-width: 160px; }
+  #tl-date { font-size: .95rem; color: #c5cae9; font-weight: 600; }
+  #tl-loc  { font-size: .75rem; color: #6b7499; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+  #tl-speed { background:#12152a; border:1px solid #2e3250; color:#8b93b8; border-radius:8px; padding:3px 8px; font-size:.75rem; cursor:pointer; }
+  /* ── Timeline date overlay on map ── */
+  #tab-map { position: relative; }
+  #tl-date-overlay {
+    display: none;
+    position: absolute;
+    top: 58px; left: 50%; transform: translateX(-50%);
+    background: rgba(10,12,28,0.82);
+    backdrop-filter: blur(6px);
+    color: #e8eaf0;
+    padding: 10px 28px;
+    border-radius: 30px;
+    font-size: 1.5rem; font-weight: 700; letter-spacing: 3px;
+    z-index: 1000; pointer-events: none;
+    border: 1px solid rgba(124,158,240,0.35);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+    white-space: nowrap;
+  }
   </style>
 </head>
 <body>
@@ -665,12 +710,25 @@
 </nav>
 
 <div class="tab-pane active" id="tab-map">
+  <div id="tl-date-overlay"></div>
   <div class="filter-bar" id="map-filter-bar" style="padding:16px 16px 0">
     <button class="filter-btn active" onclick="filterMapLayers('all', this)">All</button>
     <button class="filter-btn" onclick="filterMapLayers('countries', this)">Countries</button>
     <button class="filter-btn" onclick="filterMapLayers('events', this)">Events</button>
   </div>
   <div id="map"></div>
+  <div id="tl-bar">
+    <button id="tl-play-btn" onclick="tlTogglePlay()" title="Play / Pause">▶</button>
+    <input type="range" id="tl-slider" min="0" max="10000" step="1" value="10000" oninput="tlSeek(this.value)">
+    <select id="tl-speed" onchange="tlSetSpeed(this.value)" title="Playback speed">
+      <option value="30">Extra slow</option>
+      <option value="100">Slow</option>
+      <option value="300" selected>Normal</option>
+      <option value="600">Fast</option>
+      <option value="1200">Very fast</option>
+    </select>
+    <div id="tl-info"><div id="tl-date">—</div><div id="tl-loc">—</div></div>
+  </div>
 </div>
 
 <div class="tab-pane" id="tab-countries">
@@ -1578,6 +1636,248 @@ var COUNTRY_TZ = {
     setInterval(tickClock, 30000);
   }
 })();
+
+// ══════════════════════════════════════════════════════
+// Timeline playback slider
+// ══════════════════════════════════════════════════════
+(function() {
+
+  // ── Coordinate lookup ──
+  var coordMap = {};
+  countries.forEach(function(co) { if (co.lat != null) coordMap[co.name] = [co.lat, co.lng]; });
+  coordMap['Israel'] = [31.5, 34.75];
+
+  // ── Build full period list: stays + Israel home gaps ──
+  var tlSorted = stays.slice().sort(function(a,b){ return a.from < b.from ? -1 : 1; });
+  var allPeriods = [], prevEnd = null;
+  tlSorted.forEach(function(s) {
+    if (prevEnd) {
+      var gs = new Date(prevEnd); gs.setDate(gs.getDate() + 1);
+      if ((new Date(s.from) - gs) / 86400000 >= 1)
+        allPeriods.push({ from: gs.toISOString().slice(0,10), to: s.from,
+          country:'Israel', flag:HOME.flag, city:'Tel Aviv' });
+    }
+    allPeriods.push(Object.assign({}, s));
+    prevEnd = s.to;
+  });
+  var todayDs = new Date().toISOString().slice(0,10);
+  if (prevEnd && prevEnd < todayDs)
+    allPeriods.push({ from:prevEnd, to:todayDs, country:'Israel', flag:HOME.flag, city:'Tel Aviv' });
+
+  var tlMin = new Date(allPeriods[0].from).getTime();
+  var tlMax = new Date(todayDs).getTime();
+  var tlRange = tlMax - tlMin;
+
+  function getPeriod(ts) {
+    var ds = new Date(ts).toISOString().slice(0,10);
+    var best = allPeriods[0];
+    for (var i = 0; i < allPeriods.length; i++) {
+      if (allPeriods[i].from <= ds) best = allPeriods[i]; else break;
+    }
+    return best;
+  }
+
+  var PROFILE_PIC = 'data:image/jpeg;base64,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';
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // ── Marker (created once) ──
+  var tlMarker  = null;
+  var lastCoords  = null;
+  var lastCountry = null;
+
+  function createTlMarker(coords, flag) {
+    var html =
+      '<div style="position:relative;width:48px;height:48px;">' +
+        '<div style="width:48px;height:48px;border-radius:50%;overflow:hidden;' +
+             'border:3px solid #7c9ef0;box-shadow:0 0 0 3px rgba(124,158,240,.25),0 4px 16px rgba(0,0,0,.7);">' +
+          '<img src="' + PROFILE_PIC + '" width="48" height="48" style="border-radius:50%;object-fit:cover;display:block;">' +
+        '</div>' +
+        '<img id="tl-flag-badge" src="' + flagSrc(flag) + '" ' +
+             'style="position:absolute;bottom:-4px;right:-4px;width:22px;height:15px;' +
+             'border-radius:3px;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.5);">' +
+      '</div>';
+    tlMarker = L.marker(coords, {
+      icon: L.divIcon({ className:'', html:html, iconSize:[48,48], iconAnchor:[24,24] }),
+      zIndexOffset: 2000
+    }).addTo(map);
+    lastCoords  = coords;
+    lastCountry = null; // force badge update on first render
+  }
+
+  // ── Trail ──
+  var trailPoints = [];
+  var trailLine   = null;
+
+  function addTrailPoint(coords) {
+    trailPoints.push(L.latLng(coords));
+    if (trailLine) {
+      trailLine.setLatLngs(trailPoints);
+    } else if (trailPoints.length >= 2) {
+      trailLine = L.polyline(trailPoints, {
+        color:'#7c9ef0', weight:2, opacity:0.55, dashArray:'5 7'
+      }).addTo(map);
+    }
+  }
+
+  function clearTrail() {
+    trailPoints = [];
+    if (trailLine) { map.removeLayer(trailLine); trailLine = null; }
+  }
+
+  // ── Animated country-change move ──
+  var moveRaf = null;
+
+  function animateMove(fromCoords, toCoords, flag, country, onDone) {
+    if (moveRaf) { cancelAnimationFrame(moveRaf); moveRaf = null; }
+
+    // Fly map to frame both points
+    var bounds = L.latLngBounds([L.latLng(fromCoords), L.latLng(toCoords)]).pad(0.25);
+    map.flyToBounds(bounds, { duration:0.75, maxZoom:6, easeLinearity:0.4 });
+
+    var dur = 900, startT = null;
+    function step(now) {
+      if (!startT) startT = now;
+      var t = Math.min(1, (now - startT) / dur);
+      var e = t < 0.5 ? 2*t*t : -1+(4-2*t)*t; // easeInOut
+      tlMarker.setLatLng([
+        fromCoords[0] + (toCoords[0] - fromCoords[0]) * e,
+        fromCoords[1] + (toCoords[1] - fromCoords[1]) * e
+      ]);
+      // Swap flag badge at halfway point
+      if (t >= 0.5 && country !== lastCountry) {
+        var badge = document.getElementById('tl-flag-badge');
+        if (badge) badge.src = flagSrc(flag);
+        lastCountry = country;
+      }
+      if (t < 1) {
+        moveRaf = requestAnimationFrame(step);
+      } else {
+        tlMarker.setLatLng(toCoords);
+        lastCoords   = toCoords;
+        addTrailPoint(toCoords);
+        moveRaf = null;
+        onDone();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ── Date overlay helper ──
+  var dateOverlay = document.getElementById('tl-date-overlay');
+  function setDateOverlay(ts) {
+    var d = new Date(ts);
+    dateOverlay.textContent = MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+    document.getElementById('tl-date').textContent = MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  // ── Hide / restore all map markers ──
+  function hideAllMapMarkers() {
+    if (map.hasLayer(countryLayer)) map.removeLayer(countryLayer);
+    if (map.hasLayer(eventLayer))   map.removeLayer(eventLayer);
+  }
+  function restoreAllMapMarkers() { applyMapFilters(); }
+
+  // ── Playback state ──
+  var playing = false, rafId = null, lastRaf = null;
+  var currentTs = tlMax;
+  var speedDaysPerSec = 300;
+
+  // ── Main playback step ──
+  function tlStep(now) {
+    if (!playing) return;
+    if (lastRaf !== null) {
+      var dt = Math.min(now - lastRaf, 150);
+      currentTs = Math.min(tlMax, currentTs + (dt / 1000) * speedDaysPerSec * 86400000);
+    }
+    lastRaf = now;
+
+    var p = getPeriod(currentTs);
+    var newCoords = coordMap[p.country] || [31.5, 34.75];
+
+    // Update slider + date
+    document.getElementById('tl-slider').value = (currentTs - tlMin) / tlRange * 10000;
+    setDateOverlay(currentTs);
+
+    // Country changed → pause timer and animate the move
+    if (p.country !== lastCountry && lastCountry !== null) {
+      var from = lastCoords || coordMap[lastCountry] || [31.5, 34.75];
+      animateMove(from, newCoords, p.flag, p.country, function() {
+        if (playing) {
+          // Update sidebar label
+          var city = (p.city||'').split('–')[0].split('(')[0].split(';')[0].trim().substring(0,36);
+          document.getElementById('tl-loc').textContent = p.flag+' '+p.country+(city?' · '+city:'');
+          lastRaf = null;
+          if (currentTs < tlMax) rafId = requestAnimationFrame(tlStep);
+          else tlStop();
+        }
+      });
+      return; // wait for animation callback
+    }
+
+    // Same country — just move marker (no animation needed)
+    if (!tlMarker) {
+      createTlMarker(newCoords, p.flag);
+      addTrailPoint(newCoords);
+    } else {
+      tlMarker.setLatLng(newCoords);
+      lastCoords = newCoords;
+      if (p.country !== lastCountry) {
+        var badge = document.getElementById('tl-flag-badge');
+        if (badge) badge.src = flagSrc(p.flag);
+        lastCountry = p.country;
+      }
+    }
+
+    var city = (p.city||'').split('–')[0].split('(')[0].split(';')[0].trim().substring(0,36);
+    document.getElementById('tl-loc').textContent = p.flag+' '+p.country+(city?' · '+city:'');
+
+    if (currentTs >= tlMax) { tlStop(); return; }
+    rafId = requestAnimationFrame(tlStep);
+  }
+
+  // ── Stop ──
+  function tlStop() {
+    playing = false; lastRaf = null;
+    if (rafId)    { cancelAnimationFrame(rafId);    rafId    = null; }
+    if (moveRaf)  { cancelAnimationFrame(moveRaf);  moveRaf  = null; }
+    document.getElementById('tl-play-btn').textContent = '▶';
+    dateOverlay.style.display = 'none';
+    clearTrail();
+    if (tlMarker) { map.removeLayer(tlMarker); tlMarker = null; lastCountry = null; lastCoords = null; }
+    restoreAllMapMarkers();
+    document.getElementById('tl-date').textContent = '▶ press play';
+    document.getElementById('tl-loc').textContent  = '2005 → today';
+  }
+
+  // ── Public API ──
+  window.tlTogglePlay = function() {
+    if (playing) { tlStop(); return; }
+    if (currentTs >= tlMax) { currentTs = tlMin; clearTrail(); }
+    playing = true;
+    document.getElementById('tl-play-btn').textContent = '⏸';
+    dateOverlay.style.display = 'block';
+    lastRaf = null; lastCountry = null; lastCoords = null;
+    hideAllMapMarkers();
+    rafId = requestAnimationFrame(tlStep);
+  };
+
+  window.tlSeek = function(val) {
+    currentTs = tlMin + (val / 10000) * tlRange;
+    if (!playing) {
+      setDateOverlay(currentTs);
+    }
+  };
+
+  window.tlSetSpeed = function(val) { speedDaysPerSec = parseInt(val); };
+
+  // Init labels
+  document.getElementById('tl-date').textContent = '▶ press play';
+  document.getElementById('tl-loc').textContent  = '2005 → today';
+
+})();
 </script>
+</body>
+</body>
+</body>
 </body>
 </html>
