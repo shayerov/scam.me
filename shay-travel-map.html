@@ -827,7 +827,10 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
   subdomains: 'abcd',
   maxZoom: 19,
-  noWrap: true
+  noWrap: true,
+  keepBuffer: 8,
+  updateWhenIdle: false,
+  updateWhenZooming: false
 }).addTo(map);
 
 // Flag image helpers
@@ -1729,10 +1732,11 @@ var COUNTRY_TZ = {
 
   function animateMove(fromCoords, toCoords, flag, country, onDone) {
     if (moveRaf) { cancelAnimationFrame(moveRaf); moveRaf = null; }
+    map.stop(); // cancel any running Leaflet animation
 
-    // Fly map to frame both points
-    var bounds = L.latLngBounds([L.latLng(fromCoords), L.latLng(toCoords)]).pad(0.25);
-    map.flyToBounds(bounds, { duration:0.75, maxZoom:6, easeLinearity:0.4 });
+    // Pan smoothly to the destination — no zoom change means no tile reload, no flicker.
+    // The marker animation and pan run in parallel so they feel like one movement.
+    map.panTo(toCoords, { animate: true, duration: 0.7, easeLinearity: 0.5 });
 
     var dur = 900, startT = null;
     function step(now) {
@@ -1753,7 +1757,7 @@ var COUNTRY_TZ = {
         moveRaf = requestAnimationFrame(step);
       } else {
         tlMarker.setLatLng(toCoords);
-        lastCoords   = toCoords;
+        lastCoords = toCoords;
         addTrailPoint(toCoords);
         moveRaf = null;
         onDone();
