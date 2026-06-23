@@ -63,6 +63,20 @@
       color: #2e3250;
       letter-spacing: 0.06em;
     }
+
+    .local-time {
+      margin-top: 22px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #7c9ef0;
+      letter-spacing: 3px;
+    }
+    .tz-label {
+      font-size: 0.8rem;
+      color: #4a5080;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -72,6 +86,8 @@
     <div class="location" id="location"></div>
     <div class="sublocation" id="sublocation"></div>
     <div class="date" id="date"></div>
+    <div class="local-time" id="local-time"></div>
+    <div class="tz-label" id="tz-label"></div>
   </div>
 
   <script src="shay-travel-data.js"></script>
@@ -108,6 +124,24 @@
       return { ...HOME, from: dateStr, to: dateStr };
     }
 
+    var COUNTRY_TZ = {
+      'Israel':'Asia/Jerusalem','United Kingdom':'Europe/London','France':'Europe/Paris',
+      'Germany':'Europe/Berlin','Austria':'Europe/Vienna','Switzerland':'Europe/Zurich',
+      'Netherlands':'Europe/Amsterdam','Belgium':'Europe/Brussels','Spain':'Europe/Madrid',
+      'Portugal':'Europe/Lisbon','Italy':'Europe/Rome','Greece':'Europe/Athens',
+      'Czech Republic':'Europe/Prague','Hungary':'Europe/Budapest','Poland':'Europe/Warsaw',
+      'Norway':'Europe/Oslo','Sweden':'Europe/Stockholm','Denmark':'Europe/Copenhagen',
+      'Finland':'Europe/Helsinki','Iceland':'Atlantic/Reykjavik','Ireland':'Europe/Dublin',
+      'Montenegro':'Europe/Podgorica','Croatia':'Europe/Zagreb','Serbia':'Europe/Belgrade',
+      'United States':'America/Los_Angeles','Canada':'America/Toronto','Mexico':'America/Cancun',
+      'Brazil':'America/Sao_Paulo','Argentina':'America/Argentina/Buenos_Aires',
+      'Australia':'Australia/Sydney','New Zealand':'Pacific/Auckland',
+      'Japan':'Asia/Tokyo','South Korea':'Asia/Seoul','China':'Asia/Shanghai',
+      'India':'Asia/Kolkata','Thailand':'Asia/Bangkok','Singapore':'Asia/Singapore',
+      'South Africa':'Africa/Johannesburg','Egypt':'Africa/Cairo',
+      'United Arab Emirates':'Asia/Dubai','Turkey':'Europe/Istanbul'
+    };
+
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
     const current = getStayForDate(todayStr);
@@ -126,6 +160,22 @@
     }
 
     // Show date range (omit if lastKnown — date is synthetic)
+    // Local time clock
+    var tz = COUNTRY_TZ[current.country] || 'UTC';
+    var tzName = new Intl.DateTimeFormat('en-GB', { timeZone: tz, timeZoneName: 'short' })
+      .formatToParts(new Date()).find(p => p.type === 'timeZoneName');
+    document.getElementById('tz-label').textContent =
+      current.country + (tzName ? ' · ' + tzName.value : '');
+
+    function tickClock() {
+      document.getElementById('local-time').textContent =
+        new Intl.DateTimeFormat('en-GB', {
+          timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
+        }).format(new Date());
+    }
+    tickClock();
+    setInterval(tickClock, 30000);
+
     if (!current.lastKnown && current.from !== current.to) {
       const f = new Date(current.from + 'T00:00:00');
       const t = new Date(current.to   + 'T00:00:00');

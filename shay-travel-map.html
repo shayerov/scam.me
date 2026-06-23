@@ -1162,12 +1162,15 @@ countries.forEach((c, i) => {
   // Visits: one entry per merged trip, showing just the date range plus
   // transport in/out (no accommodation/reservation details).
   const trips = tripsByCountry[c.name] || [];
+  const todayIso = new Date().toISOString().slice(0, 10);
   const visitsHtml = trips.map(trip => {
     const transport = tripTransport(trip);
+    const isOngoing = trip.to >= todayIso;
     const tripDays = Math.round((new Date(trip.to) - new Date(trip.from)) / 86400000) + 1;
-    const daysLabel = tripDays + ' day' + (tripDays === 1 ? '' : 's');
+    const daysLabel = isOngoing ? 'ongoing' : tripDays + ' day' + (tripDays === 1 ? '' : 's');
+    const dateStr = isOngoing ? fmtDate(trip.from) + ' – <em>present</em>' : fmtRange(trip.from, trip.to);
     return '<div class="visit-item"><div class="visit-dot"></div><div>'+
-      '<div class="visit-date">'+fmtRange(trip.from, trip.to)+' <span class="visit-days">'+daysLabel+'</span></div>'+
+      '<div class="visit-date">'+dateStr+' <span class="visit-days">'+daysLabel+'</span></div>'+
       (transport ? '<div class="visit-transport">'+transport+'</div>' : '')+
       '</div></div>';
   }).join('');
