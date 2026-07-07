@@ -68,7 +68,7 @@ const countries = [
   {
     flag: "🇬🇧", name: "United Kingdom", city: "London", region: "europe",
     lat: 51.5074, lng: -0.1278,
-    visits: ["Jun 4–12, 2008 (London + Horsham – friend's wedding Jun 7; with Yana)", "Jul 12–20, 2010 (London – Eurolines from Amsterdam; side trips to Oxford Jul 15 and Horsham Jul 17–18; left Jul 20)", "Nov 9–15, 2017 (London – UIA PS778 TLV→KBP Nov 9, PS111 KBP→LGW Nov 9; Smart Camden Inn Hostel; London Decompression Nov 11–12; BA2762 LGW→AMS Nov 15)", "May 19–Jun 18, 2024 (London – FlixBus Brussels→London Victoria May 19; Burning Nest 2024 regional burn ~May 20–27 England; BA BA0988 LHR→BER Brandon Jun 18)", "May 13–Jun 20, 2025 (London Gatwick – China Eastern MU780 AKL→PVG May 12 + MU213 PVG→LGW May 13; Burning Nest 2025 regional burn ~Jun 2025; BA LHR→SOF Jun 20)", "Jun 9, 2026 (London Gatwick – Air Transat TS122 YYZ→LGW Jun 8 22:45)"],
+    visits: ["Jun 4–12, 2008 (London + Horsham – friend's wedding Jun 7; with Yana)", "Jul 12–20, 2010 (London – Eurolines from Amsterdam; side trips to Oxford Jul 15 and Horsham Jul 17–18; left Jul 20)", "Nov 9–15, 2017 (London – UIA PS778 TLV→KBP Nov 9, PS111 KBP→LGW Nov 9; Smart Camden Inn Hostel; London Decompression Nov 11–12; BA2762 LGW→AMS Nov 15)", "May 19–Jun 18, 2024 (London – FlixBus Brussels→London Victoria May 19; Burning Nest 2024 regional burn ~May 20–27 England; BA BA0988 LHR→BER Brandon Jun 18)", "May 13–Jun 20, 2025 (London Gatwick – China Eastern MU780 AKL→PVG May 12 + MU213 PVG→LGW May 13; Burning Nest 2025 regional burn ~Jun 2025; BA LHR→SOF Jun 20)", "Jun 9–22, 2026 (London – Air Transat TS122 YYZ→LGW Jun 8 22:45; Brighton Jun 12–14; Ryanair BS8PRL LTN→VNO Jun 22)"],
     note: "London + Horsham (Jun 2008, Jul 2010) · London Decompression 2017 · Burning Nest 2024/2025 (England)"
   },
   {
@@ -754,15 +754,15 @@ const stays = [
   { from:"2025-11-15", to:"2025-11-15", flag:"🇶🇦", country:"Qatar", city:"Doha – DOH transit (Qatar AMS→DOH→AKL)" },
   { from:"2025-11-16", to:"2026-05-05", flag:"🇳🇿", country:"New Zealand", city:"New Zealand – Qatar AMS→DOH→AKL departs Nov 14, arrives Nov 16; Nelson Lakes · Kahurangi" },
   { from:"2026-05-06", to:"2026-06-08", flag:"🇨🇦", country:"Canada", city:"Toronto – Qantas QF3 AKL→JFK→YYZ May 6; Air Transat TS122 YYZ→LGW Jun 8 22:45" },
-  { from:"2026-06-09", to:"2026-06-11", flag:"🇬🇧", country:"United Kingdom", city:"London Gatwick – Air Transat TS122 YYZ→LGW Jun 8 22:45" },
+  { from:"2026-06-09", to:"2026-06-22", flag:"🇬🇧", country:"United Kingdom", city:"London – Air Transat TS122 YYZ→LGW Jun 8 22:45; Brighton Jun 12–14 (hostel); Ryanair BS8PRL FR3466 LTN→VNO Jun 22 06:25" },
+  { from:"2026-06-22", to:"2026-07-10", flag:"🇱🇹", country:"Lithuania", city:"Vilnius – Ryanair BS8PRL FR3466 LTN→VNO Jun 22 11:05; SAS Z35NYL VNO→CPH Jul 10" },
 ];
 
-// "Expected" upcoming stays, based on flight bookings found in email.
-// Only the flight route and date are recorded here (no booking refs, PNRs,
-// or ticket numbers) - these show on the timeline and calendar as forecasts,
-// but are intentionally NOT used for map markers or country cards.
+// "Expected" upcoming stays — confirmed transport bookings for future arrivals.
+// from = confirmed arrival date by transport; to = last confirmed date in that country.
+// No end date is assumed without a confirmed departure booking.
 const expectedStays = [
-  { from:"2026-06-22", to:"2026-07-01", flag:"🇱🇹", country:"Lithuania", city:"Vilnius – flight London Luton → Vilnius, Jun 22" },
-  { from:"2026-08-18", to:"2026-08-19", flag:"🇵🇱", country:"Poland", city:"Warsaw (transit) – flight Vienna → Warsaw, Aug 18" },
-  { from:"2026-08-20", to:"2026-12-31", flag:"🇺🇸", country:"United States", city:"San Francisco – flight Warsaw → San Francisco, Aug 20" },
+  { from:"2026-07-10", to:"2026-07-30", flag:"🇩🇰", country:"Denmark", city:"Copenhagen – SAS Z35NYL VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30" },
+  { from:"2026-08-18", to:"2026-08-20", flag:"🇵🇱", country:"Poland", city:"Warsaw (transit) – LOT X3AP4H LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00" },
+  { from:"2026-08-20", to:"2026-12-31", flag:"🇺🇸", country:"United States", city:"San Francisco – LOT X3AP4H LO35 WAW→SFO Aug 20; Union Hotel SF Aug 20–21; Reno Sep 8–10 (Airbnb)" },
 ];
