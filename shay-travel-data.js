@@ -26,7 +26,7 @@ const countries = [
   {
     flag: "🇦🇹", name: "Austria", city: "Vienna", region: "europe",
     lat: 48.2082, lng: 16.3738,
-    visits: ["Sep 18–24, 2018 (Vienna – easyJet U24733 BER SXF→VIE Sep 18 18:55; Wizzair W62811 VIE→TLV Sep 24 06:05→10:30; with Nadja Schreiber; Schönburn 2018 at Schloss Wetzlas – no ticket email found)", "~Mar 1–2, 2019 (Vienna – Vienna Burning Ball)", "Sep 15–16, 2019 (Vienna – FlixBus side trip from Zurich; Schönburn 2019 at Schloss Wetzlas)", "Jun 29–Jul 4, 2020 (Vienna – arrived by FlixBus ~Jun 29; departed Ryanair FR7161 VIE→TLV Jul 4 13:00–17:20)", "Sep ~22–28, 2020 (Vienna – transit from Berlin; Schönburn 2020 at Schloss Wetzlas; departed ÖBB D720 Wien Hbf→München Sep 28)", "Oct 30–Nov 3, 2020 (Vienna – arrived Wiener Linien Airport Lines return ticket Oct 30; departed ÖBB RJX 564 Wien→Innsbruck→Zürich Nov 3 11:30)", "Sep 8–12, 2021 (Schönburn 2021, Schloss Wetzlas; during Vienna Aug 31–Sep 26 stay)", "Aug 31–Sep 26, 2021 (Vienna – Omio Budapest→Vienna Aug 31; DB Bahn Sep 14 Berlin trip; Aegean A3863+A3928 VIE→TLV Sep 26 via Athens)", "Jan 15–26, 2022 (Ryanair FR7161 VIE→TLV Jan 26, delayed 2h+)", "Feb 7–27, 2022 (Ryanair TLV→VIE Feb 7; VIE→TLV Feb 27)", "Aug 5–23, 2022 (Austrian GOT→VIE Aug 5 19:55)", "Sep ~7–11, 2022 (Schönburn 2022, Böllerbauer; during Vienna Sep 7–Jan 2023 stay)", "Sep 7, 2022–Jan 5, 2023 (Austrian SFO→FRA→VIE Sep 7; El Al LY362 VIE→TLV Jan 5 2023)", "Feb 23–Mar 5, 2023 (Vienna – ÖBB ZRH→VIE Feb 23; Austrian OS857 VIE→TLV Mar 5)", "Sep 21–29, 2023 (Vienna – FlixBus BER→VIE Sep 21; El Al VIE→TLV Sep 29)", "Oct 28–Nov 1, 2023 (Vienna – Austrian TGD→VIE Oct 28; Wizzair VIE→LCA Nov 1)", "Aug 7–11, 2024 (Schönburn 2024, Böllerbauer; during Vienna Aug 5–22 stay)", "Aug 2024 (Vienna – Ryanair ARN→VIE)", "Aug 6–10, 2025 (Schönburn 2025, Böllerbauer; during Vienna Jul 27–Aug 15 stay)", "Jul 27–Aug 15, 2025 (Vienna – drove from Stockholm Jul 27; OS207 VIE→FRA + UA59 FRA→SFO Aug 15)", "Oct 14–23, 2025 (Airbnb, 9 nights)"],
+    visits: ["Sep 18–24, 2018 (Vienna – easyJet U24733 BER SXF→VIE Sep 18 18:55; Wizzair W62811 VIE→TLV Sep 24 06:05→10:30; with Nadja Schreiber; Schönburn 2018 at Schloss Wetzlas – no ticket email found)", "~Mar 1–2, 2019 (Vienna – Vienna Burning Ball)", "Sep 15–16, 2019 (Vienna – FlixBus side trip from Zurich; Schönburn 2019 at Schloss Wetzlas)", "Jun 29–Jul 4, 2020 (Vienna – arrived by FlixBus ~Jun 29; departed Ryanair FR7161 VIE→TLV Jul 4 13:00–17:20)", "Sep ~22–28, 2020 (Vienna – transit from Berlin; Schönburn 2020 at Schloss Wetzlas; departed ÖBB D720 Wien Hbf→München Sep 28)", "Oct 30–Nov 3, 2020 (Vienna – arrived Wiener Linien Airport Lines return ticket Oct 30; departed ÖBB RJX 564 Wien→Innsbruck→Zürich Nov 3 11:30)", "Sep 8–12, 2021 (Schönburn 2021, Schloss Wetzlas; during Vienna Aug 31–Sep 26 stay)", "Aug 31–Sep 26, 2021 (Vienna – Omio Budapest→Vienna Aug 31; DB Bahn Sep 14 Berlin trip; Aegean A3863+A3928 VIE→TLV Sep 26 via Athens)", "Jan 15–26, 2022 (Ryanair FR7161 VIE→TLV Jan 26, delayed 2h+)", "Feb 7–27, 2022 (Ryanair TLV→VIE Feb 7; VIE→TLV Feb 27)", "Aug 5–23, 2022 (Austrian GOT→VIE Aug 5 19:55)", "Sep ~7–11, 2022 (Schönburn 2022, Böllerbauer; during Vienna Sep 7–Jan 2023 stay)", "Sep 7, 2022–Jan 5, 2023 (Austrian SFO→FRA→VIE Sep 7; El Al LY362 VIE→TLV Jan 5 2023)", "Feb 23–Mar 5, 2023 (Vienna – ÖBB ZRH→VIE Feb 23; Austrian OS857 VIE→TLV Mar 5)", "Sep 21–29, 2023 (Vienna – FlixBus BER→VIE Sep 21; El Al VIE→TLV Sep 29)", "Oct 28–Nov 1, 2023 (Vienna – Austrian TGD→VIE Oct 28; Wizzair VIE→LCA Nov 1)", "Aug 7–11, 2024 (Schönburn 2024, Böllerbauer; during Vienna Aug 5–22 stay)", "Aug 2024 (Vienna – Ryanair ARN→VIE)", "Aug 6–10, 2025 (Schönburn 2025, Böllerbauer; during Vienna Jul 27–Aug 15 stay)", "Jul 27–Aug 15, 2025 (Vienna – drove from Stockholm Jul 27; OS207 VIE→FRA + UA59 FRA→SFO Aug 15)", "Oct 14–23, 2025 (Airbnb, 9 nights)", "Aug 3–18, 2026 (Vienna – Ethiopian GMYEYG ET731 CPH→VIE Aug 3; LOT X3AP4H LO226 VIE→WAW Aug 18 19:30)"],
     note: "Frequent Ryanair TLV ↔ VIE hub · Schönburn regional burn (Schloss Wetzlas 2018–2021; Böllerbauer 2022–)"
   },
   {
@@ -62,7 +62,7 @@ const countries = [
   {
     flag: "🇩🇰", name: "Denmark", city: "Copenhagen", region: "europe",
     lat: 55.6761, lng: 12.5683,
-    visits: ["Jul 14–26, 2016 (Copenhagen – Pegasus TLV→SAW→CPH; ~12 days; car rental; road trip; The Borderland 2016 regional burn)", "Jul 21–Aug 4, 2017 (Copenhagen – Gotogate TLV→CPH Jul 21; Airbnb Christianshavn Jul 21–22 (with Yulia); Avis car rental CPH Jul 21–Aug 3; The Borderland 2017 regional burn Jul 22–Aug 2; returned Aegean A3 CPH→ATH→TLV Aug 3–4 (luggage delayed))", "Jul 21–28, 2018 (Copenhagen – UIA PS780 TLV→KBP Jul 21, PS163 KBP→CPH Jul 21; The Borderland 2018 regional burn Jul 24–27)", "Jul 21–31, 2019 (Copenhagen – SWISS LX1278 ZRH→CPH Jul 21 (delayed, with Christina Welter); The Borderland 2019; Quality Hotel Høje Taastrup Jul 27; SWISS LX1273 CPH→ZRH + LX256 ZRH→TLV Jul 31)", "Jul 15–27, 2021 (Copenhagen – Air France AF1621 TLV→CPH Jul 15 direct; Revent 2021 regional burn; Airbnb Store Kongensgade 42A Jul 15–19; SWISS LX1267 CPH→ZRH Jul 27)", "Oct 2025 (Eurowings DUS→CPH)", "Nov 4, 2025 (Digital Tech Summit)"],
+    visits: ["Jul 14–26, 2016 (Copenhagen – Pegasus TLV→SAW→CPH; ~12 days; car rental; road trip; The Borderland 2016 regional burn)", "Jul 21–Aug 4, 2017 (Copenhagen – Gotogate TLV→CPH Jul 21; Airbnb Christianshavn Jul 21–22 (with Yulia); Avis car rental CPH Jul 21–Aug 3; The Borderland 2017 regional burn Jul 22–Aug 2; returned Aegean A3 CPH→ATH→TLV Aug 3–4 (luggage delayed))", "Jul 21–28, 2018 (Copenhagen – UIA PS780 TLV→KBP Jul 21, PS163 KBP→CPH Jul 21; The Borderland 2018 regional burn Jul 24–27)", "Jul 21–31, 2019 (Copenhagen – SWISS LX1278 ZRH→CPH Jul 21 (delayed, with Christina Welter); The Borderland 2019; Quality Hotel Høje Taastrup Jul 27; SWISS LX1273 CPH→ZRH + LX256 ZRH→TLV Jul 31)", "Jul 15–27, 2021 (Copenhagen – Air France AF1621 TLV→CPH Jul 15 direct; Revent 2021 regional burn; Airbnb Store Kongensgade 42A Jul 15–19; SWISS LX1267 CPH→ZRH Jul 27)", "Oct 2025 (Eurowings DUS→CPH)", "Nov 4, 2025 (Digital Tech Summit)", "Jul 10–Aug 3, 2026 (Copenhagen – SAS Z35NYL VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30; Green House Copenhagen Aug 2; The Borderland 2026 at Alvarsjö, Sweden; Ethiopian GMYEYG CPH→VIE Aug 3)"],
     note: "The Borderland 2016/17/18/19 (Denmark) · Revent 2021 · SWISS · UIA"
   },
   {
@@ -110,8 +110,8 @@ const countries = [
   {
     flag: "🇸🇪", name: "Sweden", city: "Gothenburg / Stockholm", region: "europe",
     lat: 57.7089, lng: 11.9746,
-    visits: ["Jul 21–Aug 5, 2022 (Gothenburg – FlixBus from Berlin Jul 21; The Borderland 2022 regional burn (Jul); Austrian OS326 GOT→VIE Aug 5 19:55)", "Jul 18–Aug 6, 2023 (Gothenburg – Ryanair DUB→GOT Jul 18; The Borderland 2023 regional burn (Jul); Airbnb Lerum Jul 31–Aug 5; Eurowings EW8221 GOT→BER Aug 6)", "Jul 17–Aug 5, 2024 (Stockholm – SWISS LX1254 ZRH→ARN Jul 17; The Borderland 2024 regional burn (Jul, 10 days); Ryanair FR756 ARN→VIE Aug 5)", "Jul 16–27, 2025 (Stockholm – SAS BER→ARN Jul 16; The Borderland 2025 regional burn (Jul); drove to Vienna Jul 27)"],
-    note: "Gothenburg (GOT) · Stockholm Arlanda (ARN) · The Borderland 2022/2023/2024/2025"
+    visits: ["Jul 21–Aug 5, 2022 (Gothenburg – FlixBus from Berlin Jul 21; The Borderland 2022 regional burn (Jul); Austrian OS326 GOT→VIE Aug 5 19:55)", "Jul 18–Aug 6, 2023 (Gothenburg – Ryanair DUB→GOT Jul 18; The Borderland 2023 regional burn (Jul); Airbnb Lerum Jul 31–Aug 5; Eurowings EW8221 GOT→BER Aug 6)", "Jul 17–Aug 5, 2024 (Stockholm – SWISS LX1254 ZRH→ARN Jul 17; The Borderland 2024 regional burn (Jul, 10 days); Ryanair FR756 ARN→VIE Aug 5)", "Jul 16–27, 2025 (Stockholm – SAS BER→ARN Jul 16; The Borderland 2025 regional burn (Jul); drove to Vienna Jul 27)", "~Jul 16–27, 2026 (Alvarsjö, Blekinge – The Borderland 2026 regional burn at alvarsjo.land; from Copenhagen by train/bus)"],
+    note: "Gothenburg (GOT) · Stockholm Arlanda (ARN) · The Borderland 2022/2023/2024/2025/2026"
   },
   {
     flag: "🇧🇬", name: "Bulgaria", city: "Bansko / Sofia", region: "europe",
@@ -474,6 +474,10 @@ const travelLog = [
   { date: "Jan–Apr 2026", flag: "🇳🇿", country: "New Zealand", city: "Nelson Lakes · Kahurangi · Parklands Marina", future: false },
   { date: "May 6, 2026", flag: "🇨🇦", country: "Canada", city: "Toronto – Qantas QF3 AKL→JFK→YYZ", future: false },
   { date: "Jun 9, 2026", flag: "🇬🇧", country: "United Kingdom", city: "London Gatwick – Air Transat TS122 YYZ→LGW Jun 8 22:45", future: false },
+  { date: "Jun 22, 2026", flag: "🇱🇹", country: "Lithuania", city: "Vilnius – Ryanair BS8PRL FR3466 LTN→VNO Jun 22 11:05", future: false },
+  { date: "Jul 10, 2026", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – SAS Z35NYL VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30", future: false },
+  { date: "~Jul 16–27, 2026", flag: "🇸🇪", country: "Sweden", city: "The Borderland 2026 – Alvarsjö, Blekinge (alvarsjo.land)", future: false },
+  { date: "Aug 3, 2026", flag: "🇦🇹", country: "Austria", city: "Vienna – Ethiopian GMYEYG ET731 CPH→VIE Aug 3 19:25", future: false },
 ];
 
 // Events with confirmed venue addresses
@@ -576,7 +580,8 @@ const events = [
   // ── Burns – 2026 (upcoming) ──
   { name: "Ignition 2026", venue: "Ignition – NZ regional burn", address: "New Zealand", date: "Jan 2026", emoji: "🔥", type: "Burn", lat: -39.6000, lng: 176.8000 },
   { name: "KiwiBurn 2026", venue: "KiwiBurn", address: "New Zealand", date: "Jan 2026", emoji: "🔥", type: "Burn", lat: -39.9300, lng: 175.5700 },
-  { name: "What The Farm VIII (WTF VIII)", venue: "Ferme d'Antioche", address: "Ferme d'Antioche, Vauxaillon, Aisne, France", date: "May 2026", emoji: "🔥", type: "Burn", lat: 49.5592, lng: 3.5308 }
+  { name: "What The Farm VIII (WTF VIII)", venue: "Ferme d'Antioche", address: "Ferme d'Antioche, Vauxaillon, Aisne, France", date: "May 2026", emoji: "🔥", type: "Burn", lat: 49.5592, lng: 3.5308 },
+  { name: "The Borderland 2026", venue: "The Borderland – Alvarsjö", address: "Alvarsjö, Blekinge, Sweden", date: "~Jul 16–27, 2026", emoji: "🔥", type: "Burn", lat: 56.09, lng: 15.59 }
 ];
 
 // ── Calendar: known stays away from Israel ──
@@ -756,13 +761,14 @@ const stays = [
   { from:"2026-05-06", to:"2026-06-08", flag:"🇨🇦", country:"Canada", city:"Toronto – Qantas QF3 AKL→JFK→YYZ May 6; Air Transat TS122 YYZ→LGW Jun 8 22:45" },
   { from:"2026-06-09", to:"2026-06-22", flag:"🇬🇧", country:"United Kingdom", city:"London – Air Transat TS122 YYZ→LGW Jun 8 22:45; Brighton Jun 12–14 (hostel); Ryanair BS8PRL FR3466 LTN→VNO Jun 22 06:25" },
   { from:"2026-06-22", to:"2026-07-10", flag:"🇱🇹", country:"Lithuania", city:"Vilnius – Ryanair BS8PRL FR3466 LTN→VNO Jun 22 11:05; SAS Z35NYL VNO→CPH Jul 10" },
+  { from:"2026-07-10", to:"2026-08-03", flag:"🇩🇰", country:"Denmark", city:"Copenhagen – SAS Z35NYL VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30; Green House Copenhagen Aug 2; Ethiopian GMYEYG ET731 CPH→VIE Aug 3 19:25" },
+  { from:"2026-08-03", to:"2026-08-18", flag:"🇦🇹", country:"Austria", city:"Vienna – Ethiopian GMYEYG ET731 CPH→VIE Aug 3; LOT X3AP4H LO226 VIE→WAW Aug 18 19:30" },
 ];
 
 // "Expected" upcoming stays — confirmed transport bookings for future arrivals.
 // from = confirmed arrival date by transport; to = last confirmed date in that country.
 // No end date is assumed without a confirmed departure booking.
 const expectedStays = [
-  { from:"2026-07-10", to:"2026-07-30", flag:"🇩🇰", country:"Denmark", city:"Copenhagen – SAS Z35NYL VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30" },
   { from:"2026-08-18", to:"2026-08-20", flag:"🇵🇱", country:"Poland", city:"Warsaw (transit) – LOT X3AP4H LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00" },
   { from:"2026-08-20", to:"2026-12-31", flag:"🇺🇸", country:"United States", city:"San Francisco – LOT X3AP4H LO35 WAW→SFO Aug 20; Union Hotel SF Aug 20–21; Reno Sep 8–10 (Airbnb)" },
 ];
