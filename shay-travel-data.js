@@ -120,6 +120,12 @@ const countries = [
     note: "Bansko ski resort · Sofia Airport departure"
   },
   {
+    flag: "🇬🇷", name: "Greece", city: "Heraklion / Crete", region: "europe",
+    lat: 35.3387, lng: 25.1442,
+    visits: ["Oct 7+, 2026 (Heraklion, Crete – SWISS YNNYV4 LX4641 YYZ→ZRH Oct 6 + LX8350 ZRH→HER Oct 7 16:10 arr 19:55; Poseidon Hotel)"],
+    note: "Heraklion (HER) · Crete · SWISS via Zurich Oct 2026"
+  },
+  {
     flag: "🇲🇪", name: "Montenegro", city: "Tivat / Kotor / Žabljak / Budva", region: "europe",
     lat: 42.4304, lng: 19.2594,
     visits: ["Oct 10–28, 2023 (Tivat – Israir TLV→TIV Oct 10; Airbnb Tivat Oct 10–13; Kotor boat tour Oct 13; Apartmani Momčilo Žabljak Oct 13; Airbnb Prčanj Oct 15–16; SunSea Apartments Budva; Gospostina prima Budva; CroatiaBus Budva→Podgorica Oct 28; Austrian TGD→VIE Oct 28)"],
@@ -248,7 +254,7 @@ const countries = [
   {
     flag: "🇨🇦", name: "Canada", city: "Toronto / Barrie", region: "americas",
     lat: 43.6511, lng: -79.3470,
-    visits: ["Mar 28–29, 2018 (Toronto – Air Canada AC85 TLV→YYZ Mar 28; AC1810 YYZ→CUN Mar 29)", "Apr 13, 2018 (Toronto transit – AC84 YYZ→TLV Apr 13 16:40)", "Sep 22–Oct 15, 2014 (Toronto → Vancouver – Air Canada AC 105 YYZ→YVR Sep 22 10:00–12:03; Canadian West Coast; returned via Seattle SEA→PHL→TLV Oct 15–16)", "Sep 6, 2024 (Lake Tahoe area – Pretty Lights concert, pre-Canada leg)", "Sep 16–Oct 12, 2024 (Toronto Sep 16–23 – United SFO→YYZ Sep 16; car rental YYZ; Vancouver Sep 23–Oct 12 – WestJet YYZ→YVR Sep 23; Nomad Cruise 13 to Japan sails Sep 29)", "Oct 1–13, 2025 (Toronto – United UA2097+UA5293 SFO→ORD→YYZ Sep 30–Oct 1; Barrie Oct 8–9; Legends of Horror Oct 12; SAS YYZ→CPH Oct 13)", "May 6–Jun 8, 2026 (Toronto – Qantas QF3 AKL→JFK→YYZ May 6; Air Transat TS122 YYZ→LGW Jun 8)"],
+    visits: ["Mar 28–29, 2018 (Toronto – Air Canada AC85 TLV→YYZ Mar 28; AC1810 YYZ→CUN Mar 29)", "Apr 13, 2018 (Toronto transit – AC84 YYZ→TLV Apr 13 16:40)", "Sep 22–Oct 15, 2014 (Toronto → Vancouver – Air Canada AC 105 YYZ→YVR Sep 22 10:00–12:03; Canadian West Coast; returned via Seattle SEA→PHL→TLV Oct 15–16)", "Sep 6, 2024 (Lake Tahoe area – Pretty Lights concert, pre-Canada leg)", "Sep 16–Oct 12, 2024 (Toronto Sep 16–23 – United SFO→YYZ Sep 16; car rental YYZ; Vancouver Sep 23–Oct 12 – WestJet YYZ→YVR Sep 23; Nomad Cruise 13 to Japan sails Sep 29)", "Oct 1–13, 2025 (Toronto – United UA2097+UA5293 SFO→ORD→YYZ Sep 30–Oct 1; Barrie Oct 8–9; Legends of Horror Oct 12; SAS YYZ→CPH Oct 13)", "May 6–Jun 8, 2026 (Toronto – Qantas QF3 AKL→JFK→YYZ May 6; Air Transat TS122 YYZ→LGW Jun 8)", "Sep 22–Oct 6, 2026 (Toronto – UA IPX8G8 UA436 SFO→YYZ Sep 22; SWISS YNNYV4 LX4641 YYZ→ZRH Oct 6)"],
     note: "Toronto YYZ · Barrie, Ontario"
   },
   {
@@ -261,7 +267,7 @@ const countries = [
     flag: "🇺🇸", name: "United States", city: "San Francisco / Nevada / New York", region: "americas",
     lat: 37.7749, lng: -122.4194,
     visits: ["May–Jul 2005 (Seattle; San Diego – Ocean Beach International Hostel; New York City)", "Jan–Apr 2, 2012 (Palo Alto / San Francisco – UpWest Labs accelerator, ~3 months; returned via Toronto Apr 2)", "May 12–28, 2013 (San Francisco – United UA91 TLV→EWR May 11, UA216 EWR→SFO May 12; Google I/O 2013 May 15–17; return UA1696+UA90 SFO→EWR→TLV May 28–29)",
-      "Aug 25–Sep 21, 2014 (San Francisco – outbound via El Al TLV→BUD Jul 15 + TAP BUD→LIS Jul 29 + AA LIS→SFO; HI-SF City Center Hostel; Burning Man Black Rock City NV; car rental Advantage SFO Sep 7 18:00–Sep 12 16:00; SFMTA Sep 21; departed US 798 SEA→PHL 08:35 + US 796 PHL→TLV 21:10 Oct 15–16)", "Aug 26–Sep 27, 2015 (San Francisco – KLM KL0605/KL0462 TLV→AMS→SFO Aug 26 (delayed); Burning Man 2015 Black Rock City NV (car rental with Anati); Reno Sep 7; Symbiosis Gathering 2015 (10yr ReUnion) Sep 17–21; San Diego Sep ∼22–23; Greyhound SAN→SFO Sep 23; car rental; return Air France AF 0085 SFO→CDG Sep 27 + AF 1320 CDG→TLV Sep 28)", "Aug 21–Oct 3, 2016 (San Francisco – SWISS LX 257 TLV 04:50→ZRH 08:10 + LX 36 ZRH 09:40→SFO 12:50 Aug 21; Reno Sep 5–7 Eldorado; car rental; Symbiosis Gathering 2016 Sep 22–26 Woodward Reservoir CA; departed LX 39 SFO→ZRH Oct 3 + LX 256 ZRH→TLV Oct 4)", "Dec 2–27, 2016 (Las Vegas + San Francisco – outbound UA955 TLV→SFO Dec 2 00:50–6:00 AM; UA943 SFO→LAS Dec 2 4:22–5:57 PM; Las Vegas Hostel; UA728 LAS→SFO Dec 6 6:00–7:39 AM; San Francisco Dec 6–27; departed LH459 SFO→MUC Dec 27 20:55 + LH680 MUC→TLV Dec 28 21:50→Dec 29 02:30)", "Aug 14–Sep 10, 2017 (Portland OR + San Francisco + Burning Man 2017 – United UA955 TLV→SFO→PDX Aug 14; Black Rock City NV Aug 27–Sep 4; car rental Reno Sep 7; return UA954 SFO→TLV Sep 10)", "Aug 22–Sep 11, 2018 (San Francisco + Burning Man 2018 – United TLV→SFO Aug 22; Black Rock City NV; departed SFO→YVR Sep 11 (AC8839) + YVR→FRA→BER TXL Sep 12 (AC9637/Lufthansa CityLine))", "~Aug 27–Sep 4, 2023 (Burning Man 2023 – Black Rock City, NV; flew from London LHR; returned to London ~Sep 5)", "Aug 23–Sep 6, 2022 (San Francisco – Austrian VIE→MUC→SFO Aug 23; SFO→FRA→VIE Sep 6)", "Aug 22–Sep 16, 2024 (San Francisco + Burning Man 2024 – Austrian VIE→SFO Aug 22; Black Rock City NV Aug 25–Sep 2; Reno/Lake Tahoe Sep 6–9; United SFO→YYZ Sep 16)", "Sep 6, 2024 (Pretty Lights – Lake Tahoe Outdoor Arena, Harveys, Stateline NV)", "Aug 15–24, 2025 (San Francisco – Bartlett Hotel)", "Aug 24–Sep 1, 2025 (Burning Man – Black Rock City, NV 89412)", "Sep 2–4, 2025 (Reno, Nevada – Airbnb)", "Sep 13, 2025 (OTT Live – Public Works, SF)", "Sep 22, 2025 (United)", "May 2026 (Qantas AKL→JFK – upcoming, New York)"],
+      "Aug 25–Sep 21, 2014 (San Francisco – outbound via El Al TLV→BUD Jul 15 + TAP BUD→LIS Jul 29 + AA LIS→SFO; HI-SF City Center Hostel; Burning Man Black Rock City NV; car rental Advantage SFO Sep 7 18:00–Sep 12 16:00; SFMTA Sep 21; departed US 798 SEA→PHL 08:35 + US 796 PHL→TLV 21:10 Oct 15–16)", "Aug 26–Sep 27, 2015 (San Francisco – KLM KL0605/KL0462 TLV→AMS→SFO Aug 26 (delayed); Burning Man 2015 Black Rock City NV (car rental with Anati); Reno Sep 7; Symbiosis Gathering 2015 (10yr ReUnion) Sep 17–21; San Diego Sep ∼22–23; Greyhound SAN→SFO Sep 23; car rental; return Air France AF 0085 SFO→CDG Sep 27 + AF 1320 CDG→TLV Sep 28)", "Aug 21–Oct 3, 2016 (San Francisco – SWISS LX 257 TLV 04:50→ZRH 08:10 + LX 36 ZRH 09:40→SFO 12:50 Aug 21; Reno Sep 5–7 Eldorado; car rental; Symbiosis Gathering 2016 Sep 22–26 Woodward Reservoir CA; departed LX 39 SFO→ZRH Oct 3 + LX 256 ZRH→TLV Oct 4)", "Dec 2–27, 2016 (Las Vegas + San Francisco – outbound UA955 TLV→SFO Dec 2 00:50–6:00 AM; UA943 SFO→LAS Dec 2 4:22–5:57 PM; Las Vegas Hostel; UA728 LAS→SFO Dec 6 6:00–7:39 AM; San Francisco Dec 6–27; departed LH459 SFO→MUC Dec 27 20:55 + LH680 MUC→TLV Dec 28 21:50→Dec 29 02:30)", "Aug 14–Sep 10, 2017 (Portland OR + San Francisco + Burning Man 2017 – United UA955 TLV→SFO→PDX Aug 14; Black Rock City NV Aug 27–Sep 4; car rental Reno Sep 7; return UA954 SFO→TLV Sep 10)", "Aug 22–Sep 11, 2018 (San Francisco + Burning Man 2018 – United TLV→SFO Aug 22; Black Rock City NV; departed SFO→YVR Sep 11 (AC8839) + YVR→FRA→BER TXL Sep 12 (AC9637/Lufthansa CityLine))", "~Aug 27–Sep 4, 2023 (Burning Man 2023 – Black Rock City, NV; flew from London LHR; returned to London ~Sep 5)", "Aug 23–Sep 6, 2022 (San Francisco – Austrian VIE→MUC→SFO Aug 23; SFO→FRA→VIE Sep 6)", "Aug 22–Sep 16, 2024 (San Francisco + Burning Man 2024 – Austrian VIE→SFO Aug 22; Black Rock City NV Aug 25–Sep 2; Reno/Lake Tahoe Sep 6–9; United SFO→YYZ Sep 16)", "Sep 6, 2024 (Pretty Lights – Lake Tahoe Outdoor Arena, Harveys, Stateline NV)", "Aug 15–24, 2025 (San Francisco – Bartlett Hotel)", "Aug 24–Sep 1, 2025 (Burning Man – Black Rock City, NV 89412)", "Sep 2–4, 2025 (Reno, Nevada – Airbnb)", "Sep 13, 2025 (OTT Live – Public Works, SF)", "Sep 22, 2025 (United)", "May 2026 (New York transit – Qantas QF3 AKL→JFK→YYZ)", "Aug 20–Sep 21, 2026 (San Francisco / Sacramento / Reno – LOT LO35 WAW→SFO Aug 20; Union Hotel Aug 20–21; Sacramento Aug 25–26 with Elizabeth; Burning Man 2026 (implied); Reno Sep 8–14; UA436 IPX8G8 SFO→YYZ Sep 21)"],
     note: "SF · Lake Tahoe · Black Rock City · Reno · New York JFK"
   }
 ];
@@ -478,6 +484,12 @@ const travelLog = [
   { date: "Jul 10, 2026", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – SAS Z35NYL VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30", future: false },
   { date: "~Jul 16–27, 2026", flag: "🇸🇪", country: "Sweden", city: "The Borderland 2026 – Alvarsjö, Blekinge (alvarsjo.land)", future: false },
   { date: "Aug 3, 2026", flag: "🇦🇹", country: "Austria", city: "Vienna – Ethiopian GMYEYG ET731 CPH→VIE Aug 3 19:25", future: false },
+  { date: "Aug 18, 2026", flag: "🇵🇱", country: "Poland", city: "Warsaw (transit) – LOT X3AP4H LO226 VIE→WAW Aug 18; LO35 WAW→SFO Aug 20", future: false },
+  { date: "Aug 20, 2026", flag: "🇺🇸", country: "United States", city: "San Francisco – LOT X3AP4H LO35 WAW→SFO; Union Hotel SF Aug 20–21", future: false },
+  { date: "Aug 25–26, 2026", flag: "🇺🇸", country: "United States", city: "Sacramento, CA – Airbnb 2303 Edison Ave (with Elizabeth, en route to Burning Man)", future: false },
+  { date: "~Aug 30–Sep 7, 2026", flag: "🇺🇸", country: "United States", city: "Burning Man 2026 – Black Rock City, NV (implied by Sacramento pre-BM stop + Reno decompression)", future: false },
+  { date: "Sep 8–14, 2026", flag: "🇺🇸", country: "United States", city: "Reno, NV – Airbnb Sep 8–10 (Hot Tub & Grill); Coffeebar McCarran Sep 14", future: false },
+  { date: "Sep 22, 2026", flag: "🇨🇦", country: "Canada", city: "Toronto – UA IPX8G8 UA436 SFO→YYZ Sep 21 22:51, arrives Sep 22 07:00", future: false },
 ];
 
 // Events with confirmed venue addresses
@@ -581,7 +593,8 @@ const events = [
   { name: "Ignition 2026", venue: "Ignition – NZ regional burn", address: "New Zealand", date: "Jan 2026", emoji: "🔥", type: "Burn", lat: -39.6000, lng: 176.8000 },
   { name: "KiwiBurn 2026", venue: "KiwiBurn", address: "New Zealand", date: "Jan 2026", emoji: "🔥", type: "Burn", lat: -39.9300, lng: 175.5700 },
   { name: "What The Farm VIII (WTF VIII)", venue: "Ferme d'Antioche", address: "Ferme d'Antioche, Vauxaillon, Aisne, France", date: "May 2026", emoji: "🔥", type: "Burn", lat: 49.5592, lng: 3.5308 },
-  { name: "The Borderland 2026", venue: "The Borderland – Alvarsjö", address: "Alvarsjö, Blekinge, Sweden", date: "~Jul 16–27, 2026", emoji: "🔥", type: "Burn", lat: 56.09, lng: 15.59 }
+  { name: "The Borderland 2026", venue: "The Borderland – Alvarsjö", address: "Alvarsjö, Blekinge, Sweden", date: "~Jul 16–27, 2026", emoji: "🔥", type: "Burn", lat: 56.09, lng: 15.59 },
+  { name: "Burning Man 2026", venue: "Black Rock City", address: "Black Rock Desert, NV 89412, USA", date: "~Aug 30–Sep 7, 2026", emoji: "🔥", type: "Burn", lat: 40.7864, lng: -119.2065 }
 ];
 
 // ── Calendar: known stays away from Israel ──
@@ -763,12 +776,14 @@ const stays = [
   { from:"2026-06-22", to:"2026-07-10", flag:"🇱🇹", country:"Lithuania", city:"Vilnius – Ryanair BS8PRL FR3466 LTN→VNO Jun 22 11:05; SAS Z35NYL VNO→CPH Jul 10" },
   { from:"2026-07-10", to:"2026-08-03", flag:"🇩🇰", country:"Denmark", city:"Copenhagen – SAS Z35NYL VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30; Green House Copenhagen Aug 2; Ethiopian GMYEYG ET731 CPH→VIE Aug 3 19:25" },
   { from:"2026-08-03", to:"2026-08-18", flag:"🇦🇹", country:"Austria", city:"Vienna – Ethiopian GMYEYG ET731 CPH→VIE Aug 3; LOT X3AP4H LO226 VIE→WAW Aug 18 19:30" },
+  { from:"2026-08-18", to:"2026-08-20", flag:"🇵🇱", country:"Poland", city:"Warsaw (transit) – LOT X3AP4H LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00" },
+  { from:"2026-08-20", to:"2026-09-21", flag:"🇺🇸", country:"United States", city:"San Francisco / Sacramento / Reno – LOT X3AP4H LO35 WAW→SFO Aug 20; Union Hotel SF Aug 20–21; Sacramento Aug 25–26 (Airbnb with Elizabeth); Burning Man 2026 (implied); Reno Sep 8–14 (Airbnb Sep 8–10; Coffeebar McCarran Sep 14); UA IPX8G8 UA436 SFO→YYZ Sep 21 22:51" },
+  { from:"2026-09-22", to:"2026-10-06", flag:"🇨🇦", country:"Canada", city:"Toronto – UA IPX8G8 UA436 SFO→YYZ arrives Sep 22 07:00; SWISS YNNYV4 LX4641 YYZ→ZRH Oct 6 20:05" },
 ];
 
 // "Expected" upcoming stays — confirmed transport bookings for future arrivals.
 // from = confirmed arrival date by transport; to = last confirmed date in that country.
 // No end date is assumed without a confirmed departure booking.
 const expectedStays = [
-  { from:"2026-08-18", to:"2026-08-20", flag:"🇵🇱", country:"Poland", city:"Warsaw (transit) – LOT X3AP4H LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00" },
-  { from:"2026-08-20", to:"2026-12-31", flag:"🇺🇸", country:"United States", city:"San Francisco – LOT X3AP4H LO35 WAW→SFO Aug 20; Union Hotel SF Aug 20–21; Reno Sep 8–10 (Airbnb)" },
+  { from:"2026-10-07", to:"2026-12-31", flag:"🇬🇷", country:"Greece", city:"Heraklion, Crete – SWISS YNNYV4 LX4641 YYZ→ZRH Oct 6 20:05 → ZRH Oct 7 10:05; LX8350 ZRH→HER Oct 7 16:10 arr 19:55; Poseidon Hotel" },
 ];
