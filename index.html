@@ -76,7 +76,7 @@
     }
     .done{display:none; text-align:center; margin-top:14px}
     .thanks{color:var(--ok); font-weight:900}
-    .footnote{margin:16px 0 0; text-align:center; color:var(--muted); font-size:.95rem}
+    .footnote{margin:16px 0 0; text-align:center; color:var(--muted); font-size:.95rem; font-style:italic}
     .endOverlay{
       display:none;
       margin:0 0 14px;
@@ -110,7 +110,7 @@
 
 <body>
 <div class="wrap">
-  <h1>Hold on! We're almost there...</h1>
+  <h1 id="pageTitle">Hold on! We're almost there...</h1>
 
   <p class="lead">
     Event: <span class="pill" id="eventLabel">—</span>
@@ -151,7 +151,7 @@
           seconds have been spent waiting online
         </p>
 
-        <p class="footnote">Embarking on a quest? It's the time to light a joint 😉</p>
+        <p class="footnote">Embarking on a quest? It's the time to light a joint... 😉</p>
       </div>
     </div>
   </section>
@@ -382,6 +382,7 @@ async function finishNow(){
     eventTotalEl.textContent = "0";
   }
 
+  $("pageTitle").style.display = "none";
   waitingUI.style.display = "none";
   endOverlayEl.style.display = "block";
   doneEl.style.display = "block";
