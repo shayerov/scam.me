@@ -143,12 +143,12 @@
         </div>
         <h2 class="thanks">Thank you for waiting 🙏</h2>
 
-        <p>You waited <b><span id="youWaited">0</span></b> seconds.</p>
+        <p>You waited <b><span id="youWaited">00:00</span></b></p>
 
         <p>
-          So far, at this burn
+          So far, at this event
           <b><span id="eventTotal">—</span></b>
-          seconds have been spent waiting online
+          has been spent waiting online
         </p>
 
         <p class="footnote">Embarking on a quest? It's the time to light a joint... 😉</p>
@@ -159,6 +159,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 
 <script>
 /* ================= Firebase ================= */
@@ -204,6 +205,11 @@ function fmt(ms){
   const m = Math.floor(s/60);
   const r = String(s % 60).padStart(2,'0');
   return `${String(m).padStart(2,'0')}:${r}`;
+}
+function hms(totalSec){
+  const s = Math.max(0, Math.floor(totalSec));
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
+  return [h, m, r].map(n => String(n).padStart(2, "0")).join(":");
 }
 function safeNumber(x){ return (typeof x === "number" && isFinite(x)) ? x : 0; }
 
@@ -252,23 +258,10 @@ function setTabSession(obj){
 }
 
 /* ================= Timer rules ================= */
-const minMs = 30_000, maxMs = 300_000;
-const REFRESH_BONUS_MS = 30_000;
-
-function newRandomDuration(){
-  return Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-}
+const WAIT_MS = 260_000; // 4:20, every time
+// Every page load (including a refresh) is a brand-new session with a fresh 4:20.
 function ensureEndAtForTab(eventName){
-  const now = Date.now();
-  const tabState = getTabSession();
-
-  if (tabState && tabState.eventName === eventName && tabState.endAt && tabState.endAt > now) {
-    tabState.endAt += REFRESH_BONUS_MS;
-    setTabSession(tabState);
-    return tabState.endAt;
-  }
-
-  const endAt = now + newRandomDuration();
+  const endAt = Date.now() + WAIT_MS;
   const fresh = { eventName, endAt, sessionId: null };
   setTabSession(fresh);
   return endAt;
@@ -287,6 +280,8 @@ let finished = false;
 /* Pause/resume */
 let visible = (document.visibilityState === "visible");
 let hiddenAt = null;
+let startedAt = null;   // when this session's countdown started
+let pausedMs = 0;       // total time the tab was hidden (not counted)
 
 function persistEndAt(){
   const st = getTabSession() || {};
@@ -304,6 +299,7 @@ document.addEventListener("visibilitychange", () => {
   } else if (nowVisible && !visible) {
     if (hiddenAt) {
       const delta = Date.now() - hiddenAt;
+      pausedMs += delta;
       endAt += delta;
       baselineMs += delta;
       persistEndAt();
@@ -316,11 +312,19 @@ document.addEventListener("visibilitychange", () => {
 });
 
 /* ================= Counting + DB buffer ================= */
-let waited = 0;
-let buffer = 0;
+// Waited time is derived from the same clock as the countdown, so the two always agree.
+let waited = 0;    // whole seconds actually waited (tab visible)
+let reported = 0;  // seconds already added to the event total
+
+function activeSec(){
+  if (!startedAt) return 0;
+  const now = Date.now();
+  const hiddenNow = hiddenAt ? now - hiddenAt : 0;
+  const sec = Math.floor((now - startedAt - pausedMs - hiddenNow) / 1000);
+  return Math.min(WAIT_MS / 1000, Math.max(0, sec));
+}
 
 /* interval handles */
-let intervalCount = null;
 let intervalFlush = null;
 let intervalTick = null;
 
@@ -330,16 +334,18 @@ let devDonePreview = false;
 async function flush(){
   if (finished) return;
   if (devDonePreview) return;
-  if (!sessionRef || !totalRef || buffer <= 0) return;
+  if (!sessionRef || !totalRef) return;
 
-  const delta = buffer;
-  buffer = 0;
+  waited = activeSec();
+  const delta = waited - reported;
+  if (delta <= 0) return;
+  reported += delta;
 
   try {
     await totalRef.transaction(v => safeNumber(v) + delta);
     await sessionRef.update({ total_waiting: waited, lastSeenAt: firebase.database.ServerValue.TIMESTAMP });
   } catch {
-    buffer += delta;
+    reported -= delta;
   }
 }
 
@@ -356,30 +362,30 @@ async function finishNow(){
   finished = true;
 
   // stop intervals
-  if (intervalCount) clearInterval(intervalCount);
   if (intervalFlush) clearInterval(intervalFlush);
   if (intervalTick)  clearInterval(intervalTick);
 
   // final flush
-  if (!devDonePreview && buffer > 0 && totalRef && sessionRef) {
-    const delta = buffer;
-    buffer = 0;
+  waited = activeSec();
+  if (!devDonePreview && totalRef && sessionRef) {
+    const delta = waited - reported;
     try {
-      await totalRef.transaction(v => safeNumber(v) + delta);
+      if (delta > 0) {
+        reported += delta;
+        await totalRef.transaction(v => safeNumber(v) + delta);
+      }
       await sessionRef.update({ total_waiting: waited, didFinish: true, lastSeenAt: firebase.database.ServerValue.TIMESTAMP });
     } catch {}
-  } else {
-    buffer = 0;
   }
 
   statusEl.textContent = "Done!";
-  youWaitedEl.textContent = waited.toLocaleString();
+  youWaitedEl.textContent = waited >= 3600 ? hms(waited) : hms(waited).slice(3); // MM:SS
 
   try {
     const snap = totalRef ? await totalRef.get() : null;
-    eventTotalEl.textContent = snap ? safeNumber(snap.val()).toLocaleString() : "—";
+    eventTotalEl.textContent = snap ? hms(safeNumber(snap.val())) : "—";
   } catch {
-    eventTotalEl.textContent = "0";
+    eventTotalEl.textContent = hms(0);
   }
 
   $("pageTitle").style.display = "none";
@@ -399,6 +405,19 @@ if (devMode) {
 
   resetEventBtn.addEventListener("click", async () => {
     if (!eventName) return;
+
+    // Resets require a signed-in admin (enforced by the RTDB rules).
+    // Sign in first, while the click still counts as a user gesture (popup blockers).
+    try {
+      if (!firebase.auth().currentUser) {
+        statusEl.textContent = "Signing in…";
+        await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+      }
+    } catch (e) {
+      console.error("Sign-in failed", e);
+      statusEl.textContent = "Sign-in cancelled.";
+      return;
+    }
 
     const ok = confirm(
       `RESET EVENT "${eventName}"?\n\nThis will:\n- set events/${eventName}/totalSeconds = 0\n- set events/${eventName}/done = false\n- delete all sessions where event_name == "${eventName}"\n\nThis cannot be undone.`
@@ -428,7 +447,8 @@ if (devMode) {
       console.error("Reset failed", e);
       resetEventBtn.disabled = false;
       statusEl.textContent = "Reset failed (rules?).";
-      alert("Reset failed. This usually means your RTDB rules don't allow reset/deletes.\n\n" + (e?.message || e));
+      const who = firebase.auth().currentUser?.email || "not signed in";
+      alert("Reset failed (signed in as " + who + ").\nOnly the admin account in the RTDB rules can reset.\n\n" + (e?.message || e));
     }
   });
 }
@@ -470,6 +490,7 @@ if (devMode) {
   // Timer state for this tab
   endAt = ensureEndAtForTab(eventName);
   baselineMs = Math.max(1, endAt - Date.now());
+  startedAt = Date.now();
 
   // In dev preview (event done): show timer only (no DB writes)
   if (devDonePreview) {
@@ -484,15 +505,10 @@ if (devMode) {
     return;
   }
 
-  // Create/resume session for this tab
+  // Always create a new session for this page load (a refresh starts over)
   statusEl.textContent = "Creating session…";
   const tabState = getTabSession() || { eventName, endAt };
-
-  if (tabState.sessionId && tabState.eventName === eventName) {
-    sessionRef = db.ref(`sessions/${tabState.sessionId}`);
-    try { await sessionRef.update({ lastSeenAt: firebase.database.ServerValue.TIMESTAMP }); } catch {}
-    statusEl.textContent = (visible ? "Resuming…" : "Paused…");
-  } else {
+  {
     sessionRef = db.ref("sessions").push();
     tabState.sessionId = sessionRef.key;
     tabState.eventName = eventName;
@@ -513,12 +529,6 @@ if (devMode) {
 
   tickOnce();
 
-  intervalCount = setInterval(() => {
-    if (finished) return;
-    if (!visible) return;
-    waited++; buffer++;
-  }, 1000);
-
   intervalFlush = setInterval(() => {
     if (finished) return;
     if (!visible) return;
@@ -530,6 +540,9 @@ if (devMode) {
     if (!visible) return;
     if (tickOnce() <= 0) finishNow();
   }, 200);
+
+  // Leaving or refreshing: send the last few unflushed seconds (best effort)
+  window.addEventListener("pagehide", () => { flush(); });
 })();
 </script>
 
