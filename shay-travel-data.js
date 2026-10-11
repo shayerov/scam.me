@@ -66,6 +66,12 @@ const countries = [
     note: "The Borderland 2016/17/18/19 (Denmark) · Revent 2021 · SWISS · UIA"
   },
   {
+    flag: "🇱🇹", name: "Lithuania", city: "Vilnius", region: "europe",
+    lat: 54.6872, lng: 25.2797,
+    visits: ["Jun 22–Jul 10, 2026 (Vilnius – Ryanair FR3466 LTN→VNO Jun 22 11:05; SAS VNO→CPH Jul 10)"],
+    note: "Vilnius · Ryanair from London Luton Jun 2026"
+  },
+  {
     flag: "🇬🇧", name: "United Kingdom", city: "London", region: "europe",
     lat: 51.5074, lng: -0.1278,
     visits: ["Jun 4–12, 2008 (London + Horsham – friend's wedding Jun 7; with Yana)", "Jul 12–20, 2010 (London – Eurolines from Amsterdam; side trips to Oxford Jul 15 and Horsham Jul 17–18; left Jul 20)", "Nov 9–15, 2017 (London – UIA PS778 TLV→KBP Nov 9, PS111 KBP→LGW Nov 9; Smart Camden Inn Hostel; London Decompression Nov 11–12; BA2762 LGW→AMS Nov 15)", "May 19–Jun 18, 2024 (London – FlixBus Brussels→London Victoria May 19; Burning Nest 2024 regional burn ~May 20–27 England; BA BA0988 LHR→BER Brandon Jun 18)", "May 13–Jun 20, 2025 (London Gatwick – China Eastern MU780 AKL→PVG May 12 + MU213 PVG→LGW May 13; Burning Nest 2025 regional burn ~Jun 2025; BA LHR→SOF Jun 20)", "Jun 9–22, 2026 (London – Air Transat TS122 YYZ→LGW Jun 8 22:45; Brighton Jun 12–14; Ryanair LTN→VNO Jun 22)"],
@@ -94,6 +100,12 @@ const countries = [
     lat: 48.7164, lng: 21.2611,
     visits: ["Jul 16–20, 2014 (Slovakia hiking side trip from Budapest – CouchSurfing in Košice (host accepted Jul 16); \"tomorrow back to Hungary\" email Jul 19; during Budapest Jul 15–29 stay)"],
     note: "Hiking side trip from Budapest · CouchSurfing Košice · Jul 2014"
+  },
+  {
+    flag: "🇵🇱", name: "Poland", city: "Warsaw", region: "europe",
+    lat: 52.2297, lng: 21.0122,
+    visits: ["Aug 18–20, 2026 (Warsaw transit – LOT LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00)"],
+    note: "Warsaw (WAW) · LOT transit hub Aug 2026"
   },
   {
     flag: "🇮🇪", name: "Ireland", city: "Dublin", region: "europe",
@@ -160,6 +172,12 @@ const countries = [
     lat: 28.4899, lng: 34.5166,
     visits: ["Apr 28–May 2, 2009 (Dahab, Sinai – scuba diving safari, Red Sea)"],
     note: "Scuba diving · Dahab, Sinai Peninsula · Red Sea"
+  },
+  {
+    flag: "🇶🇦", name: "Qatar", city: "Doha", region: "middleeast",
+    lat: 25.2854, lng: 51.5310,
+    visits: ["Nov 15, 2025 (Doha transit – Qatar Airways AMS→DOH→AKL)"],
+    note: "Doha (DOH) · Qatar Airways transit hub Nov 2025"
   },
   {
     flag: "🇨🇷", name: "Costa Rica", city: "San José / Arenal / rainforest", region: "americas",
