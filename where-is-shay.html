@@ -131,7 +131,8 @@
       'Japan':'Asia/Tokyo','South Korea':'Asia/Seoul','China':'Asia/Shanghai',
       'India':'Asia/Kolkata','Thailand':'Asia/Bangkok','Singapore':'Asia/Singapore',
       'South Africa':'Africa/Johannesburg','Egypt':'Africa/Cairo',
-      'United Arab Emirates':'Asia/Dubai','Turkey':'Europe/Istanbul'
+      'United Arab Emirates':'Asia/Dubai','Turkey':'Europe/Istanbul',
+      'Cyprus':'Asia/Nicosia'
     };
 
     const today = new Date();
@@ -167,13 +168,16 @@
     tickClock();
     setInterval(tickClock, 30000);
 
-    if (current.from !== current.to) {
-      const f = new Date(current.from + 'T00:00:00');
-      const t = new Date(current.to   + 'T00:00:00');
-      const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const f = new Date(current.from + 'T00:00:00');
+    const hasNextTrip = [...stays, ...expectedStays].some(s => s.from > todayStr);
+    if (hasNextTrip && current.to && current.from !== current.to) {
+      const t = new Date(current.to + 'T00:00:00');
       const fStr = mo[f.getMonth()] + ' ' + f.getDate();
       const tStr = mo[t.getMonth()] + ' ' + t.getDate() + ', ' + t.getFullYear();
       dateEl.textContent = fStr + ' – ' + tStr;
+    } else {
+      dateEl.textContent = 'Since ' + mo[f.getMonth()] + ' ' + f.getDate() + ', ' + f.getFullYear();
     }
   </script>
 </body>
