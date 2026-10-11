@@ -1401,16 +1401,18 @@ function getStayForDate(dateStr) {
     if (ts >= new Date(s.from).getTime() && ts <= new Date(s.to).getTime()) return { ...s, expected: true };
   }
 
-  // Beyond the last known stay: show the last known location for dates up to
-  // (and including) today, and "Unknown" for any date after today.
-  const lastStay = stays[stays.length - 1];
-  if (lastStay && ts > new Date(lastStay.to).getTime()) {
-    const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    if (ts <= new Date(todayStr).getTime()) {
-      return { ...lastStay, from: dateStr, to: dateStr, lastKnown: true };
-    }
-    return { flag: '❓', country: 'Unknown', city: 'No travel data yet', from: dateStr, to: dateStr, unknown: true };
+  // No range match — fall back to the most recent arrival on or before dateStr
+  // across both arrays. This correctly handles open-ended stays (from === to)
+  // and future dates beyond the last confirmed range.
+  const allByFrom = [
+    ...stays.map(s => ({ s, expected: false })),
+    ...expectedStays.map(s => ({ s, expected: true }))
+  ].filter(({s}) => new Date(s.from).getTime() <= ts)
+   .sort((a, b) => new Date(b.s.from).getTime() - new Date(a.s.from).getTime());
+
+  if (allByFrom.length > 0) {
+    const { s, expected } = allByFrom[0];
+    return expected ? { ...s, expected: true } : s;
   }
 
   return { ...HOME, from: dateStr, to: dateStr };
