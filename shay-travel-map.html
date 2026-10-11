@@ -801,6 +801,18 @@
 <script src="shay-travel-data.js"></script>
 <script>
 
+// Dynamically promote any stays whose from-date is still in the future into
+// expectedStays, so the map automatically shows them as "upcoming" without
+// needing manual curation of two separate arrays in the data file.
+(function() {
+  var today = new Date().toISOString().slice(0, 10);
+  for (var i = stays.length - 1; i >= 0; i--) {
+    if (stays[i].from > today) {
+      expectedStays.unshift(stays.splice(i, 1)[0]);
+    }
+  }
+})();
+
 // Initialize map
 const map = L.map('map', {
   center: [30, 20],
