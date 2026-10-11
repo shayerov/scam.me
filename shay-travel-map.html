@@ -78,7 +78,7 @@
       background: #0f1117;
     }
 
-    .leaflet-tile-pane { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+    .leaflet-tile-pane { filter: none; }
 
     .countries-section {
       padding: 32px;
@@ -835,10 +835,9 @@ function fitMapZoom() {
 window.addEventListener('resize', fitMapZoom);
 fitMapZoom();
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  subdomains: 'abc',
-  maxZoom: 19,
+L.tileLayer('https://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles © <a href="https://www.esri.com/">Esri</a>',
+  maxZoom: 16,
   noWrap: true,
   keepBuffer: 8,
   updateWhenIdle: false,
