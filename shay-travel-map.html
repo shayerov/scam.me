@@ -820,9 +820,6 @@
   }
 })();
 
-// Required when loading maplibre-gl from CDN (worker can't self-resolve its URL)
-maplibregl.setWorkerUrl('https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl-worker.js');
-
 // Initialize map
 const map = L.map('map', {
   center: [30, 20],
