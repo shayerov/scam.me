@@ -6,6 +6,9 @@
   <title>Shay's Travel Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@latest/leaflet-maplibre-gl.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -762,6 +765,10 @@
       <span class="sort-label">Type:</span>
       <button class="sort-btn active" onclick="filterEvents('all',this)">All</button>
     </div>
+    <div class="sort-bar" id="event-year-bar">
+      <span class="sort-label">Year:</span>
+      <button class="sort-btn active" id="event-year-all" onclick="filterEventYears('all',this)">All</button>
+    </div>
     <div class="events-grid" id="events-grid"></div>
   </div>
 </div>
@@ -835,13 +842,9 @@ function fitMapZoom() {
 window.addEventListener('resize', fitMapZoom);
 fitMapZoom();
 
-L.tileLayer('https://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles © <a href="https://www.esri.com/">Esri</a>',
-  maxZoom: 16,
-  noWrap: true,
-  keepBuffer: 8,
-  updateWhenIdle: false,
-  updateWhenZooming: false
+L.maplibreGL({
+  style: 'https://tiles.openfreemap.org/styles/dark',
+  attribution: '<a href="https://openfreemap.org">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
 // Flag image helpers
@@ -1250,17 +1253,29 @@ events.forEach(ev => {
 });
 
 // Build events grid with type filter
-var eventsGrid = document.getElementById('events-grid');
+var eventsGrid  = document.getElementById('events-grid');
 var filterBar   = document.getElementById('event-filter-bar');
+var yearBar     = document.getElementById('event-year-bar');
 var eventTypes  = new Set();
+var eventYears  = new Set();
+var activeEventType = 'all';
+var activeEventYears = new Set(); // empty = all years
+
+function extractFirstYear(dateStr) {
+  var m = dateStr.match(/\d{4}/);
+  return m ? m[0] : null;
+}
 
 events.forEach(function(ev) {
   var type = ev.type || 'Other';
   eventTypes.add(type);
+  var year = extractFirstYear(ev.date || '');
+  if (year) eventYears.add(year);
 
   var card = document.createElement('div');
   card.className = 'event-card';
   card.dataset.type = type;
+  if (year) card.dataset.year = year;
   card.innerHTML =
     '<div class="event-name">' + ev.emoji + ' ' + ev.name + '</div>' +
     '<div class="event-venue">📍 ' + stripBookingCodes(ev.venue) + '</div>' +
@@ -1271,7 +1286,7 @@ events.forEach(function(ev) {
   eventsGrid.appendChild(card);
 });
 
-// Build filter buttons from types found in data
+// Build type filter buttons
 Array.from(eventTypes).sort().forEach(function(type) {
   var btn = document.createElement('button');
   btn.className = 'sort-btn';
@@ -1280,12 +1295,54 @@ Array.from(eventTypes).sort().forEach(function(type) {
   filterBar.appendChild(btn);
 });
 
+// Build year filter buttons (sorted descending)
+Array.from(eventYears).sort().reverse().forEach(function(year) {
+  var btn = document.createElement('button');
+  btn.className = 'sort-btn';
+  btn.textContent = year;
+  btn.dataset.year = year;
+  btn.onclick = function() { filterEventYears(year, this); };
+  yearBar.appendChild(btn);
+});
+
+function applyEventFilters() {
+  document.querySelectorAll('#events-grid .event-card').forEach(function(card) {
+    var typeOk = (activeEventType === 'all' || card.dataset.type === activeEventType);
+    var yearOk = (activeEventYears.size === 0 || activeEventYears.has(card.dataset.year));
+    card.style.display = (typeOk && yearOk) ? '' : 'none';
+  });
+}
+
 function filterEvents(type, btn) {
   document.querySelectorAll('#event-filter-bar .sort-btn').forEach(function(b) { b.classList.remove('active'); });
   if (btn) btn.classList.add('active');
-  document.querySelectorAll('#events-grid .event-card').forEach(function(card) {
-    card.style.display = (type === 'all' || card.dataset.type === type) ? '' : 'none';
-  });
+  activeEventType = type;
+  applyEventFilters();
+}
+
+function filterEventYears(year, btn) {
+  var allBtn = document.getElementById('event-year-all');
+  if (year === 'all') {
+    activeEventYears.clear();
+    document.querySelectorAll('#event-year-bar .sort-btn').forEach(function(b) { b.classList.remove('active'); });
+    allBtn.classList.add('active');
+  } else {
+    // toggle this year
+    if (activeEventYears.has(year)) {
+      activeEventYears.delete(year);
+      btn.classList.remove('active');
+    } else {
+      activeEventYears.add(year);
+      btn.classList.add('active');
+    }
+    // deactivate "All" if any specific year is selected
+    if (activeEventYears.size > 0) {
+      allBtn.classList.remove('active');
+    } else {
+      allBtn.classList.add('active');
+    }
+  }
+  applyEventFilters();
 }
 
 // Simplified timeline from stays[] with Israel home gaps

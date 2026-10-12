@@ -523,10 +523,26 @@ const events = [
   { name: "Breathe | Mauri Ora (VR) – Te Papa", venue: "Museum of New Zealand Te Papa Tongarewa", address: "55 Cable Street, Wellington, NZ", date: "Feb 22, 2026", emoji: "🏛️", type: "Arts", lat: -41.2903, lng: 174.7817 },
   { name: "Toronto Burning Man Decompression 2026 – Ascent", venue: "Motorista Studio", address: "Toronto, Ontario, Canada", date: "Sep 26, 2026", emoji: "🔥", type: "Burn", lat: 43.6532, lng: -79.3832 },
 
+  // ── Events – 2013 ──
+  { name: "Google I/O 2013", venue: "Moscone Center", address: "747 Howard St, San Francisco, CA 94103, USA", date: "May 15–17, 2013", emoji: "💻", type: "Work", lat: 37.7847, lng: -122.3999 },
+  { name: "SUN Festival 2013", venue: "Zamárdi Strand, Lake Balaton", address: "Zamárdi, Somogy County, Hungary", date: "~Jul 19–23, 2013", emoji: "🎵", type: "Music", lat: 46.8821, lng: 17.9214 },
+
+  // ── Burns – 2013 ──
+  { name: "MidBurn Hanukkah 2013", venue: "MidBurn – Israeli regional burn", address: "Israel", date: "~Nov 27–30, 2013", emoji: "🔥", type: "Burn", lat: 30.9000, lng: 34.5000 },
+
+  // ── Events – 2014 ──
+  { name: "SUN Festival 2014", venue: "Zamárdi Strand, Lake Balaton", address: "Zamárdi, Somogy County, Hungary", date: "~Jul 23–27, 2014", emoji: "🎵", type: "Music", lat: 46.8821, lng: 17.9214 },
+  { name: "Boom Festival 2014", venue: "Boomland, Idanha-a-Nova", address: "Idanha-a-Nova, Castelo Branco, Portugal", date: "Jul 30–Aug 10, 2014", emoji: "🎵", type: "Music", lat: 39.9167, lng: -7.2833 },
+
   // ── Burns – 2014 ──
+  { name: "MidBurn 2014", venue: "MidBurn – Ein Zivan", address: "Ein Zivan, Golan Heights, Israel", date: "~Jun 3–8, 2014", emoji: "🔥", type: "Burn", lat: 33.0975, lng: 35.8025 },
   { name: "Burning Man 2014", venue: "Black Rock City", address: "Black Rock Desert, NV, USA", date: "Aug 25–Sep 1, 2014", emoji: "🔥", type: "Burn", lat: 40.7864, lng: -119.2065 },
 
+  // ── Events – 2015 ──
+  { name: "Symbiosis Gathering 2015", venue: "Woodward Reservoir", address: "Oakdale, CA, USA", date: "Sep 17–21, 2015", emoji: "🎵", type: "Music", lat: 37.7764, lng: -120.7697 },
+
   // ── Burns – 2015 ──
+  { name: "MidBurn 2015", venue: "MidBurn – Israeli regional burn", address: "Israel", date: "~May 20–25, 2015", emoji: "🔥", type: "Burn", lat: 33.0975, lng: 35.8025 },
   { name: "Burning Man 2015", venue: "Black Rock City", address: "Black Rock Desert, NV, USA", date: "Aug 30–Sep 7, 2015", emoji: "🔥", type: "Burn", lat: 40.7864, lng: -119.2065 },
 
   // ── Burns – 2016 ──
