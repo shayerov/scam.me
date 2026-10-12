@@ -6,9 +6,9 @@
   <title>Shay's Travel Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" />
-  <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
-  <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@latest/leaflet-maplibre-gl.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -819,6 +819,9 @@
     }
   }
 })();
+
+// Required when loading maplibre-gl from CDN (worker can't self-resolve its URL)
+maplibregl.setWorkerUrl('https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl-worker.js');
 
 // Initialize map
 const map = L.map('map', {
