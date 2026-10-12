@@ -104,8 +104,8 @@ const countries = [
   {
     flag: "🇵🇱", name: "Poland", city: "Warsaw", region: "europe",
     lat: 52.2297, lng: 21.0122,
-    visits: ["Aug 18–20, 2026 (Warsaw transit – LOT LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00)"],
-    note: "Warsaw (WAW) · LOT transit hub Aug 2026"
+    visits: ["Aug 18–20, 2026 (Warsaw – LOT LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00)"],
+    note: "Warsaw (WAW) · Aug 2026"
   },
   {
     flag: "🇮🇪", name: "Ireland", city: "Dublin", region: "europe",
@@ -172,12 +172,6 @@ const countries = [
     lat: 28.4899, lng: 34.5166,
     visits: ["Apr 28–May 2, 2009 (Dahab, Sinai – scuba diving safari, Red Sea)"],
     note: "Scuba diving · Dahab, Sinai Peninsula · Red Sea"
-  },
-  {
-    flag: "🇶🇦", name: "Qatar", city: "Doha", region: "middleeast",
-    lat: 25.2854, lng: 51.5310,
-    visits: ["Nov 15, 2025 (Doha transit – Qatar Airways AMS→DOH→AKL)"],
-    note: "Doha (DOH) · Qatar Airways transit hub Nov 2025"
   },
   {
     flag: "🇨🇷", name: "Costa Rica", city: "San José / Arenal / rainforest", region: "americas",
@@ -502,7 +496,7 @@ const travelLog = [
   { date: "Jul 10, 2026", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – SAS VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30", future: false },
   { date: "~Jul 16–27, 2026", flag: "🇸🇪", country: "Sweden", city: "The Borderland 2026 – Alvarsjö, Blekinge (alvarsjo.land)", future: false },
   { date: "Aug 3, 2026", flag: "🇦🇹", country: "Austria", city: "Vienna – Ethiopian ET731 CPH→VIE Aug 3 19:25", future: false },
-  { date: "Aug 18, 2026", flag: "🇵🇱", country: "Poland", city: "Warsaw (transit) – LOT LO226 VIE→WAW Aug 18; LO35 WAW→SFO Aug 20", future: false },
+  { date: "Aug 18, 2026", flag: "🇵🇱", country: "Poland", city: "Warsaw – LOT LO226 VIE→WAW Aug 18; LO35 WAW→SFO Aug 20", future: false },
   { date: "Aug 20, 2026", flag: "🇺🇸", country: "United States", city: "San Francisco – LOT LO35 WAW→SFO; Union Hotel SF Aug 20–21", future: false },
   { date: "Aug 25–26, 2026", flag: "🇺🇸", country: "United States", city: "Sacramento, CA – Airbnb 2303 Edison Ave (with Elizabeth, en route to Burning Man)", future: false },
   { date: "~Aug 30–Sep 7, 2026", flag: "🇺🇸", country: "United States", city: "Burning Man 2026 – Black Rock City, NV (implied by Sacramento pre-BM stop + Reno decompression)", future: false },
@@ -527,6 +521,7 @@ const events = [
   { name: "Digital Tech Summit 2025", venue: "Copenhagen", address: "Copenhagen, Denmark", date: "Nov 4, 2025", emoji: "💻", type: "Work", lat: 55.6761, lng: 12.5683 },
   { name: "Vengaboys – 90's Mania", venue: "Auckland Town Hall, Great Hall", address: "Greys Ave, Auckland CBD, NZ", date: "Jan 28, 2026", emoji: "🕺", type: "Music", lat: -36.8481, lng: 174.7633 },
   { name: "Breathe | Mauri Ora (VR) – Te Papa", venue: "Museum of New Zealand Te Papa Tongarewa", address: "55 Cable Street, Wellington, NZ", date: "Feb 22, 2026", emoji: "🏛️", type: "Arts", lat: -41.2903, lng: 174.7817 },
+  { name: "Toronto Burning Man Decompression 2026 – Ascent", venue: "Motorista Studio", address: "Toronto, Ontario, Canada", date: "Sep 26, 2026", emoji: "🔥", type: "Burn", lat: 43.6532, lng: -79.3832 },
 
   // ── Burns – 2014 ──
   { name: "Burning Man 2014", venue: "Black Rock City", address: "Black Rock Desert, NV, USA", date: "Aug 25–Sep 1, 2014", emoji: "🔥", type: "Burn", lat: 40.7864, lng: -119.2065 },
@@ -550,6 +545,8 @@ const events = [
 
   // ── Burns – 2018 ──
   { name: "What The Farm 2018", venue: "Ferme d'Antioche", address: "Vauxaillon, Aisne, France", date: "Jun 8–10, 2018", emoji: "🔥", type: "Burn", lat: 49.5592, lng: 3.5308 },
+  { name: "KiezBurn 2018", venue: "KiezBurn – Berlin regional burn", address: "Berlin area, Germany", date: "~Jun 14–25, 2018", emoji: "🔥", type: "Burn", lat: 52.5200, lng: 13.4050 },
+  { name: "The Borderland 2018", venue: "The Borderland – Hedeland", address: "Hedeland, Denmark", date: "Jul 24–27, 2018", emoji: "🔥", type: "Burn", lat: 55.6500, lng: 12.1500 },
   { name: "Burning Man 2018", venue: "Black Rock City", address: "Black Rock Desert, NV, USA", date: "Aug 26–Sep 3, 2018", emoji: "🔥", type: "Burn", lat: 40.7864, lng: -119.2065 },
   { name: "Ponyhof 2018", venue: "Ponyhof – German regional burn", address: "Germany", date: "Sep 12–18, 2018", emoji: "🔥", type: "Burn", lat: 52.4500, lng: 12.5000 },
   { name: "Schönburn 2018", venue: "Schloss Wetzlas", address: "Wetzlas, Waldviertel, Lower Austria", date: "Sep 2018 (approximate)", emoji: "🔥", type: "Burn", lat: 48.5100, lng: 15.3900 },
@@ -561,6 +558,7 @@ const events = [
   { name: "What The Farm 2019", venue: "Ferme d'Antioche", address: "Vauxaillon, Aisne, France", date: "May 31–Jun 2, 2019", emoji: "🔥", type: "Burn", lat: 49.5592, lng: 3.5308 },
   { name: "KiezBurn 2019", venue: "KiezBurn – Berlin regional burn", address: "Berlin area, Germany", date: "~Jun 2019", emoji: "🔥", type: "Burn", lat: 52.5200, lng: 13.4050 },
   { name: "Nowhere 2019", venue: "Nowhere", address: "near Castejón de Monegros, Zaragoza, Spain", date: "~Jul 2–7, 2019", emoji: "🔥", type: "Burn", lat: 41.5936, lng: -0.1536 },
+  { name: "The Borderland 2019", venue: "The Borderland", address: "Denmark", date: "~Jul 24–Aug 1, 2019", emoji: "🔥", type: "Burn", lat: 55.6761, lng: 12.5683 },
   { name: "Ponyhof 2019", venue: "Ponyhof – German regional burn", address: "Germany", date: "Sep 12–15, 2019", emoji: "🔥", type: "Burn", lat: 52.4500, lng: 12.5000 },
   { name: "Schönburn 2019", venue: "Schloss Wetzlas", address: "Wetzlas, Waldviertel, Lower Austria", date: "~Sep 2019", emoji: "🔥", type: "Burn", lat: 48.5100, lng: 15.3900 },
   { name: "Hamburn 2019", venue: "Hamburn", address: "Hamburg area, Germany", date: "Oct 22–28, 2019", emoji: "🔥", type: "Burn", lat: 53.5753, lng: 10.0153 },
@@ -615,7 +613,9 @@ const events = [
   { name: "Ignition 2026", venue: "Ignition – NZ regional burn", address: "New Zealand", date: "Jan 2026", emoji: "🔥", type: "Burn", lat: -39.6000, lng: 176.8000 },
   { name: "KiwiBurn 2026", venue: "KiwiBurn", address: "New Zealand", date: "Jan 2026", emoji: "🔥", type: "Burn", lat: -39.9300, lng: 175.5700 },
   { name: "What The Farm VIII (WTF VIII)", venue: "Ferme d'Antioche", address: "Ferme d'Antioche, Vauxaillon, Aisne, France", date: "May 2026", emoji: "🔥", type: "Burn", lat: 49.5592, lng: 3.5308 },
+  { name: "Amber Burn 2026", venue: "Amber Burn – Lithuanian regional burn", address: "Lithuania", date: "~Jun 26–Jul 6, 2026", emoji: "🔥", type: "Burn", lat: 54.6872, lng: 25.2797 },
   { name: "The Borderland 2026", venue: "The Borderland – Alvarsjö", address: "Alvarsjö, Blekinge, Sweden", date: "~Jul 16–27, 2026", emoji: "🔥", type: "Burn", lat: 56.09, lng: 15.59 },
+  { name: "Schönburn 2026", venue: "Böllerbauer", address: "Böllerbauer, Upper Austria, Austria", date: "Aug 3–10, 2026", emoji: "🔥", type: "Burn", lat: 48.2524, lng: 13.8304 },
   { name: "Burning Man 2026", venue: "Black Rock City", address: "Black Rock Desert, NV 89412, USA", date: "~Aug 30–Sep 7, 2026", emoji: "🔥", type: "Burn", lat: 40.7864, lng: -119.2065 }
 ];
 
@@ -798,7 +798,7 @@ const stays = [
   { from:"2026-06-22", to:"2026-07-10", flag:"🇱🇹", country:"Lithuania", city:"Vilnius – Ryanair FR3466 LTN→VNO Jun 22 11:05; SAS VNO→CPH Jul 10" },
   { from:"2026-07-10", to:"2026-08-03", flag:"🇩🇰", country:"Denmark", city:"Copenhagen – SAS VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30; Green House Copenhagen Aug 2; Ethiopian ET731 CPH→VIE Aug 3 19:25" },
   { from:"2026-08-03", to:"2026-08-18", flag:"🇦🇹", country:"Austria", city:"Vienna – Ethiopian ET731 CPH→VIE Aug 3; LOT LO226 VIE→WAW Aug 18 19:30" },
-  { from:"2026-08-18", to:"2026-08-20", flag:"🇵🇱", country:"Poland", city:"Warsaw (transit) – LOT LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00" },
+  { from:"2026-08-18", to:"2026-08-20", flag:"🇵🇱", country:"Poland", city:"Warsaw – LOT LO226 VIE→WAW Aug 18 19:30; LO35 WAW→SFO Aug 20 11:00" },
   { from:"2026-08-20", to:"2026-09-21", flag:"🇺🇸", country:"United States", city:"San Francisco / Sacramento / Reno – LOT LO35 WAW→SFO Aug 20; Union Hotel SF Aug 20–21; Sacramento Aug 25–26 (Airbnb with Elizabeth); Burning Man 2026 (implied); Reno Sep 8–14 (Airbnb Sep 8–10; Coffeebar McCarran Sep 14); UA436 SFO→YYZ Sep 21 22:51" },
   { from:"2026-09-22", to:"2026-10-06", flag:"🇨🇦", country:"Canada", city:"Toronto – UA436 SFO→YYZ arrives Sep 22 07:00; SWISS LX4641 YYZ→ZRH Oct 6 20:05" },
   { from:"2026-10-07", to:"2026-10-12", flag:"🇬🇷", country:"Greece", city:"Heraklion, Crete – SWISS LX4641 YYZ→ZRH Oct 6 20:05; LX8350 ZRH→HER Oct 7 16:10 arr 19:55; Poseidon Hotel Oct 7–8; Studio 21 Airbnb Michelidaki 21 Oct 11–12; Ryanair FR7392 HER→VIE Oct 12 19:45" },
