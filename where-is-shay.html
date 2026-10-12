@@ -104,11 +104,34 @@
         `<img src="https://flagcdn.com/w160/${code}.png" alt="${emoji}">`;
     }
 
+    // Parse "arr HH:MM" from a city string (e.g. "HER→VIE Oct 12 arr 21:20")
+    function parseArrivalTime(cityStr) {
+      const m = cityStr && cityStr.match(/\barr\s+(\d{1,2}):(\d{2})/i);
+      return m ? { hour: parseInt(m[1], 10), minute: parseInt(m[2], 10) } : null;
+    }
+
     // Find where Shay is: the most recent confirmed transport arrival on or before dateStr.
-    // No assumptions about departure — we only trust what's in the DB.
+    // If a stay starts today but has an "arr HH:MM" in its city string, it is only
+    // considered active once that time has passed in the destination's timezone.
     function getStayForDate(dateStr) {
+      const now = new Date();
       const allStays = [...stays, ...expectedStays]
-        .filter(s => s.from <= dateStr)
+        .filter(s => {
+          if (s.from > dateStr) return false;
+          if (s.from === dateStr) {
+            const arr = parseArrivalTime(s.city || '');
+            if (arr) {
+              const tz = COUNTRY_TZ[s.country] || 'UTC';
+              const parts = new Intl.DateTimeFormat('en-GB', {
+                timeZone: tz, hour: 'numeric', minute: 'numeric', hour12: false
+              }).formatToParts(now);
+              const curH = parseInt(parts.find(p => p.type === 'hour').value, 10);
+              const curM = parseInt(parts.find(p => p.type === 'minute').value, 10);
+              if (curH * 60 + curM < arr.hour * 60 + arr.minute) return false;
+            }
+          }
+          return true;
+        })
         .sort((a, b) => b.from.localeCompare(a.from));
       if (allStays.length > 0) return allStays[0];
       return { ...HOME, from: dateStr, to: dateStr };
