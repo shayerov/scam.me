@@ -110,8 +110,8 @@ const countries = [
   {
     flag: "🇮🇪", name: "Ireland", city: "Dublin", region: "europe",
     lat: 53.3498, lng: -6.2603,
-    visits: ["Jul 4–18, 2023 (Dublin – Ryanair FR3103 AMS→DUB Jul 4 22:00; MayoBurn 2023 regional burn in County Mayo; Ryanair FR6070 DUB→GOT Jul 18 17:15)"],
-    note: "Ryanair AMS→DUB · DUB→GOT · Jul 2023"
+    visits: ["Jul 4–18, 2023 (Dublin – Ryanair FR3103 AMS→DUB Jul 4 22:00; MayoBurn 2023 regional burn in County Mayo; Ryanair FR6070 DUB→GOT Jul 18 17:15)", "Nov 2–16, 2026 (Dun Laoghaire – Mulgrave Lodge)"],
+    note: "Ryanair AMS→DUB · Jul 2023 · Dun Laoghaire Nov 2026"
   },
   {
     flag: "🇳🇱", name: "Netherlands", city: "Amsterdam", region: "europe",
@@ -453,7 +453,7 @@ const travelLog = [
   { date: "Dec 29, 2023", flag: "🇳🇿", country: "New Zealand", city: "Auckland – Etihad EY594 TLV→AUH + EY862 AUH→PVG + Air NZ NZ288 PVG→AKL (departed TLV Dec 29, arrived Auckland Dec 31)", future: false },
   // — 2024 —
   { date: "Jan 2024", flag: "🇳🇿", country: "New Zealand", city: "Ignition 2024 – NZ regional burn; KiwiBurn 2024 – Hunterville, NZ regional burn", future: false },
-  { date: "Feb 1, 2024", flag: "🇳🇿", country: "New Zealand", city: "Christchurch & South Island – Jetstar JQ233 AKL→CHC Feb 1; DOC campsites (Lewis Pass, Milford Rd/Cascade Creek); glacier helicopter Feb 20 (AKL→SYD Jetstar was cancelled Feb 5 – Australia trip never happened)", future: false },
+  { date: "Feb 1, 2024", flag: "🇳🇿", country: "New Zealand", city: "Christchurch & South Island – Jetstar JQ233 AKL→CHC Feb 1; DOC campsites (Lewis Pass, Milford Rd/Cascade Creek); glacier helicopter Feb 20 (AKL→SYD Jetstar JQ202 EMZQ2D also not taken; eDreams duplicate refunded Feb 9 – Australia trip never happened)", future: false },
   { date: "May 2024", flag: "🇳🇿", country: "New Zealand", city: "Hot Water Beach, Coromandel – back in NZ", future: false },
   { date: "May 6, 2024", flag: "🇩🇪", country: "Germany", city: "Frankfurt – Qatar AKL→FRA via DOH May 6; to WTF France May 8", future: false },
   { date: "May 9–12, 2024", flag: "🇫🇷", country: "France", city: "What The Farm 2024 – Ferme d'Antioche, Vauxaillon, Aisne; Normandy May 13–16; drove to Brussels May 16", future: false },
@@ -519,6 +519,7 @@ const travelLog = [
   { date: "Oct 12, 2026", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair FR7392 HER→VIE Oct 12 arr 21:20", future: true },
   { date: "Oct 14–15, 2026", flag: "🇨🇾", country: "Cyprus", city: "Paphos – Ryanair FR721 VIE→PFO Oct 14 20:25 arr 00:20 Oct 15", future: true },
   { date: "Oct 16, 2026", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair FR722 PFO→VIE Oct 16 arr 19:20", future: true },
+  { date: "Nov 2–16, 2026", flag: "🇮🇪", country: "Ireland", city: "Dun Laoghaire (Dublin area) – Mulgrave Lodge 47 Mulgrave Street; 14 nights", future: true },
 ];
 
 // Events with confirmed venue addresses
@@ -811,12 +812,12 @@ const stays = [
   { from:"2023-10-10", to:"2023-10-28", flag:"🇲🇪", country:"Montenegro", city:"Tivat / Kotor / Žabljak / Budva – Israir TLV→TIV Oct 10; Austrian TGD→VIE Oct 28" },
   { from:"2023-10-28", to:"2023-11-01", flag:"🇦🇹", country:"Austria", city:"Vienna – Austrian TGD→VIE Oct 28; Wizzair VIE→LCA Nov 1" },
   { from:"2023-11-01", to:"2023-11-06", flag:"🇨🇾", country:"Cyprus", city:"Larnaca – Wizzair VIE→LCA Nov 1; LCA→TLV Nov 6" },
-  { from:"2023-12-31", to:"2024-05-06", flag:"🇳🇿", country:"New Zealand", city:"Auckland & NZ road trip – Etihad TLV→AUH→PVG→AKL Dec 29; Qatar AKL→FRA May 6" },
+  { from:"2023-12-31", to:"2024-05-06", flag:"🇳🇿", country:"New Zealand", city:"Auckland & NZ road trip – Etihad EY594 TLV→AUH + EY862 AUH→PVG + Air NZ NZ288 PVG→AKL (departed Dec 29, arrived Dec 31); Qatar AKL→FRA May 6" },
   { from:"2024-05-06", to:"2024-05-08", flag:"🇩🇪", country:"Germany", city:"Frankfurt – Qatar AKL→FRA via DOH May 6; to France May 8" },
   { from:"2024-05-08", to:"2024-05-16", flag:"🇫🇷", country:"France", city:"WTF event May 8–13 (friend's car from Frankfurt); Normandy May 13–16" },
   { from:"2024-05-16", to:"2024-05-19", flag:"🇧🇪", country:"Belgium", city:"Brussels – arrived from Normandy May 16; FlixBus Brussels-North→London Victoria May 19" },
   { from:"2024-05-19", to:"2024-06-18", flag:"🇬🇧", country:"United Kingdom", city:"London – FlixBus Brussels→London Victoria May 19; BA LHR→BER Jun 18" },
-  { from:"2024-06-18", to:"2024-07-17", flag:"🇩🇪", country:"Germany", city:"Berlin – BA BA0988 LHR→BER Brandenburg Jun 18; DB train BER→ZRH Jul 17; SWISS LX1254 ZRH→ARN Jul 17" },
+  { from:"2024-06-18", to:"2024-07-17", flag:"🇩🇪", country:"Germany", city:"Berlin – BA BA0988 LHR→BER Brandenburg Jun 18; Google I/O Connect Berlin Jun 27; DB train BER→ZRH Jul 17; SWISS LX1254 ZRH→ARN Jul 17" },
   { from:"2024-07-17", to:"2024-08-05", flag:"🇸🇪", country:"Sweden", city:"Stockholm – SWISS LX1254 ZRH→ARN Jul 17 (delayed to 22:30); The Borderland 2024 (10 days); Ryanair FR756 ARN→VIE Aug 5 08:45" },
   { from:"2024-08-05", to:"2024-08-22", flag:"🇦🇹", country:"Austria", city:"Vienna – Ryanair FR756 ARN→VIE Aug 5; Schönburn 2024 Aug 7–11 Böllerbauer; Austrian VIE→SFO Aug 22" },
   { from:"2024-08-22", to:"2024-09-16", flag:"🇺🇸", country:"United States", city:"San Francisco / Burning Man 2024 / Reno / Lake Tahoe – Austrian VIE→SFO Aug 22; Union Square Hotel Aug 22–24; BM Aug 25–Sep 2; Reno/Tahoe Sep 6–9; United SFO→YYZ Sep 16" },
@@ -825,7 +826,7 @@ const stays = [
   { from:"2024-10-13", to:"2024-11-18", flag:"🇯🇵", country:"Japan", city:"Yokohama / Tokyo / Otsu – arrived via Nomad Cruise 13; Air NZ NZ90 NRT→AKL departs Nov 18 18:45" },
   { from:"2024-11-19", to:"2025-05-12", flag:"🇳🇿", country:"New Zealand", city:"New Zealand – Air NZ NZ90 NRT→AKL arrives Nov 19 09:20; Nelson · Tauranga" },
   { from:"2025-05-13", to:"2025-06-20", flag:"🇬🇧", country:"United Kingdom", city:"London – China Eastern MU780 AKL→PVG May 12 21:00 + MU213 PVG→LGW May 13 15:00; Burning Nest 2025 regional burn ~Jun 2025; Loom Club Jun 6; BA LHR→SOF Jun 20" },
-  { from:"2025-06-20", to:"2025-07-06", flag:"🇧🇬", country:"Bulgaria", city:"Bansko – BA LHR→SOF Jun 20" },
+  { from:"2025-06-20", to:"2025-07-06", flag:"🇧🇬", country:"Bulgaria", city:"Bansko – BA LHR→SOF Jun 20; Traventuria bus Sofia T2→Bansko Jun 20 16:00; Airbnb Panoramic Penthouse Jun 20–Jul 4" },
   { from:"2025-07-07", to:"2025-07-16", flag:"🇩🇪", country:"Germany", city:"Berlin – Ryanair FR1149 SOF→BER Jul 7 08:30" },
   { from:"2025-07-16", to:"2025-07-27", flag:"🇸🇪", country:"Sweden", city:"Stockholm – SAS BER→ARN Jul 16; The Borderland 2025; drove to Vienna Jul 27" },
   { from:"2025-07-27", to:"2025-08-15", flag:"🇦🇹", country:"Austria", city:"Vienna – drove from Stockholm Jul 27; Schönburn 2025 Aug 6–10 Böllerbauer; OS207 VIE→FRA + UA59 FRA→SFO Aug 15" },
@@ -854,4 +855,6 @@ const stays = [
 // "Expected" upcoming stays — confirmed transport bookings for future arrivals.
 // from = confirmed arrival date by transport; to = last confirmed date in that country.
 // No end date is assumed without a confirmed departure booking.
-const expectedStays = [];
+const expectedStays = [
+  { from:"2026-11-02", to:"2026-11-16", flag:"🇮🇪", country:"Ireland", city:"Dun Laoghaire (Dublin area) – Mulgrave Lodge 47 Mulgrave Street; 14 nights" },
+];
