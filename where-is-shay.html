@@ -133,7 +133,16 @@
           return true;
         })
         .sort((a, b) => b.from.localeCompare(a.from));
-      if (allStays.length > 0) return allStays[0];
+      if (allStays.length > 0) {
+        const best = allStays[0];
+        // If the stay has ended and a later confirmed entry exists, we're in a gap → HOME.
+        // If no later entry exists, the stay is open-ended (still there) → keep it.
+        if (dateStr > best.to) {
+          const all = [...stays, ...expectedStays];
+          if (all.some(x => x.from > best.to)) return { ...HOME, from: dateStr, to: dateStr };
+        }
+        return best;
+      }
       return { ...HOME, from: dateStr, to: dateStr };
     }
 

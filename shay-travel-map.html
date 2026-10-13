@@ -1468,6 +1468,12 @@ function getStayForDate(dateStr) {
 
   if (allByFrom.length > 0) {
     const { s, expected } = allByFrom[0];
+    // If the stay has ended and a later confirmed entry exists, we're in a gap → HOME.
+    // If no later entry exists, the stay is open-ended (still there) → keep it.
+    if (dateStr > s.to) {
+      const allS = [...stays, ...expectedStays];
+      if (allS.some(x => x.from > s.to)) return { ...HOME, from: dateStr, to: dateStr };
+    }
     return expected ? { ...s, expected: true } : s;
   }
 
