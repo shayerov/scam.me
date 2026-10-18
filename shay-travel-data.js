@@ -11,7 +11,7 @@ const countries = [
     flag: "🇳🇿", name: "New Zealand", city: "Auckland", region: "oceania",
     lat: -36.8509, lng: 174.7645,
     visits: [
-      "Jan 2024 (Ignition 2024 – NZ regional burn; KiwiBurn 2024 – Hunterville regional burn; during Dec 2023–May 2024 NZ stay)",
+      "Jan 2024 (Ignition 2024 – NZ regional burn (PsycheLEDic art installation; with Yod Lublin); KiwiBurn 2024 – Hunterville regional burn (with Yod Lublin); during Dec 2023–May 2024 NZ stay)",
       "Dec 29, 2023–May 6, 2024 (Auckland & NZ road trip – Etihad EY594 TLV→AUH + EY862 AUH→PVG + Air NZ NZ288 PVG→AKL Dec 29; Ignition + KiwiBurn Jan 2024; Kahurangi NP, Nelson Lakes, Milford, Coromandel; departed Qatar AKL→FRA May 6)",
       "Nov 2024 (Re:Gen 2024 – NZ regional burn, 3 days; during Nov 2024–May 2025 NZ stay)",
       "Jan 2025 (KiwiBurn 2025 – NZ regional burn, 7 days)",
@@ -26,7 +26,7 @@ const countries = [
   {
     flag: "🇦🇹", name: "Austria", city: "Vienna", region: "europe",
     lat: 48.2082, lng: 16.3738,
-    visits: ["Sep 18–24, 2018 (Vienna – easyJet U24733 BER SXF→VIE Sep 18 18:55; Wizzair W62811 VIE→TLV Sep 24 06:05→10:30; with Nadja Schreiber; Schönburn 2018 at Schloss Wetzlas – no ticket email found)", "~Mar 1–2, 2019 (Vienna – Vienna Burning Ball)", "Sep 15–16, 2019 (Vienna – FlixBus side trip from Zurich; Schönburn 2019 at Schloss Wetzlas)", "Jun 29–Jul 4, 2020 (Vienna – arrived by FlixBus ~Jun 29; departed Ryanair FR7161 VIE→TLV Jul 4 13:00–17:20)", "Sep ~22–28, 2020 (Vienna – transit from Berlin; Schönburn 2020 at Schloss Wetzlas; departed ÖBB D720 Wien Hbf→München Sep 28)", "Oct 30–Nov 3, 2020 (Vienna – arrived Wiener Linien Airport Lines return ticket Oct 30; departed ÖBB RJX 564 Wien→Innsbruck→Zürich Nov 3 11:30)", "Sep 8–12, 2021 (Schönburn 2021, Schloss Wetzlas; during Vienna Aug 31–Sep 26 stay)", "Aug 31–Sep 26, 2021 (Vienna – Omio Budapest→Vienna Aug 31; DB Bahn Sep 14 Berlin trip; Aegean A3863+A3928 VIE→TLV Sep 26 via Athens)", "Jan 7–26, 2022 (Vienna – Ryanair FR7162 TLV→VIE Jan 7 11:20→14:10; FR7161 VIE→TLV Jan 26 delayed 2h+)", "Feb 7–27, 2022 (Ryanair TLV→VIE Feb 7; VIE→TLV Feb 27)", "May 11–18, 2022 (Vienna – ICE 93 LQ3ACZ BER→VIE May 11 10:04→17:45 (with Joyce); El Al VIE→TLV May 18 cancelled (JBEPJ8); rebooked Austrian OS859 VIE→TLV May 18 20:15)", "Aug 5–23, 2022 (Austrian GOT→VIE Aug 5 19:55)", "Sep ~7–11, 2022 (Schönburn 2022, Böllerbauer; during Vienna Sep 7–Jan 2023 stay)", "Sep 7, 2022–Jan 5, 2023 (Austrian SFO→FRA→VIE Sep 7; El Al LY362 VIE→TLV Jan 5 2023)", "Feb 23–Mar 5, 2023 (Vienna – ÖBB ZRH→VIE Feb 23; Austrian OS857 VIE→TLV Mar 5)", "Sep 21–29, 2023 (Vienna – FlixBus BER→VIE Sep 21; El Al VIE→TLV Sep 29)", "Oct 28–Nov 1, 2023 (Vienna – Austrian TGD→VIE Oct 28; Wizzair VIE→LCA Nov 1)", "Aug 7–11, 2024 (Schönburn 2024, Böllerbauer; during Vienna Aug 5–22 stay)", "Aug 2024 (Vienna – Ryanair ARN→VIE)", "Aug 6–10, 2025 (Schönburn 2025, Böllerbauer; during Vienna Jul 27–Aug 15 stay)", "Jul 27–Aug 15, 2025 (Vienna – drove from Stockholm Jul 27; OS207 VIE→FRA + UA59 FRA→SFO Aug 15)", "Oct 14–23, 2025 (Airbnb, 9 nights)", "Aug 3–18, 2026 (Vienna – Ethiopian ET731 CPH→VIE Aug 3; LOT LO226 VIE→WAW Aug 18 19:30)", "Oct 12–14, 2026 (Vienna – Ryanair FR7392 HER→VIE Oct 12 arr 21:20; Ryanair FR721 VIE→PFO Oct 14 20:25)", "Oct 16+, 2026 (Vienna – Ryanair FR722 PFO→VIE Oct 16 arr 19:20)"],
+    visits: ["Sep 18–24, 2018 (Vienna – easyJet U24733 BER SXF→VIE Sep 18 18:55; Wizzair W62811 VIE→TLV Sep 24 06:05→10:30; with Nadja Schreiber; Schönburn 2018 at Schloss Wetzlas – no ticket email found)", "~Mar 1–2, 2019 (Vienna – Vienna Burning Ball)", "Sep 15–16, 2019 (Vienna – FlixBus side trip from Zurich; Schönburn 2019 at Schloss Wetzlas)", "Jun 29–Jul 4, 2020 (Vienna – arrived by FlixBus ~Jun 29; departed Ryanair FR7161 VIE→TLV Jul 4 13:00–17:20)", "Sep ~22–28, 2020 (Vienna – transit from Berlin; Schönburn 2020 at Schloss Wetzlas; departed ÖBB D720 Wien Hbf→München Sep 28)", "Oct 30–Nov 3, 2020 (Vienna – arrived Wiener Linien Airport Lines return ticket Oct 30; departed ÖBB RJX 564 Wien→Innsbruck→Zürich Nov 3 11:30)", "Sep 8–12, 2021 (Schönburn 2021, Schloss Wetzlas; during Vienna Aug 31–Sep 26 stay)", "Aug 31–Sep 26, 2021 (Vienna – Omio Budapest→Vienna Aug 31; DB Bahn Sep 14 Berlin trip; Aegean A3863+A3928 VIE→TLV Sep 26 via Athens)", "Jan 7–26, 2022 (Vienna – Ryanair FR7162 TLV→VIE Jan 7 11:20→14:10; FR7161 VIE→TLV Jan 26 delayed 2h+)", "Feb 7–27, 2022 (Ryanair TLV→VIE Feb 7; side trip to Zürich Feb 8–17 via ÖBB; ÖBB ZRH→VIE Feb 17; VIE→TLV Feb 27)", "May 11–18, 2022 (Vienna – ICE 93 LQ3ACZ BER→VIE May 11 10:04→17:45 (with Joyce); El Al VIE→TLV May 18 cancelled (JBEPJ8); rebooked Austrian OS859 VIE→TLV May 18 20:15)", "Jun 9–14, 2022 (Vienna – Wizzair W6 2812 UEZYVP TLV→VIE Jun 9; returned Kiwi 232645688 VIE→TLV Jun 14)", "Aug 5–23, 2022 (Austrian GOT→VIE Aug 5 19:55)", "Sep ~7–11, 2022 (Schönburn 2022, Böllerbauer; during Vienna Sep 7–Jan 2023 stay)", "Sep 7, 2022–Jan 5, 2023 (Austrian SFO→FRA→VIE Sep 7; El Al LY362 VIE→TLV Jan 5 2023)", "Feb 23–Mar 5, 2023 (Vienna – ÖBB ZRH→VIE Feb 23; Austrian OS857 VIE→TLV Mar 5)", "Sep 21–29, 2023 (Vienna – FlixBus BER→VIE Sep 21; El Al VIE→TLV Sep 29)", "Oct 28–Nov 1, 2023 (Vienna – Austrian TGD→VIE Oct 28; Wizzair VIE→LCA Nov 1)", "Aug 7–11, 2024 (Schönburn 2024, Böllerbauer; during Vienna Aug 5–22 stay)", "Aug 2024 (Vienna – Ryanair ARN→VIE)", "Aug 6–10, 2025 (Schönburn 2025, Böllerbauer; during Vienna Jul 27–Aug 15 stay)", "Jul 27–Aug 15, 2025 (Vienna – drove from Stockholm Jul 27; OS207 VIE→FRA + UA59 FRA→SFO Aug 15)", "Oct 14–23, 2025 (Airbnb, 9 nights)", "Aug 3–18, 2026 (Vienna – Ethiopian ET731 CPH→VIE Aug 3; LOT LO226 VIE→WAW Aug 18 19:30)", "Oct 12–14, 2026 (Vienna – Ryanair FR7392 HER→VIE Oct 12 arr 21:20; Ryanair FR721 VIE→PFO Oct 14 20:25)", "Oct 16+, 2026 (Vienna – Ryanair FR722 PFO→VIE Oct 16 arr 19:20)"],
     note: "Frequent Ryanair TLV ↔ VIE hub · Schönburn regional burn (Schloss Wetzlas 2018–2021; Böllerbauer 2022–)"
   },
   {
@@ -50,8 +50,8 @@ const countries = [
   {
     flag: "🇩🇪", name: "Germany", city: "Berlin / Munich / Frankfurt", region: "europe",
     lat: 52.5200, lng: 13.4050,
-    visits: ["Feb 25–29, 2016 (Berlin – EasyJet EZY4784 TLV→BER SXF Feb 25; Burning Bär – Plug and Play; car rental; Plus Berlin hostel Feb 28–29)", "Feb 22–~Mar 1, 2017 (Berlin – El Al LY2373 (UP Air) TLV→BER SXF Feb 22 17:20→20:55; ZBB / Zum Brennenden Bär 2017; drove to Zurich)", "Jun 21–26, 2017 (Berlin – Air Berlin AB8383 TLV→BER TXL Jun 21 17:25; KiezBurn 2017 regional burn; AB8382 BER→TLV Jun 26 10:50)", "Jun 18–30, 2018 (Berlin – Turkish Airlines TLV→IST→BER Jun 18; KiezBurn 2018 regional burn (art installer/Wonderer volunteer); Eurowings BER→BCN Jun 30)", "Sep 12–18, 2018 (Berlin – SFO→YVR Sep 11 (AC8839) + YVR→FRA→BER TXL Sep 12 (AC9637); with Nadja Schreiber; Ponyhof 2018 regional burn; easyJet U24733 BER SXF→VIE Sep 18)", "Oct 7, 2018 (Berlin TXL – Aegean A30929 TLV→ATH→BER Oct 7; with Nadja Schreiber)", "Mar 5–12, 2019 (Berlin – ÖBB Nightjet Wien→BER arr Mar 5; ZBB / Burning Bar 2019; FlixBus BER→ZRH Mar 12)", "May 30–Jun 25, 2019 (Berlin/Zurich – SWISS TLV→ZRH May 30; KiezBurn 2019 regional burn ~Jun 20–25 Berlin; Lufthansa LH185 TXL→FRA→TLV Jun 25)", "Sep 12–15, 2019 (Ponyhof 2019 regional burn – Germany; during Zurich Sep 5–24 trip)", "Oct 22–28, 2019 (Berlin – Austrian OS858/OS239 TLV→VIE→TXL Oct 22–23; Hamburn 2019 (tickets.hamburn.de); PREMIUM Hostel; Aegean TXL→ATH Oct 28)", "Jun 21–~26, 2020 (Frankfurt/Berlin – Deutsche Bahn ICE 798 Frankfurt(Main)Süd→Berlin Hbf Jun 21; ~4 nights Berlin)", "Sep 9–~21, 2020 (Berlin SXF – Ryanair FR6473 TLV→SXF Sep 9; Ponyhof 2020 regional burn; Zum Brennenden Löwen 2020 (tickets.hamburn.de))", "Sep 28, 2020 (Munich – ÖBB D720 Wien Hbf→München Hbf 15:42–21:36; HI Munich Park Youth Hostel)", "Sep 29–Oct ~6, 2020 (Markdorf/Bodensee – Airbnb 'Mitten in Markdorf', Baden-Württemberg)", "Aug ~20–26, 2021 (Berlin – KiezBurn 2021; COVID test Aug 23; Dark Matter Berlin Aug 28; Ryanair to Budapest ~26–27)", "May 2–10, 2022 (Berlin – FlixBus from Zurich arr Südkreuz May 2 08:40; Amano hotel; Zeroliq sober bar May 5; ICE 93 LQ3ACZ BER→VIE May 11 10:04)", "Jul 11–21, 2022 (Berlin – Ryanair FR2528 MAD→BER Jul 11; KiezBurn 2022 regional burn; FlixBus to Gothenburg Jul 21)", "Aug 6–24, 2023 (Berlin – Eurowings EW8221 GOT→BER Aug 6; KiezBurn 2023 regional burn)", "Sep 13–21, 2023 (Berlin – BA286 delayed arrival; FlixBus BER→VIE Sep 21)", "May 6–8, 2024 (Frankfurt – Qatar AKL→FRA via DOH May 6)", "Jun 18–Jul 17, 2024 (Berlin – BA BA0988 LHR→BER Jun 18; KiezBurn 2024 regional burn; DB train BER→ZRH Jul 17)", "Jul 7, 2025 (Sofia→Berlin, Ryanair)", "Oct 29, 2025 (Eurowings, Düsseldorf)"],
-    note: "Berlin · Burning Bär 2016 · ZBB/Burning Bär 2017 · KiezBurn 2017/18/19/21/22/23/24 · ZBB 2019 · Ponyhof 2018/19/20 · Hamburn 2019 · Zum Brennenden Löwen 2020"
+    visits: ["Feb 25–29, 2016 (Berlin – EasyJet EZY4784 TLV→BER SXF Feb 25; Burning Bär – Plug and Play; car rental; Plus Berlin hostel Feb 28–29)", "Feb 22–~Mar 1, 2017 (Berlin – El Al LY2373 (UP Air) TLV→BER SXF Feb 22 17:20→20:55; ZBB / Zum Brennenden Bär 2017; drove to Zurich)", "Jun 21–26, 2017 (Berlin – Air Berlin AB8383 TLV→BER TXL Jun 21 17:25; KiezBurn 2017 regional burn; AB8382 BER→TLV Jun 26 10:50)", "Jun 18–30, 2018 (Berlin – Turkish Airlines TLV→IST→BER Jun 18; KiezBurn 2018 regional burn (art installer/Wonderer volunteer); Eurowings BER→BCN Jun 30)", "Sep 12–18, 2018 (Berlin – SFO→YVR Sep 11 (AC8839) + YVR→FRA→BER TXL Sep 12 (AC9637); with Nadja Schreiber; Ponyhof 2018 regional burn; easyJet U24733 BER SXF→VIE Sep 18)", "Oct 7, 2018 (Berlin TXL – Aegean A30929 TLV→ATH→BER Oct 7; with Nadja Schreiber)", "Mar 5–12, 2019 (Berlin – ÖBB Nightjet Wien→BER arr Mar 5; ZBB / Burning Bar 2019; FlixBus BER→ZRH Mar 12)", "May 30–Jun 25, 2019 (Berlin/Zurich – SWISS TLV→ZRH May 30; KiezBurn 2019 regional burn ~Jun 20–25 Berlin; Lufthansa LH185 TXL→FRA→TLV Jun 25)", "Sep 12–15, 2019 (Ponyhof 2019 regional burn – Germany; during Zurich Sep 5–24 trip)", "Oct 22–28, 2019 (Berlin – Austrian OS858/OS239 TLV→VIE→TXL Oct 22–23; Hamburn 2019 (tickets.hamburn.de); PREMIUM Hostel; Aegean TXL→ATH Oct 28)", "Jun 21–~26, 2020 (Frankfurt/Berlin – Deutsche Bahn ICE 798 Frankfurt(Main)Süd→Berlin Hbf Jun 21; ~4 nights Berlin)", "Sep 9–~21, 2020 (Berlin SXF – Ryanair FR6473 TLV→SXF Sep 9; Ponyhof 2020 regional burn; Zum Brennenden Löwen 2020 (tickets.hamburn.de))", "Sep 28, 2020 (Munich – ÖBB D720 Wien Hbf→München Hbf 15:42–21:36; HI Munich Park Youth Hostel)", "Sep 29–Oct ~6, 2020 (Markdorf/Bodensee – Airbnb 'Mitten in Markdorf', Baden-Württemberg)", "Aug ~20–26, 2021 (Berlin – KiezBurn 2021; COVID test Aug 23; Dark Matter Berlin Aug 28; Ryanair to Budapest ~26–27)", "May 2–10, 2022 (Berlin – FlixBus from Zurich arr Südkreuz May 2 08:40; Amano hotel; Zeroliq sober bar May 5; ICE 93 LQ3ACZ BER→VIE May 11 10:04)", "Jul 11–21, 2022 (Berlin – Ryanair FR2528 MAD→BER Jul 11; tested COVID positive Jul 12; attended KiezBurn 2022 (arrived late); FlixBus to Gothenburg Jul 21)", "Aug 6–24, 2023 (Berlin – Eurowings EW8221 GOT→BER Aug 6; KiezBurn 2023 regional burn)", "Sep 13–21, 2023 (Berlin – BA286 delayed arrival; FlixBus BER→VIE Sep 21)", "May 6–8, 2024 (Frankfurt – Qatar AKL→FRA via DOH May 6)", "Jun 18–Jul 17, 2024 (Berlin – BA BA0988 LHR→BER Jun 18; KiezBurn 2024 regional burn; DB train BER→ZRH Jul 17)", "Jul 7, 2025 (Sofia→Berlin, Ryanair)", "Oct 29, 2025 (Eurowings, Düsseldorf)"],
+    note: "Berlin · Burning Bär 2016 · ZBB/Burning Bär 2017 · KiezBurn 2017/18/19/21/22/23/24 (2022 arrived late after COVID) · ZBB 2019 · Ponyhof 2018/19/20 · Hamburn 2019 · Zum Brennenden Löwen 2020"
   },
   {
     flag: "🇨🇭", name: "Switzerland", city: "Zurich", region: "europe",
@@ -64,6 +64,12 @@ const countries = [
     lat: 55.6761, lng: 12.5683,
     visits: ["Jul 14–26, 2016 (Copenhagen – Pegasus TLV→SAW→CPH; ~12 days; car rental; road trip; The Borderland 2016 regional burn)", "Jul 21–Aug 4, 2017 (Copenhagen – Gotogate TLV→CPH Jul 21; Airbnb Christianshavn Jul 21–22 (with Yulia); Avis car rental CPH Jul 21–Aug 3; The Borderland 2017 regional burn Jul 22–Aug 2; returned Aegean A3 CPH→ATH→TLV Aug 3–4 (luggage delayed))", "Jul 21–28, 2018 (Copenhagen – UIA PS780 TLV→KBP Jul 21, PS163 KBP→CPH Jul 21; The Borderland 2018 regional burn Jul 24–27)", "Jul 21–31, 2019 (Copenhagen – SWISS LX1278 ZRH→CPH Jul 21 (delayed, with Christina Welter); The Borderland 2019; Quality Hotel Høje Taastrup Jul 27; SWISS LX1273 CPH→ZRH + LX256 ZRH→TLV Jul 31)", "Jul 16–27, 2021 (Copenhagen – AF1621 TLV→CPH Jul 15 cancelled; rebooked LH0683 TLV→MUC Jul 16 07:00→10:00 + LH2442 MUC→CPH 16:50→18:20; Revent 2021 regional burn; Airbnb Store Kongensgade 42A Jul 15–19 (arrived Jul 16); SWISS LX1267 CPH→ZRH Jul 27)", "Oct 2025 (Eurowings DUS→CPH)", "Nov 4, 2025 (Digital Tech Summit)", "Jul 10–Aug 3, 2026 (Copenhagen – SAS VNO→CPH Jul 10; Airbnb Nørrebro Jul 27–30; Green House Copenhagen Aug 2; The Borderland 2026 at Alvarsjö, Sweden; Ethiopian CPH→VIE Aug 3)"],
     note: "The Borderland 2016/17/18/19 (Denmark) · Revent 2021 · SWISS · UIA"
+  },
+  {
+    flag: "🇨🇿", name: "Czech Republic", city: "Prague", region: "europe",
+    lat: 50.0755, lng: 14.4378,
+    visits: ["Oct 2026 (Prague – ÖBB Wien Franz-Josefs-Bahnhof→Praha hl.n. Oct 19)"],
+    note: "Prague · ÖBB from Vienna Oct 2026"
   },
   {
     flag: "🇱🇹", name: "Lithuania", city: "Vilnius", region: "europe",
@@ -158,14 +164,14 @@ const countries = [
   {
     flag: "🇸🇨", name: "Seychelles", city: "Mahé Island", region: "africa",
     lat: -4.6796, lng: 55.4920,
-    visits: ["Dec 8, 2020–Jan 22, 2021 (Mahé – Le Domaine de Bacova villa (SeyVillas); extended to Jan 22 confirmed Dec 22 by Le Domaine de Bacova)"],
+    visits: ["Dec 8–22, 2020 (Mahé, Anse La Mouche – Le Domaine de Bacova (SeyVillas); COVID transit Dec 8–14; scuba diving at Anse La Mouche Blue Lagoon (Dive Resort Seychelles) ~Dec 15–21; extended to Dec 22; departed Dec 22, Israel Entry Report filed 13:08)"],
     note: "Le Domaine de Bacova · Mahé · Diving with Blue Safari"
   },
   {
     flag: "🇿🇦", name: "South Africa", city: "Johannesburg · Hoedspruit (Kruger area)", region: "africa",
     lat: -26.2041, lng: 28.0473,
-    visits: ["Jan 19–Feb 5, 2023 (Johannesburg Jan 19–20 – El Al LY51 TLV→JNB Jan 19; Hoedspruit / Kruger area Jan 20–Feb 4 – drove from JNB; Johannesburg Feb 4–5 – drove back; LY52 JNB→TLV Feb 5 11:30→20:15)"],
-    note: "Johannesburg OR Tambo (JNB) · Hoedspruit / Kruger Park area · El Al LY51/LY52"
+    visits: ["Jan 19–Feb 5, 2023 (Johannesburg Jan 19–20 – El Al LY51 TLV→JNB Jan 19 (with Joyce); Hoedspruit / Kruger area Jan 20–Feb 4 – drove from JNB; Johannesburg Feb 4–5 – drove back; LY52 JNB→TLV Feb 5 11:30→20:15)"],
+    note: "Johannesburg OR Tambo (JNB) · Hoedspruit / Kruger Park area · El Al LY51/LY52 · with Joyce"
   },
   {
     flag: "🇪🇬", name: "Egypt", city: "Dahab, Sinai", region: "africa",
@@ -406,8 +412,8 @@ const travelLog = [
   { date: "Oct 11–~30, 2020", flag: "🇨🇭", country: "Switzerland", city: "Zurich – rooftop garden apartment; SBB Swiss trains Oct 26", future: false },
   { date: "Oct 30–Nov 3, 2020", flag: "🇦🇹", country: "Austria", city: "Vienna – Wiener Linien Airport Lines return ticket Oct 30; Strozzigasse", future: false },
   { date: "Nov 3–Dec 7, 2020", flag: "🇨🇭", country: "Switzerland", city: "Zurich – ÖBB RJX 564 Wien→Innsbruck + EC 164 Innsbruck→Zürich HB Nov 3 11:30–19:20; Turkish TK ZRH→TLV Dec 7", future: false },
-  { date: "Dec 7–8, 2020", flag: "🇸🇨", country: "Seychelles", city: "Mahé – departed TLV Dec 7 eve", future: false },
-  { date: "Dec 8, 2020–Jan 22, 2021", flag: "🇸🇨", country: "Seychelles", city: "Mahé – Le Domaine de Bacova villa (SeyVillas); stay extended Dec 22 to Jan 22 2021 (50 EUR/night)", future: false },
+  { date: "Dec 7–8, 2020", flag: "🇸🇨", country: "Seychelles", city: "Mahé – Air Seychelles (booking CRMHQN) departed TLV Dec 7 eve; arrived Mahé Dec 8", future: false },
+  { date: "Dec 8–22, 2020", flag: "🇸🇨", country: "Seychelles", city: "Mahé, Anse La Mouche – Le Domaine de Bacova (SeyVillas S-201208-Erov-nic-572821); COVID transit Dec 8–14; free from Dec 15; scuba diving at Anse La Mouche Blue Lagoon (Dive Resort Seychelles, Jonathan) ~Dec 15–21 (AOWD, ~3–4 days × 2 dives); extended to Dec 22; departed Dec 22 (Israel entry report filed)", future: false },
   // — 2021 —
   { date: "Jul 16–27, 2021", flag: "🇩🇰", country: "Denmark", city: "Copenhagen – AF1621 TLV→CPH Jul 15 cancelled; rebooked LH0683 TLV→MUC + LH2442 MUC→CPH arr 18:20 Jul 16; Revent 2021 regional burn; SWISS LX1267 CPH→ZRH Jul 27", future: false },
   { date: "Jul 27–Aug 7, 2021", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS LX1267 CPH→ZRH Jul 27; SBB trains Aug 3–4; drove to Berlin Aug 8", future: false },
@@ -423,14 +429,15 @@ const travelLog = [
   { date: "Apr 29–May 1, 2022", flag: "🇨🇭", country: "Switzerland", city: "Zurich – DB XM9ZSN AMS→ZRH Apr 29; FlixBus 3007009011 ZRH→BER May 1 18:45", future: false },
   { date: "May 2–10, 2022", flag: "🇩🇪", country: "Germany", city: "Berlin – FlixBus from Zurich arr Südkreuz May 2 08:40; Amano hotel; Zeroliq sober bar May 5; ICE 93 LQ3ACZ BER→VIE May 11", future: false },
   { date: "May 11–18, 2022", flag: "🇦🇹", country: "Austria", city: "Vienna – ICE 93 LQ3ACZ BER→VIE May 11 10:04→17:45 (with Joyce); El Al VIE→TLV May 18 cancelled; Austrian OS859 VIE→TLV May 18 20:15", future: false },
+  { date: "Jun 9–14, 2022", flag: "🇦🇹", country: "Austria", city: "Vienna – Wizzair W6 2812 UEZYVP TLV→VIE Jun 9; returned Kiwi 232645688 VIE→TLV Jun 14", future: false },
   { date: "Jul 1–11, 2022", flag: "🇪🇸", country: "Spain", city: "Madrid – Air Europa UX1302 TLV→MAD Jul 1 16:05; Nowhere 2022 near Castejón de Monegros", future: false },
-  { date: "Jul 11–21, 2022", flag: "🇩🇪", country: "Germany", city: "Berlin – Ryanair FR2528 MAD→BER Jul 11 17:25; KiezBurn 2022 regional burn", future: false },
+  { date: "Jul 11–21, 2022", flag: "🇩🇪", country: "Germany", city: "Berlin – Ryanair FR2528 MAD→BER Jul 11 17:25; tested COVID positive Jul 12; attended KiezBurn 2022 (arrived late after recovery); FlixBus to Gothenburg Jul 21", future: false },
   { date: "Jul 21–Aug 5, 2022", flag: "🇸🇪", country: "Sweden", city: "Gothenburg – FlixBus from Berlin Jul 21; The Borderland 2022 regional burn; Austrian OS326 GOT→VIE Aug 5 19:55", future: false },
   { date: "Aug 5–23, 2022", flag: "🇦🇹", country: "Austria", city: "Vienna – Austrian GOT→VIE Aug 5", future: false },
   { date: "Aug 23–Sep 6, 2022", flag: "🇺🇸", country: "United States", city: "San Francisco – Burning Man 2022 – Austrian VIE→MUC→SFO Aug 23; Black Rock City NV; returned SFO→FRA→VIE Sep 6", future: false },
   { date: "Sep ~7–11, 2022", flag: "🇦🇹", country: "Austria", city: "Schönburn 2022 – Böllerbauer (during Vienna Sep 2022 stay)", future: false },
   { date: "Sep 7, 2022–Jan 5, 2023", flag: "🇦🇹", country: "Austria", city: "Vienna – Austrian SFO→FRA→VIE Sep 7; Schönburn 2022 Sep 7–11 Böllerbauer; El Al LY362 VIE→TLV Jan 5 2023", future: false },
-  { date: "Jan 19–Feb 5, 2023", flag: "🇿🇦", country: "South Africa", city: "Johannesburg Jan 19–20 + Hoedspruit (Kruger area) Jan 20–Feb 4 + JNB Feb 4–5 – El Al LY51 TLV→JNB Jan 19; LY52 JNB→TLV Feb 5", future: false },
+  { date: "Jan 19–Feb 5, 2023", flag: "🇿🇦", country: "South Africa", city: "Johannesburg Jan 19–20 + Hoedspruit (Kruger area) Jan 20–Feb 4 + JNB Feb 4–5 – El Al LY51 TLV→JNB Jan 19 (with Joyce); LY52 JNB→TLV Feb 5", future: false },
   // — 2023 —
   { date: "Feb 14–23, 2023", flag: "🇨🇭", country: "Switzerland", city: "Zurich – SWISS LX253 TLV→ZRH Feb 14 17:45 gate B05 seat 37A; Bao Vest (Swiss Burn) 2023; ÖBB ZRH→VIE Feb 23", future: false },
   { date: "Feb 23–Mar 5, 2023", flag: "🇦🇹", country: "Austria", city: "Vienna – ÖBB ZRH→VIE Feb 23; Wiener Linien transit; Austrian OS857 VIE→TLV Mar 5", future: false },
@@ -449,7 +456,7 @@ const travelLog = [
   { date: "Nov 1–6, 2023", flag: "🇨🇾", country: "Cyprus", city: "Larnaca – Wizzair VIE→LCA Nov 1; LCA→TLV Nov 6", future: false },
   { date: "Dec 29, 2023", flag: "🇳🇿", country: "New Zealand", city: "Auckland – Etihad EY594 TLV→AUH + EY862 AUH→PVG + Air NZ NZ288 PVG→AKL (departed TLV Dec 29, arrived Auckland Dec 31)", future: false },
   // — 2024 —
-  { date: "Jan 2024", flag: "🇳🇿", country: "New Zealand", city: "Ignition 2024 – NZ regional burn; KiwiBurn 2024 – Hunterville, NZ regional burn", future: false },
+  { date: "Jan 2024", flag: "🇳🇿", country: "New Zealand", city: "Ignition 2024 – NZ regional burn (PsycheLEDic art installation; with Yod Lublin); KiwiBurn 2024 – Hunterville, NZ regional burn (with Yod Lublin)", future: false },
   { date: "Feb 1, 2024", flag: "🇳🇿", country: "New Zealand", city: "Christchurch & South Island – Jetstar JQ233 AKL→CHC Feb 1; DOC campsites (Lewis Pass, Milford Rd/Cascade Creek); glacier helicopter Feb 20 (AKL→SYD Jetstar JQ202 EMZQ2D also not taken; eDreams duplicate refunded Feb 9 – Australia trip never happened)", future: false },
   { date: "May 2024", flag: "🇳🇿", country: "New Zealand", city: "Hot Water Beach, Coromandel – back in NZ", future: false },
   { date: "May 6, 2024", flag: "🇩🇪", country: "Germany", city: "Frankfurt – Qatar AKL→FRA via DOH May 6; to WTF France May 8", future: false },
@@ -513,9 +520,10 @@ const travelLog = [
   { date: "Sep 8–14, 2026", flag: "🇺🇸", country: "United States", city: "Reno, NV – Airbnb Sep 8–10 (Hot Tub & Grill); Coffeebar McCarran Sep 14", future: false },
   { date: "Sep 22, 2026", flag: "🇨🇦", country: "Canada", city: "Toronto – UA436 SFO→YYZ Sep 21 22:51, arrives Sep 22 07:00", future: false },
   { date: "Oct 7, 2026", flag: "🇬🇷", country: "Greece", city: "Heraklion, Crete – SWISS LX8350 ZRH→HER Oct 7 arr 19:55; Poseidon Hotel Oct 7–8; Studio 21 Airbnb Michelidaki 21 Oct 11–12", future: false },
-  { date: "Oct 12, 2026", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair FR7392 HER→VIE Oct 12 arr 21:20", future: true },
-  { date: "Oct 14–15, 2026", flag: "🇨🇾", country: "Cyprus", city: "Paphos – Ryanair FR721 VIE→PFO Oct 14 20:25 arr 00:20 Oct 15", future: true },
-  { date: "Oct 16, 2026", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair FR722 PFO→VIE Oct 16 arr 19:20", future: true },
+  { date: "Oct 12, 2026", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair FR7392 HER→VIE Oct 12 arr 21:20", future: false },
+  { date: "Oct 14–15, 2026", flag: "🇨🇾", country: "Cyprus", city: "Paphos – Ryanair FR721 VIE→PFO Oct 14 20:25 arr 00:20 Oct 15", future: false },
+  { date: "Oct 16, 2026", flag: "🇦🇹", country: "Austria", city: "Vienna – Ryanair FR722 PFO→VIE Oct 16 arr 19:20", future: false },
+  { date: "Oct 19, 2026", flag: "🇨🇿", country: "Czech Republic", city: "Prague – ÖBB Wien Franz-Josefs-Bahnhof→Praha hl.n.", future: true },
   { date: "Nov 2–16, 2026", flag: "🇮🇪", country: "Ireland", city: "Dun Laoghaire (Dublin area) – flight from Vienna Nov 2; Mulgrave Lodge 47 Mulgrave Street; 14 nights", future: true },
 ];
 
@@ -608,7 +616,7 @@ const events = [
   // ── Burns – 2022 ──
   { name: "What The Farm 2022", venue: "Ferme d'Antioche", address: "Vauxaillon, Aisne, France", date: "Apr 14–17, 2022", emoji: "🔥", type: "Burn", lat: 49.5592, lng: 3.5308 },
   { name: "Nowhere 2022", venue: "Nowhere", address: "near Castejón de Monegros, Zaragoza, Spain", date: "~Jul 3–8, 2022", emoji: "🔥", type: "Burn", lat: 41.5936, lng: -0.1536 },
-  { name: "KiezBurn 2022", venue: "KiezBurn – Berlin regional burn", address: "Berlin area, Germany", date: "Jul 11–21, 2022", emoji: "🔥", type: "Burn", lat: 52.5200, lng: 13.4050 },
+  { name: "KiezBurn 2022", venue: "KiezBurn – Berlin regional burn", address: "Berlin area, Germany", date: "Jul 2022", emoji: "🔥", type: "Burn", lat: 52.5200, lng: 13.4050 },
   { name: "The Borderland 2022", venue: "The Borderland", address: "Sweden", date: "Jul 21–Aug 5, 2022", emoji: "🔥", type: "Burn", lat: 57.7089, lng: 11.9746 },
   { name: "Burning Man 2022", venue: "Black Rock City", address: "Black Rock Desert, NV, USA", date: "Aug 28–Sep 5, 2022", emoji: "🔥", type: "Burn", lat: 40.7864, lng: -119.2065 },
   { name: "Schönburn 2022", venue: "Böllerbauer", address: "Böllerbauer, Upper Austria, Austria", date: "Sep ~7–11, 2022", emoji: "🔥", type: "Burn", lat: 48.2524, lng: 13.8304 },
@@ -623,7 +631,7 @@ const events = [
   { name: "Burning Man 2023", venue: "Black Rock City", address: "Black Rock Desert, NV, USA", date: "Aug 27–Sep 4, 2023", emoji: "🔥", type: "Burn", lat: 40.7864, lng: -119.2065 },
 
   // ── Burns – 2024 ──
-  { name: "Ignition 2024", venue: "Ignition – NZ regional burn", address: "New Zealand", date: "Jan 2024", emoji: "🔥", type: "Burn", lat: -39.6000, lng: 176.8000 },
+  { name: "Ignition 2024", venue: "Ignition – NZ regional burn (PsycheLEDic art installation)", address: "New Zealand", date: "Jan 2024", emoji: "🔥", type: "Burn", lat: -39.6000, lng: 176.8000 },
   { name: "KiwiBurn 2024", venue: "KiwiBurn", address: "Hunterville, Manawatū-Whanganui, NZ", date: "Jan 2024", emoji: "🔥", type: "Burn", lat: -39.9300, lng: 175.5700 },
   { name: "What The Farm 2024", venue: "Ferme d'Antioche", address: "Vauxaillon, Aisne, France", date: "May 9–12, 2024", emoji: "🔥", type: "Burn", lat: 49.5592, lng: 3.5308 },
   { name: "Burning Nest 2024", venue: "Burning Nest", address: "England, UK", date: "~May 20–27, 2024", emoji: "🔥", type: "Burn", lat: 51.3000, lng: -1.5000 },
@@ -741,9 +749,9 @@ const stays = [
   { from:"2019-03-01", to:"2019-03-04", flag:"🇦🇹", country:"Austria", city:"Vienna – Austrian OS860 TLV→VIE Mar 1 05:45; Vienna Burning Ball (VBB) Mar 2–3; FlixBus N60 Vienna Erdberg→BER Mar 4 23:30" },
   { from:"2019-03-05", to:"2019-03-12", flag:"🇩🇪", country:"Germany", city:"Berlin + Schloss Beesenstedt – FlixBus N60 Vienna Erdberg→BER arr Mar 5; ZBB Mar 7–10 (Schloss Beesenstedt, Saxony-Anhalt); FlixBus BER→ZRH Mar 12" },
   { from:"2019-03-12", to:"2019-03-31", flag:"🇫🇷", country:"France", city:"Chamonix – FlixBus via Zurich, car rental Mar 12 + Chamonix Chalets" },
-  { from:"2019-04-24", to:"2019-05-13", flag:"🇨🇳", country:"China", city:"Dragon Burn + Shanghai" },
-  { from:"2019-05-30", to:"2019-06-21", flag:"🇨🇭", country:"Switzerland", city:"Zurich / Valais (Salgesch)" },
-  { from:"2019-06-22", to:"2019-06-25", flag:"🇩🇪", country:"Germany", city:"Berlin TXL – drove with friend ZRH→BER Jun 22" },
+  { from:"2019-04-24", to:"2019-05-13", flag:"🇨🇳", country:"China", city:"Shanghai + Dragon Burn – Aeroflot SU507 TLV→SVO Apr 24 12:45 + SU208 SVO→PVG Apr 24 20:05 arr Apr 25 (KVPOGS); Dragon Burn regional burn late Apr (PsycheLEDic art installation); Airbnb 'The YongKang Hidden Penthouse' Shanghai May 5–7; return SU209 PVG→SVO May 13 11:40 + SU504 SVO→TLV May 13 18:40" },
+  { from:"2019-05-30", to:"2019-06-21", flag:"🇨🇭", country:"Switzerland", city:"Zurich + Valais – SWISS KJXDPI TLV→ZRH May 30; WTF 2019 side trip May 31–Jun 2 (Vauxaillon); Airbnb Salgesch Valais Jun 8–9; drove to Berlin Jun 22 (KiezBurn 2019)" },
+  { from:"2019-06-22", to:"2019-06-25", flag:"🇩🇪", country:"Germany", city:"Berlin TXL – drove with friend ZRH→BER Jun 22; KiezBurn 2019; Lufthansa LH185 TXL→FRA Jun 25 + LH694 FRA→TLV Jun 25" },
   { from:"2019-07-06", to:"2019-07-19", flag:"🇪🇸", country:"Spain", city:"Madrid + Barcelona + Tarragona – SWISS LX253 TLV→ZRH Jul 6 16:05 (auto check-in failed Jul 5, checked in at airport) + LX2030 ZRH→MAD Jul 6 (delayed to 21:50); Nowhere 2019 near Castejón de Monegros" },
   { from:"2019-07-19", to:"2019-07-21", flag:"🇨🇭", country:"Switzerland", city:"Zurich – SWISS LX1959 BCN→ZRH Jul 19 18:35; LX1278 ZRH→CPH Jul 21 21:00" },
   { from:"2019-07-21", to:"2019-07-31", flag:"🇩🇰", country:"Denmark", city:"Copenhagen – Borderland 2019; SWISS LX1278 ZRH→CPH Jul 21" },
@@ -768,14 +776,16 @@ const stays = [
   { from:"2020-10-09", to:"2020-10-30", flag:"🇨🇭", country:"Switzerland", city:"Zurich – rooftop garden apartment" },
   { from:"2020-10-30", to:"2020-11-03", flag:"🇦🇹", country:"Austria", city:"Vienna – ÖBB Railjet ZRH→VIE Oct 30; ÖBB RJX 564 Wien→Innsbruck→Zürich Nov 3 11:30" },
   { from:"2020-11-03", to:"2020-12-07", flag:"🇨🇭", country:"Switzerland", city:"Zurich – ÖBB from Vienna" },
-  { from:"2020-12-08", to:"2021-01-22", flag:"🇸🇨", country:"Seychelles", city:"Mahé – Le Domaine de Bacova (extended to Jan 22 2021)" },
+  { from:"2020-12-08", to:"2020-12-22", flag:"🇸🇨", country:"Seychelles", city:"Mahé, Anse La Mouche – Le Domaine de Bacova (SeyVillas S-201208-Erov-nic-572821); COVID transit Dec 8–14; free from Dec 15; scuba diving at Anse La Mouche Blue Lagoon (Dive Resort Seychelles, Jonathan) ~Dec 15–21; extended to Dec 22; Air Seychelles return to TLV Dec 22 (booking CRMHQN)" },
   { from:"2021-07-16", to:"2021-07-27", flag:"🇩🇰", country:"Denmark", city:"Copenhagen – LH0683 TLV→MUC Jul 16 07:00→10:00 + LH2442 MUC→CPH 16:50→18:20 (AF1621 TLV→CPH Jul 15 cancelled; rebooked via Munich)" },
   { from:"2021-07-27", to:"2021-08-07", flag:"🇨🇭", country:"Switzerland", city:"Zurich – SWISS LX1267 CPH→ZRH Jul 27 09:30→11:25; SBB trains Aug 3–4; drove to Berlin Aug 8" },
   { from:"2021-08-08", to:"2021-08-24", flag:"🇩🇪", country:"Germany", city:"Berlin – drove from Zurich Aug 8; Airbnb Boxhagener Str 53 Aug 16–18 (Keren Shoval); KiezBurn 2021 ~Aug 19–23; COVID test Aug 23; Ryanair FR196 BER→BUD Aug 24" },
   { from:"2021-08-24", to:"2021-08-31", flag:"🇭🇺", country:"Hungary", city:"Budapest – Ryanair FR196 BER→BUD Aug 24; Omio Budapest Keleti→Vienna Aug 31" },
   { from:"2021-08-31", to:"2021-09-26", flag:"🇦🇹", country:"Austria", city:"Vienna – DB Bahn Sep 14 Berlin trip; Aegean A3863+A3928 VIE→TLV Sep 26" },
   { from:"2022-01-07", to:"2022-01-26", flag:"🇦🇹", country:"Austria", city:"Vienna – Ryanair FR7162 TLV→VIE Jan 7 11:20→14:10; Ryanair FR7161 VIE→TLV Jan 26 (delayed)" },
-  { from:"2022-02-07", to:"2022-02-27", flag:"🇦🇹", country:"Austria", city:"Vienna – Ryanair TLV→VIE Feb 7; VIE→TLV Feb 27" },
+  { from:"2022-02-07", to:"2022-02-07", flag:"🇦🇹", country:"Austria", city:"Vienna – Ryanair TLV→VIE Feb 7; ÖBB VIE→ZRH Feb 8" },
+  { from:"2022-02-08", to:"2022-02-17", flag:"🇨🇭", country:"Switzerland", city:"Zurich – ÖBB VIE→ZRH Feb 8; ÖBB ZRH→VIE Feb 17" },
+  { from:"2022-02-17", to:"2022-02-27", flag:"🇦🇹", country:"Austria", city:"Vienna – ÖBB ZRH→VIE Feb 17; Ryanair VIE→TLV Feb 27" },
   { from:"2022-04-12", to:"2022-04-14", flag:"🇧🇪", country:"Belgium", city:"Brussels – Gotogate TLV→IST→BRU Apr 12; rental car BRU Apr 13–19" },
   { from:"2022-04-14", to:"2022-04-17", flag:"🇫🇷", country:"France", city:"What The Farm 2022 – Ferme d'Antioche, Vauxaillon (Gotogate TLV→IST→BRU Apr 12; rental car BRU Apr 13–19)" },
   { from:"2022-04-19", to:"2022-04-25", flag:"🇧🇪", country:"Belgium", city:"Brussels – returned from WTF via rental car Apr 19 (car returned)" },
@@ -783,15 +793,16 @@ const stays = [
   { from:"2022-04-29", to:"2022-05-01", flag:"🇨🇭", country:"Switzerland", city:"Zurich – DB XM9ZSN AMS→ZRH Apr 29; FlixBus 3007009011 ZRH→BER May 1 18:45" },
   { from:"2022-05-02", to:"2022-05-10", flag:"🇩🇪", country:"Germany", city:"Berlin – FlixBus ZRH→BER May 1 18:45, arr Südkreuz May 2 08:40; Amano hotel; Zeroliq bar May 5; ICE 93 LQ3ACZ BER→VIE May 11 10:04" },
   { from:"2022-05-11", to:"2022-05-18", flag:"🇦🇹", country:"Austria", city:"Vienna – ICE 93 LQ3ACZ BER Hbf (tief)→VIE May 11 10:04→17:45 (with Joyce); El Al VIE→TLV May 18 cancelled (JBEPJ8); rebooked Austrian OS859 VIE→TLV May 18 20:15→00:40 May 19" },
+  { from:"2022-06-09", to:"2022-06-14", flag:"🇦🇹", country:"Austria", city:"Vienna – Wizzair W6 2812 UEZYVP TLV→VIE Jun 9; returned Kiwi 232645688 VIE→TLV Jun 14" },
   { from:"2022-07-01", to:"2022-07-11", flag:"🇪🇸", country:"Spain", city:"Madrid – Air Europa UX1302 TLV→MAD Jul 1; Nowhere 2022" },
-  { from:"2022-07-11", to:"2022-07-21", flag:"🇩🇪", country:"Germany", city:"Berlin – Ryanair FR2528 MAD→BER Jul 11; KiezBurn 2022" },
+  { from:"2022-07-11", to:"2022-07-21", flag:"🇩🇪", country:"Germany", city:"Berlin – Ryanair FR2528 MAD→BER Jul 11; tested COVID positive Jul 12; attended KiezBurn 2022 (arrived late after recovery); FlixBus to Gothenburg Jul 21" },
   { from:"2022-07-21", to:"2022-08-05", flag:"🇸🇪", country:"Sweden", city:"Gothenburg – FlixBus from Berlin; The Borderland 2022; Austrian OS326 GOT→VIE Aug 5" },
   { from:"2022-08-05", to:"2022-08-23", flag:"🇦🇹", country:"Austria", city:"Vienna – Austrian GOT→VIE Aug 5" },
   { from:"2022-08-23", to:"2022-09-06", flag:"🇺🇸", country:"United States", city:"San Francisco / Burning Man 2022 – Austrian VIE→MUC→SFO Aug 23; Black Rock City NV" },
   { from:"2022-09-07", to:"2022-09-20", flag:"🇦🇹", country:"Austria", city:"Vienna – Austrian SFO→FRA→VIE Sep 7; Schönburn 2022 ~Sep 7–11 Böllerbauer; Ryanair FR7295 VIE→TLV Sep 20" },
   { from:"2022-12-27", to:"2023-01-05", flag:"🇦🇹", country:"Austria", city:"Vienna – Ryanair FR7162 TLV→VIE Dec 27; car rental Dec 29–Jan 4; El Al LY362 VIE→TLV Jan 5 2023" },
-  { from:"2023-01-19", to:"2023-01-20", flag:"🇿🇦", country:"South Africa", city:"Johannesburg – El Al LY51 TLV→JNB Jan 19" },
-  { from:"2023-01-20", to:"2023-02-04", flag:"🇿🇦", country:"South Africa", city:"Hoedspruit (Kruger area) – drove from Johannesburg Jan 20" },
+  { from:"2023-01-19", to:"2023-01-20", flag:"🇿🇦", country:"South Africa", city:"Johannesburg – El Al LY51 TLV→JNB Jan 19 (with Joyce)" },
+  { from:"2023-01-20", to:"2023-02-04", flag:"🇿🇦", country:"South Africa", city:"Hoedspruit (Kruger area) – drove from Johannesburg Jan 20 (with Joyce)" },
   { from:"2023-02-04", to:"2023-02-05", flag:"🇿🇦", country:"South Africa", city:"Johannesburg – drove back from Hoedspruit Feb 4; El Al LY52 JNB→TLV Feb 5" },
   { from:"2023-02-14", to:"2023-02-23", flag:"🇨🇭", country:"Switzerland", city:"Zurich – SWISS LX253 TLV→ZRH Feb 14; Bao Vest (Swiss Burn) 2023; ÖBB ZRH→VIE Feb 23" },
   { from:"2023-02-23", to:"2023-03-05", flag:"🇦🇹", country:"Austria", city:"Vienna – ÖBB ZRH→VIE Feb 23; Austrian OS857 VIE→TLV Mar 5" },
@@ -848,12 +859,13 @@ const stays = [
   { from:"2026-10-07", to:"2026-10-12", flag:"🇬🇷", country:"Greece", city:"Heraklion, Crete – SWISS LX4641 YYZ→ZRH Oct 6 20:05; LX8350 ZRH→HER Oct 7 16:10 arr 19:55; Poseidon Hotel Oct 7–8; Studio 21 Airbnb Michelidaki 21 Oct 11–12; Ryanair FR7392 HER→VIE Oct 12 19:45" },
   { from:"2026-10-12", to:"2026-10-14", flag:"🇦🇹", country:"Austria", city:"Vienna – Ryanair FR7392 HER→VIE Oct 12 arr 21:20; Ryanair FR721 VIE→PFO Oct 14 20:25" },
   { from:"2026-10-15", to:"2026-10-16", flag:"🇨🇾", country:"Cyprus", city:"Paphos – Ryanair FR721 VIE→PFO Oct 14 20:25 arr 00:20 Oct 15; Ryanair FR722 PFO→VIE Oct 16 17:05" },
-  { from:"2026-10-16", to:"2026-10-16", flag:"🇦🇹", country:"Austria", city:"Vienna – Ryanair FR722 PFO→VIE Oct 16 arr 19:20" },
+  { from:"2026-10-16", to:"2026-10-18", flag:"🇦🇹", country:"Austria", city:"Vienna – Ryanair FR722 PFO→VIE Oct 16 arr 19:20; ÖBB Franz-Josefs-Bahnhof→Praha Oct 19" },
 ];
 
 // "Expected" upcoming stays — confirmed transport bookings for future arrivals.
 // from = confirmed arrival date by transport; to = last confirmed date in that country.
 // No end date is assumed without a confirmed departure booking.
 const expectedStays = [
+  { from:"2026-10-19", to:"2026-11-01", flag:"🇨🇿", country:"Czech Republic", city:"Prague – ÖBB Wien Franz-Josefs-Bahnhof→Praha hl.n. Oct 19" },
   { from:"2026-11-02", to:"2026-11-16", flag:"🇮🇪", country:"Ireland", city:"Dun Laoghaire (Dublin area) – flight from Vienna Nov 2; Mulgrave Lodge 47 Mulgrave Street; 14 nights" },
 ];
