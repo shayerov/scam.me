@@ -769,6 +769,13 @@
       <span class="sort-label">Year:</span>
       <button class="sort-btn active" id="event-year-all" onclick="filterEventYears('all',this)">All</button>
     </div>
+    <div class="sort-bar" id="event-sort-bar">
+      <span class="sort-label">Sort:</span>
+      <button class="sort-btn active" onclick="sortEvents('date',this)">Date</button>
+      <button class="sort-btn" onclick="sortEvents('name',this)">Name</button>
+      <button class="sort-btn" onclick="sortEvents('country',this)">Country</button>
+      <span id="event-count" style="margin-left:auto;font-size:12px;color:var(--text-muted,#888);align-self:center;white-space:nowrap"></span>
+    </div>
     <div class="events-grid" id="events-grid"></div>
   </div>
 </div>
@@ -1278,6 +1285,11 @@ events.forEach(function(ev) {
   card.className = 'event-card';
   card.dataset.type = type;
   if (year) card.dataset.year = year;
+  card.dataset.name = ev.name.toLowerCase();
+  card.dataset.sortDate = parseSortDate(ev.date);
+  // Extract country from address (last comma-separated segment)
+  var addrParts = (ev.address || '').split(',');
+  card.dataset.country = addrParts[addrParts.length - 1].trim().toLowerCase();
   card.innerHTML =
     '<div class="event-name">' + ev.emoji + ' ' + ev.name + '</div>' +
     '<div class="event-venue">📍 ' + stripBookingCodes(ev.venue) + '</div>' +
@@ -1307,12 +1319,20 @@ Array.from(eventYears).sort().reverse().forEach(function(year) {
   yearBar.appendChild(btn);
 });
 
+// Initial count
+applyEventFilters();
+
 function applyEventFilters() {
+  var total = 0, visible = 0;
   document.querySelectorAll('#events-grid .event-card').forEach(function(card) {
     var typeOk = (activeEventType === 'all' || card.dataset.type === activeEventType);
     var yearOk = (activeEventYears.size === 0 || activeEventYears.has(card.dataset.year));
-    card.style.display = (typeOk && yearOk) ? '' : 'none';
+    var show = typeOk && yearOk;
+    card.style.display = show ? '' : 'none';
+    total++; if (show) visible++;
   });
+  var countEl = document.getElementById('event-count');
+  if (countEl) countEl.textContent = visible === total ? total + ' events' : visible + ' of ' + total + ' events';
 }
 
 function filterEvents(type, btn) {
@@ -1345,6 +1365,41 @@ function filterEventYears(year, btn) {
     }
   }
   applyEventFilters();
+}
+
+function parseSortDate(dateStr) {
+  if (!dateStr) return '0000-00-00';
+  var s = dateStr.replace(/^~/, '').split(/[–\-]/)[0].trim();
+  var mo = {Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',
+            Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+  var m = s.match(/([A-Z][a-z]{2})\s+(\d{1,2}),?\s+(\d{4})/);
+  if (m) return m[3]+'-'+mo[m[1]]+'-'+m[2].padStart(2,'0');
+  m = s.match(/([A-Z][a-z]{2})\s+(\d{4})/);
+  if (m) return m[2]+'-'+mo[m[1]]+'-00';
+  m = s.match(/(\d{4})/);
+  if (m) return m[1]+'-00-00';
+  return '0000-00-00';
+}
+
+var activeEventSort = 'date';
+function sortEvents(order, btn) {
+  document.querySelectorAll('#event-sort-bar .sort-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  activeEventSort = order;
+  applyEventSort();
+}
+function applyEventSort() {
+  var grid = document.getElementById('events-grid');
+  var cards = Array.from(grid.querySelectorAll('.event-card'));
+  cards.sort(function(a, b) {
+    if (activeEventSort === 'name') return a.dataset.name.localeCompare(b.dataset.name);
+    if (activeEventSort === 'country') {
+      var c = a.dataset.country.localeCompare(b.dataset.country);
+      return c !== 0 ? c : a.dataset.sortDate.localeCompare(b.dataset.sortDate);
+    }
+    return a.dataset.sortDate.localeCompare(b.dataset.sortDate);
+  });
+  cards.forEach(function(c){ grid.appendChild(c); });
 }
 
 // Simplified timeline from stays[] with Israel home gaps
